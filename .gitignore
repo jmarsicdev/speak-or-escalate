@@ -22,3 +22,6 @@ hf_cache/
 # local Claude Code notes stay out of the repo
 CLAUDE.md
 .claude/
+
+# fetched third-party repos
+third_party/ProactiveVideoQA/
