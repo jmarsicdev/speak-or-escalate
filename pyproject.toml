@@ -1,0 +1,32 @@
+[project]
+name = "egogate"
+version = "0.1.0"
+description = "Edge VLM on Jetson that selectively escalates to a cloud model for proactive egocentric video understanding"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.26",
+    "pyyaml>=6.0",
+    "tqdm>=4.66",
+]
+
+[project.optional-dependencies]
+# Model backends. Install on the machine that actually runs them.
+models = [
+    "torch>=2.3",
+    "transformers>=4.45",
+    "accelerate>=0.30",
+    "pillow>=10",
+    "opencv-python-headless>=4.9",
+]
+cloud = ["openai>=1.40"]
+dev = ["pytest>=8", "ruff>=0.5"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["egogate*"]
+
+[tool.ruff]
+line-length = 100

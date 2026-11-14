@@ -1,0 +1,58 @@
+# Base config. Experiment configs in configs/experiments/ overlay this.
+# Override from the CLI with --set key.path=value
+
+seed: 0
+data:
+  jsonl: data/processed/dev.jsonl   # produced by scripts/ingest_dataset.py
+  limit: null                       # cap number of samples (null = all)
+  toy: false                        # true -> synthetic samples, no video needed
+
+video:
+  fps: 2.0          # Em-Garde matcher: 2 fps
+  window_s: 2.0     # 2-second windows
+  stride_s: 0.5     # emit a window every 0.5 s
+
+cues:
+  backend: cloud    # cloud | edge | manual
+  n_cues: 3
+  manual: []        # used when backend == manual
+
+matcher:
+  embedder: random  # random | opsmm
+  model_id: OpenSearch-AI/Ops-MM-embedding-v1-2B
+  threshold: 0.04   # Em-Garde default theta
+  mode: surge       # surge | absolute
+  aggregate: any    # any | mean
+  cooldown_s: 0.0
+
+evidence:
+  enabled: true
+  every_s: 5.0      # scene-graph triplets every 5 s
+  per_clip: 8
+  top_k: 5
+
+edge:
+  backend: mock     # mock | hf
+  model_id: Qwen/Qwen2.5-VL-3B-Instruct   # or google/gemma-3-4b-it
+  device: cuda
+  dtype: float16
+  quant: null       # null | int8 | int4
+
+cloud:
+  backend: mock     # mock | openai
+  model: gpt-4o-mini
+  payload: frames+evidence   # frames+evidence | frames | evidence
+
+policy:
+  kind: band        # band | random | always_cloud | edge_only
+  lo: 0.3
+  hi: 0.7
+  p_cloud: 0.2      # for random
+  require_trigger: true
+
+eval:
+  tol_s: 4.0        # correct if response within [event, event+tol]  (Em-Garde)
+  calib_bins: 10
+
+output:
+  dir: results

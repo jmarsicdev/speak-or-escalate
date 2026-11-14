@@ -1,0 +1,3 @@
+# Matcher variant: mean over cues, absolute similarity threshold instead of surge.
+name: matcher_mean_absolute
+matcher: {mode: absolute, aggregate: mean, threshold: 0.25}

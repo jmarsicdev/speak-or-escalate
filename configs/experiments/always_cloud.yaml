@@ -1,0 +1,3 @@
+# Upper bound on accuracy / worst case on cost: every trigger goes to the cloud.
+name: always_cloud
+policy: {kind: always_cloud}

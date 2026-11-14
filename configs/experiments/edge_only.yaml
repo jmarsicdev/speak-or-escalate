@@ -1,0 +1,3 @@
+# Lower bound on cost: never escalate.
+name: edge_only
+policy: {kind: edge_only, hi: 0.5}

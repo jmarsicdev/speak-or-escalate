@@ -1,0 +1,24 @@
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.venv/
+.env
+
+# data and outputs (keep the .gitkeep files)
+data/raw/*
+data/processed/*
+results/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!results/.gitkeep
+
+# model caches
+*.safetensors
+*.gguf
+hf_cache/
+
+# local Claude Code notes stay out of the repo
+CLAUDE.md
+.claude/
