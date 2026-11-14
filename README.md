@@ -32,7 +32,7 @@ VideoJev (a score rather than generated text as the routing signal).
 ## Layout
 
 ```
-egogate/
+egogate/                    the pipeline package (our code)
   types.py      dataclasses shared across stages (Window, MatchResult, Decision, Event)
   config.py     YAML loader (configs/default.yaml + optional overlay + --set overrides)
   video.py      frame sampling + sliding windows
@@ -47,10 +47,30 @@ egogate/
     metrics.py  online recall/precision with tolerance window, calibration table, run summary
     datasets.py normalised JSONL loader, toy samples
 configs/default.yaml        every knob with its default
-scripts/run_baseline.py     run the pipeline -> results/baseline/{summary.json, <id>.jsonl, <id>.calib.json}
-scripts/ingest_dataset.py   raw benchmark -> data/processed/*.jsonl   (OVO parser is a TODO)
+scripts/
+  run_baseline.py           run the pipeline -> results/baseline/{summary.json, <id>.jsonl, <id>.calib.json}
+  ingest_dataset.py         raw benchmark -> data/processed/*.jsonl   (OVO parser is a TODO)
+  fetch_proactivevideoqa.sh clone the ProactiveVideoQA scorer at a pinned commit (see third_party/)
 tests/test_core.py          matcher, router, metric, cue parsing, end-to-end mock run
+data/                       raw/ and processed/ stay local (gitignored); only .gitkeep is tracked
+results/                    run outputs; small JSON/CSV/JSONL that we read back from git
+docs/papers/                the 8 reference PDFs, named <short-name>_<arxiv-id>.pdf, with a README
+                            saying what we take from each. Kept in the repo so they are read page by
+                            page when a detail matters, instead of pasted into a chat.
+third_party/                code from other projects, kept apart from egogate/ so it is never confused
+                            with ours (see third_party/README.md for sources and pinned commits)
+  em_garde/                 MIT-licensed Ops-MM embedding wrapper and config from the Em-Garde repo.
+                            It is the reference for fixing the placeholder method names in
+                            egogate/embed.py and confirms the HF id. Vendored because its license allows it.
+  ProactiveVideoQA/         NOT committed: fetched by scripts/fetch_proactivevideoqa.sh. That repo has no
+                            license file, so we fetch it rather than copy it. It holds the PAUC scorer,
+                            which we run unchanged so our numbers match the benchmark's.
 ```
+
+Quick glossary, since the config uses it: **BF16 / FP16 / FP32** are number formats for model weights. FP32 uses 4 bytes per
+value and is the full-precision reference. FP16 and BF16 both use 2 bytes, so they halve the memory. FP16 keeps more fine
+detail but overflows on large values; BF16 keeps FP32's range with less detail and is safer for large models. The baseline
+stage uses BF16 and no quantization (INT8 / INT4), which is a separate later experiment.
 
 ## Setup
 
