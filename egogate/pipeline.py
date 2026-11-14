@@ -1,10 +1,11 @@
 """End-to-end stream processing for one (video, query) pair.
 
-    run_stream(windows, query, components, cfg) -> list[Decision]
+    run_stream(windows, query, cues, components) -> list[Decision]
 
-Every window: matcher.step -> maybe update evidence -> if triggered, ask edge for
-p_speak -> policy -> act. All intermediate numbers (sims, deltas, p_speak) are kept
-in Decision.meta so experiments can plot calibration and trigger curves afterwards.
+Every window: matcher.step -> maybe update evidence -> if triggered, ask the edge model
+for p_speak -> band policy -> act (edge answers / cloud answers / silent).
+All intermediate numbers (sims, deltas, p_speak) are kept in Decision.meta so results
+can be analysed afterwards without re-running models.
 """
 from __future__ import annotations
 
@@ -15,8 +16,12 @@ from .cloud import CloudClient
 from .edge import EdgeVLM
 from .embed import Matcher
 from .evidence import EvidenceMemory
-from .router import Policy
+from .router import BandPolicy
 from .types import Action, Decision, Window
+
+CLOUD_PROMPT = """The user, wearing a first-person camera, asked: "{query}"
+{evidence_block}
+Is this the right moment to respond? If yes, give the answer concisely. If not, reply exactly: NO_RESPONSE"""
 
 
 @dataclass
@@ -24,27 +29,15 @@ class Components:
     matcher: Matcher
     edge: EdgeVLM
     cloud: CloudClient
-    policy: Policy
+    policy: BandPolicy
     evidence: EvidenceMemory | None = None
-    cloud_payload: str = "frames+evidence"  # "frames+evidence" | "frames" | "evidence"
     top_k_evidence: int = 5
 
 
-def _cloud_answer(c: Components, query: str, window: Window, ev_text: list[str]) -> str:
-    prompt = (
-        f'The user, wearing a first-person camera, asked: "{query}"\n'
-        + ("Recent scene evidence:\n" + "\n".join(f"- {e}" for e in ev_text) + "\n" if ev_text and c.cloud_payload != "frames" else "")
-        + "Is this the right moment to respond? If yes, give the answer concisely. If not, reply exactly: NO_RESPONSE"
-    )
-    images = None if c.cloud_payload == "evidence" else window.frames
-    return c.cloud.complete(prompt, images=images)
-
-
-def run_stream(windows: Iterable[Window], query: str, c: Components, log_all: bool = False) -> list[Decision]:
+def run_stream(windows: Iterable[Window], query: str, cues: list[str], c: Components, log_all: bool = False) -> list[Decision]:
     c.matcher.reset()
     if c.evidence is not None:
         c.evidence.reset()
-    query_vec = c.matcher.cue_vecs.mean(axis=0)
     decisions: list[Decision] = []
 
     for w in windows:
@@ -58,9 +51,9 @@ def run_stream(windows: Iterable[Window], query: str, c: Components, log_all: bo
                                           meta={"sims": m.sims.tolist(), "deltas": m.deltas.tolist(), "triggered": False}))
             continue
 
-        ev_text = [str(tr) for tr in c.evidence.retrieve(query_vec, c.top_k_evidence)] if c.evidence else []
-        eo = c.edge.speak_now(query, w.frames, ev_text)
-        action = c.policy.decide(w.t_end, eo.p_speak, m.triggered)
+        ev_text = [str(tr) for tr in c.evidence.retrieve(c.matcher.query_vec, c.top_k_evidence)] if c.evidence else []
+        eo = c.edge.speak_now(query, w.frames, ev_text, cues)
+        action = c.policy.decide(eo.p_speak, m.triggered)
 
         d = Decision(t=w.t_end, action=action, p_speak=eo.p_speak,
                      meta={"sims": m.sims.tolist(), "deltas": m.deltas.tolist(), "best_cue": m.best_cue,
@@ -68,7 +61,8 @@ def run_stream(windows: Iterable[Window], query: str, c: Components, log_all: bo
         if action == Action.EDGE_ANSWER:
             d.answer, d.source = c.edge.answer(query, w.frames, ev_text), "edge"
         elif action == Action.ESCALATE:
-            text = _cloud_answer(c, query, w, ev_text)
+            ev_block = ("Recent scene evidence:\n" + "\n".join(f"- {e}" for e in ev_text) + "\n") if ev_text else ""
+            text = c.cloud.complete(CLOUD_PROMPT.format(query=query, evidence_block=ev_block), images=w.frames)
             d.cost = 1.0
             if text.strip() != "NO_RESPONSE":
                 d.answer, d.source = text, "cloud"

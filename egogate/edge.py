@@ -1,17 +1,18 @@
-"""Edge VLM wrappers (Gemma / Qwen multimodal via transformers) plus a mock.
+"""Edge VLM wrapper (Gemma / Qwen multimodal via transformers) plus a mock.
 
-Two calls the pipeline makes:
+Three calls the pipeline makes on the edge model:
 
-  complete(prompt, images)        -> free text  (cue parsing, triplets, answers)
-  speak_now(query, images, evidence) -> EdgeOutput with p_speak
+  complete(prompt, images)             -> free text   (cue parsing, scene-graph triplets)
+  speak_now(query, images, evidence, cues) -> EdgeOutput with p_speak
+  answer(query, images, evidence, cues)    -> the on-device response text
 
 `p_speak` is read from the next-token logits over {"Yes", "No"} after a
-"Should I respond now?" prompt, NOT from parsing generated text. That gives a
-calibratable number we can plot (project doc: "is the model's confidence accurate?",
-"classification f1 recall heatmap").
+"Should I respond now?" prompt, not parsed from generated text, so it is a number the
+router can threshold and we can check for calibration.
 
-Quantization: pass `quant="int4"` / `"int8"` to load with bitsandbytes. Note from the
-ISI paper: Gemma-3n cannot be INT8-quantized (AltUp); use Gemma 3 or Gemma 4 E2B / Qwen2.5-VL.
+This repo is the desktop-GPU baseline. `quant` is passed through for the Jetson /
+quantization work happening separately. (ISI SmallSat 2026: Gemma-3n cannot be INT8-quantized
+because of AltUp; Gemma 3 and Qwen2.5-VL are fine.)
 """
 from __future__ import annotations
 
@@ -23,6 +24,8 @@ from .types import EdgeOutput
 
 SPEAK_PROMPT = """You are an assistant watching a first-person video stream.
 The user asked earlier: "{query}"
+Visual cues that mean it is time to respond:
+{cue_block}
 {evidence_block}
 Based on the most recent frames, is RIGHT NOW the moment to respond to the user?
 Answer with a single word: Yes or No."""
@@ -33,10 +36,11 @@ The user asked earlier: "{query}"
 It is now time to respond. Give a concise, specific answer based on the recent frames."""
 
 
-def _evidence_block(evidence: list[str] | None) -> str:
-    if not evidence:
+def _list_block(items: list[str] | None, header: str = "") -> str:
+    if not items:
         return ""
-    return "Recent scene evidence:\n" + "\n".join(f"- {e}" for e in evidence) + "\n"
+    body = "\n".join(f"- {x}" for x in items)
+    return f"{header}\n{body}\n" if header else body
 
 
 class EdgeVLM:
@@ -47,14 +51,15 @@ class EdgeVLM:
     def complete(self, prompt: str, images=None, max_new_tokens: int = 128) -> str:
         return self._generate(prompt, images, max_new_tokens)
 
-    def speak_now(self, query: str, images, evidence: list[str] | None = None) -> EdgeOutput:
-        prompt = SPEAK_PROMPT.format(query=query, evidence_block=_evidence_block(evidence))
+    def speak_now(self, query: str, images, evidence: list[str] | None = None, cues: list[str] | None = None) -> EdgeOutput:
+        prompt = SPEAK_PROMPT.format(query=query, cue_block=_list_block(cues),
+                                     evidence_block=_list_block(evidence, "Recent scene evidence:"))
         lp_yes, lp_no = self._yes_no_logprobs(prompt, images)
         p = 1.0 / (1.0 + math.exp(lp_no - lp_yes))  # softmax over the two options
         return EdgeOutput(text="Yes" if p >= 0.5 else "No", p_speak=p, raw={"lp_yes": lp_yes, "lp_no": lp_no})
 
     def answer(self, query: str, images, evidence: list[str] | None = None) -> str:
-        prompt = ANSWER_PROMPT.format(query=query, evidence_block=_evidence_block(evidence))
+        prompt = ANSWER_PROMPT.format(query=query, evidence_block=_list_block(evidence, "Recent scene evidence:"))
         return self._generate(prompt, images, 96)
 
     # ---- to implement
@@ -66,7 +71,7 @@ class EdgeVLM:
 
 
 class MockEdgeVLM(EdgeVLM):
-    """No-GPU stand-in. p_speak is driven by an optional oracle so routing logic can be tested."""
+    """No-GPU stand-in. p_speak comes from an optional oracle so routing can be tested."""
 
     name = "mock"
 
@@ -88,9 +93,9 @@ class MockEdgeVLM(EdgeVLM):
 
 
 class HFEdgeVLM(EdgeVLM):
-    """transformers-based wrapper. Works for Qwen2.5-VL and Gemma 3 style chat VLMs.
+    """transformers-based wrapper for Qwen2.5-VL and Gemma 3 style chat VLMs.
 
-    TODO(models): the chat-template / image-placeholder details differ per family.
+    TODO(models): chat-template / image-placeholder details differ per family.
     Validate on the dev GPU with one real model before trusting numbers.
     """
 
@@ -101,14 +106,11 @@ class HFEdgeVLM(EdgeVLM):
         from transformers import AutoModelForImageTextToText, AutoProcessor  # noqa: PLC0415
 
         self.torch = torch
-        self.device = device
         kwargs = {"torch_dtype": getattr(torch, dtype)}
         if quant in ("int4", "int8"):
             from transformers import BitsAndBytesConfig  # noqa: PLC0415
 
-            kwargs["quantization_config"] = BitsAndBytesConfig(
-                load_in_4bit=(quant == "int4"), load_in_8bit=(quant == "int8")
-            )
+            kwargs["quantization_config"] = BitsAndBytesConfig(load_in_4bit=(quant == "int4"), load_in_8bit=(quant == "int8"))
             kwargs["device_map"] = "auto"
         self.processor = AutoProcessor.from_pretrained(model_id)
         self.model = AutoModelForImageTextToText.from_pretrained(model_id, **kwargs).eval()
@@ -123,16 +125,14 @@ class HFEdgeVLM(EdgeVLM):
 
         pil = [Image.fromarray(f) for f in (images or [])]
         content = [{"type": "image"} for _ in pil] + [{"type": "text", "text": prompt}]
-        msgs = [{"role": "user", "content": content}]
-        text = self.processor.apply_chat_template(msgs, add_generation_prompt=True, tokenize=False)
+        text = self.processor.apply_chat_template([{"role": "user", "content": content}], add_generation_prompt=True, tokenize=False)
         return self.processor(text=[text], images=pil or None, return_tensors="pt").to(self.model.device)
 
     def _generate(self, prompt, images, max_new_tokens):
         inputs = self._inputs(prompt, images)
         with self.torch.no_grad():
             out = self.model.generate(**inputs, max_new_tokens=max_new_tokens, do_sample=False)
-        gen = out[0, inputs["input_ids"].shape[1]:]
-        return self.processor.decode(gen, skip_special_tokens=True).strip()
+        return self.processor.decode(out[0, inputs["input_ids"].shape[1]:], skip_special_tokens=True).strip()
 
     def _yes_no_logprobs(self, prompt, images):
         inputs = self._inputs(prompt, images)

@@ -90,6 +90,7 @@ def summarize_run(decisions: list[Decision], events: list[Event], tol: float = 4
     return {
         "recall": pr.recall, "precision": pr.precision, "f1": pr.f1,
         "n_gt": pr.n_gt, "n_responses": pr.n_pred, "n_correct": pr.n_correct,
+        "n_false_positives": pr.n_pred - pr.n_correct,
         "n_triggers": n_trig, "n_cloud_calls": n_cloud,
         "n_edge_answers": sum(1 for d in resp if d.source == "edge"),
         "n_cloud_answers": sum(1 for d in resp if d.source == "cloud"),

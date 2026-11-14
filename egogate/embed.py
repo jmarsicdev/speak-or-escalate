@@ -1,17 +1,11 @@
-"""Embedding matcher: cosine similarity between the current window and the cue texts.
+"""Embedding matcher: cosine similarity between the current video window and the cue texts.
 
-Open questions from the project doc, each exposed as a config knob so they can be
-swept in experiments:
+Follows Em-Garde's LPMM: a 2-second window is embedded, compared to each pre-embedded cue,
+and a trigger fires when ANY cue's similarity jumps by more than `threshold` (0.04) since the
+previous window. `cooldown_s` suppresses immediate re-triggers.
 
-  aggregate:  "any"  -> trigger if ANY cue crosses (Em-Garde)
-              "mean" -> trigger on the mean over cues
-  mode:       "surge"    -> compare sim[t] - sim[t-1] to threshold (Em-Garde, theta=0.04)
-              "absolute" -> compare sim[t] itself to threshold
-  threshold:  float
-  cooldown_s: suppress re-triggers for this long after a trigger
-
-The embedder itself is swappable. `OpsMMEmbedder` wraps OpenSearch-AI/Ops-MM-embedding-v1-2B;
-`RandomEmbedder` lets the whole pipeline run without a GPU.
+`OpsMMEmbedder` wraps OpenSearch-AI/Ops-MM-embedding-v1-2B (text and video in one space);
+`RandomEmbedder` lets the pipeline run without a GPU.
 """
 from __future__ import annotations
 
@@ -22,7 +16,6 @@ import numpy as np
 from .types import MatchResult, Window
 
 
-# --------------------------------------------------------------------------- embedders
 class Embedder:
     def embed_text(self, texts: list[str]) -> np.ndarray:  # (n, d), L2-normalised
         raise NotImplementedError
@@ -38,7 +31,8 @@ class RandomEmbedder(Embedder):
         self.dim = dim
         self.rng = np.random.default_rng(seed)
 
-    def _norm(self, v):
+    @staticmethod
+    def _norm(v):
         return v / (np.linalg.norm(v, axis=-1, keepdims=True) + 1e-8)
 
     def embed_text(self, texts):
@@ -49,12 +43,10 @@ class RandomEmbedder(Embedder):
 
 
 class OpsMMEmbedder(Embedder):
-    """Ops-MM-embedding-v1-2B (OpenSearch-AI). Text and video land in one space.
+    """Ops-MM-embedding-v1-2B (OpenSearch-AI).
 
-    TODO(models): confirm the exact preprocessing in the model card
-    (https://huggingface.co/OpenSearch-AI/Ops-MM-embedding-v1-2B). The sketch below
-    follows the Qwen2-VL-style interface the model is built on; adjust once we've
-    run it once on the dev box. Frames are passed as a list of PIL images.
+    TODO(models): confirm preprocessing and method names against the model card
+    (https://huggingface.co/OpenSearch-AI/Ops-MM-embedding-v1-2B) on the first GPU run.
     """
 
     def __init__(self, model_id: str = "OpenSearch-AI/Ops-MM-embedding-v1-2B", device: str = "cuda", dtype: str = "float16"):
@@ -62,11 +54,8 @@ class OpsMMEmbedder(Embedder):
         from transformers import AutoModel, AutoProcessor  # noqa: PLC0415
 
         self.torch = torch
-        self.device = device
         self.processor = AutoProcessor.from_pretrained(model_id, trust_remote_code=True)
-        self.model = AutoModel.from_pretrained(
-            model_id, torch_dtype=getattr(torch, dtype), trust_remote_code=True
-        ).to(device).eval()
+        self.model = AutoModel.from_pretrained(model_id, torch_dtype=getattr(torch, dtype), trust_remote_code=True).to(device).eval()
 
     @staticmethod
     def _norm(v):
@@ -86,23 +75,21 @@ class OpsMMEmbedder(Embedder):
         return self._norm(out.float().cpu().numpy())[0]
 
 
-# --------------------------------------------------------------------------- matcher
 @dataclass
 class MatcherConfig:
     threshold: float = 0.04
-    mode: str = "surge"  # "surge" | "absolute"
-    aggregate: str = "any"  # "any" | "mean"
     cooldown_s: float = 0.0
 
 
 class Matcher:
-    def __init__(self, embedder: Embedder, cues: list[str], cfg: MatcherConfig):
+    def __init__(self, embedder: Embedder, cues: list[str], query: str, cfg: MatcherConfig):
         self.embedder = embedder
-        self.cues = cues
+        self.cues = list(cues)
         self.cfg = cfg
-        self.cue_vecs = embedder.embed_text(cues)  # (n_cues, d)
+        self.cue_vecs = embedder.embed_text(self.cues)  # (n_cues, d)
+        self.query_vec = embedder.embed_text([query])[0]  # used for evidence retrieval
         self.prev_sims: np.ndarray | None = None
-        self.last_trigger_t: float = -1e9
+        self.last_trigger_t = -1e9
 
     def reset(self):
         self.prev_sims = None
@@ -114,15 +101,9 @@ class Matcher:
         deltas = np.zeros_like(sims) if self.prev_sims is None else sims - self.prev_sims
         self.prev_sims = sims
 
-        signal = deltas if self.cfg.mode == "surge" else sims
-        if self.cfg.aggregate == "mean":
-            score, best = float(signal.mean()), int(np.argmax(signal))
-        else:
-            best = int(np.argmax(signal))
-            score = float(signal[best])
-
+        best = int(np.argmax(deltas))
         in_cooldown = (window.t_end - self.last_trigger_t) < self.cfg.cooldown_s
-        triggered = score > self.cfg.threshold and not in_cooldown
+        triggered = float(deltas[best]) > self.cfg.threshold and not in_cooldown
         if triggered:
             self.last_trigger_t = window.t_end
         return MatchResult(t=window.t_end, sims=sims, deltas=deltas, triggered=triggered, best_cue=best)

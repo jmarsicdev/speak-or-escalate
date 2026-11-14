@@ -1,4 +1,0 @@
-# Baseline: ignore confidence, escalate a random 20% of triggers.
-# Project doc: "Call gpt randomly 20 times vs waiting for confidence".
-name: random_trigger
-policy: {kind: random, p_cloud: 0.2}

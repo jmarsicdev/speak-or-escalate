@@ -1,50 +1,55 @@
 # speak-or-escalate
 
-Edge VLM on a Jetson that watches an egocentric video stream and decides, per moment, whether to
-**speak** (answer on-device), **stay silent**, or **escalate** to a cloud model (GPT).
+Edge VLM that watches an egocentric video stream and decides, per moment, whether to
+**speak** (answer on-device), **stay silent**, or **escalate** to a cloud model when uncertain.
+
+This repo is the **baseline and evaluation setup**, run on a desktop GPU. Quantization and
+Jetson deployment of the edge model are separate work by the other half of the team; the
+`edge.quant` config key is wired through for them but is not used here.
 
 The Python package is `egogate/`.
 
-## Pipeline
+## Baseline pipeline
 
 ```
-query ──► CueParser (cloud, once) ──► 3 visual cues ──► embed
-                                                          │
-video ──► 2 s windows @ 2 fps ──► Matcher: cosine(window, cues) ──► surge > θ ?  ── no ──► silent
+query ──► edge VLM parses 3 visual cues (once) ──► embed cues
+                                                     │
+video ──► 2 s windows @ 2 fps ──► Matcher: cosine(window, cues) ──► surge > θ ? ── no ──► silent
              │                                                            │ yes
              └──► EvidenceMemory: scene-graph triplets every 5 s          ▼
-                              (top-k retrieved) ──────────────► Edge VLM: p(speak now)
+                              (top-k retrieved) ──────────────► edge VLM: p(speak now)
                                                                            │
-                                            p ≥ hi: edge answers │ lo < p < hi: cloud │ p ≤ lo: silent
+                                 p ≥ hi: edge answers │ lo < p < hi: cloud answers │ p ≤ lo: silent
 ```
 
-Literature this is built on: VideoLLM-online (speak-or-silent token), Em-Garde (cue parse once,
+The cloud model (GPT) is only called in the uncertain band. Cue parsing, evidence
+extraction, p(speak), and confident answers are all the edge model.
+
+Built on: VideoLLM-online (speak-or-silent decision per frame), Em-Garde (parse cues once,
 cheap embedding matcher, θ = 0.04 surge trigger), Response-G1 (scene-graph evidence memory),
-VideoJev (a score, not generated text, as the routing signal).
+VideoJev (a score rather than generated text as the routing signal).
 
 ## Layout
 
 ```
 egogate/
   types.py      dataclasses shared across stages (Window, MatchResult, Decision, Event)
-  config.py     YAML loader; experiment configs overlay configs/default.yaml
-  video.py      frame sampling + sliding windows (fps / window_s / stride_s are config knobs)
-  cues.py       CueParser: query -> visual cues (backend: cloud | edge | manual)
-  embed.py      Embedder (Ops-MM-V1-2B wrapper + RandomEmbedder) and Matcher (surge/absolute, any/mean, cooldown)
+  config.py     YAML loader (configs/default.yaml + optional overlay + --set overrides)
+  video.py      frame sampling + sliding windows
+  cues.py       CueParser: query -> visual cues, via the edge model
+  embed.py      Embedder (Ops-MM-V1-2B wrapper, RandomEmbedder) and the surge Matcher
   evidence.py   scene-graph triplet memory with top-k retrieval
-  edge.py       EdgeVLM: HF wrapper for Qwen2.5-VL / Gemma 3 (+ int4/int8), MockEdgeVLM; p_speak from Yes/No logits
+  edge.py       EdgeVLM: HF wrapper for Qwen2.5-VL / Gemma 3, MockEdgeVLM; p_speak from Yes/No logits
   cloud.py      OpenAI client with call counting, MockCloud
-  router.py     policies: band (the method), random, always_cloud, edge_only
+  router.py     BandPolicy (lo / hi thresholds)
   pipeline.py   run_stream(): glues everything, logs sims/deltas/p_speak per window
   eval/
-    metrics.py  online recall/precision with tolerance window (Em-Garde), calibration table, run summary
+    metrics.py  online recall/precision with tolerance window, calibration table, run summary
     datasets.py normalised JSONL loader, toy samples
-configs/default.yaml           every knob with its default
-configs/experiments/*.yaml     one file per experiment in the project doc
-scripts/run_experiment.py      run a config -> results/<name>/{summary.json, <id>.jsonl, <id>.calib.json}
-scripts/sweep_thresholds.py    (lo, hi) grid -> results/sweep_<name>.csv for the F1/recall heatmap
-scripts/ingest_dataset.py      raw benchmark -> data/processed/*.jsonl   (OVO parser is a TODO)
-tests/test_core.py             matcher, router, metric, end-to-end mock run
+configs/default.yaml        every knob with its default
+scripts/run_baseline.py     run the pipeline -> results/baseline/{summary.json, <id>.jsonl, <id>.calib.json}
+scripts/ingest_dataset.py   raw benchmark -> data/processed/*.jsonl   (OVO parser is a TODO)
+tests/test_core.py          matcher, router, metric, cue parsing, end-to-end mock run
 ```
 
 ## Setup
@@ -52,54 +57,46 @@ tests/test_core.py             matcher, router, metric, end-to-end mock run
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"            # core + tests, no GPU needed
-pip install -e ".[models,cloud]"   # on the GPU box / Jetson
+pip install -e ".[models,cloud]"   # on the GPU box
 export OPENAI_API_KEY=...          # only for cloud.backend=openai
 pytest -q
 ```
 
-Dry run the whole pipeline with mocks (no models, no video, no key):
+Dry run with mocks (no models, no video, no key):
 
 ```bash
-python scripts/run_experiment.py configs/experiments/band_confidence.yaml --set data.toy=true
-python scripts/run_experiment.py configs/experiments/random_trigger.yaml --set data.toy=true
+python scripts/run_baseline.py --set data.toy=true
 ```
 
-Any config key can be overridden with `--set dotted.key=value`.
+Real run, once data and models are in place:
 
-## Experiments (from the project doc) → config
+```bash
+python scripts/run_baseline.py --set edge.backend=hf --set matcher.embedder=opsmm --set cloud.backend=openai
+```
 
-| Question | Config / knob |
-|---|---|
-| Does confidence matter vs. random GPT calls? | `band_confidence.yaml` vs `random_trigger.yaml` (`policy.p_cloud`) |
-| Upper / lower bounds | `always_cloud.yaml`, `edge_only.yaml` |
-| Is p_speak calibrated? F1/recall heatmap | `scripts/sweep_thresholds.py`; per-sample `*.calib.json` |
-| Any-cue vs mean, surge vs absolute, θ | `matcher.aggregate`, `matcher.mode`, `matcher.threshold` (`matcher_mean_absolute.yaml`) |
-| Payload: frames vs scene-graph only | `cloud.payload` (`payload_evidence_only.yaml`) |
-| Gemma vs Qwen, quantization | `edge.model_id`, `edge.quant` |
-| fps / window tuning | `video.fps`, `video.window_s`, `video.stride_s` |
+Any config key can be overridden with `--set dotted.key=value`; the resolved config is saved in
+`results/<name>/summary.json`.
 
 ## Metric
 
-Timing is scored with online recall/precision: a response counts if it lands within
+Response timing is scored with online recall/precision: a response counts if it lands within
 `[event_t, event_t + tol_s]` (default 4 s) of a ground-truth event, one match per event.
 No LLM-as-judge. OVO-Bench's original offline accuracy is gameable (always answering "yes"
-scores ~60%), so we don't use it.
+scores ~60%), so we don't use it. `summary.json` also reports trigger count, false positives,
+and cloud calls per sample; `<id>.calib.json` bins p_speak against whether the trigger was a
+real response time.
 
-## Status / next steps
+## Next steps (in order)
 
-Scaffold runs end to end with mocks. Nothing has touched a real model yet. In order:
-
-1. **Data.** Download OVO-Bench (Forward Active Responding: CRR/SSR/REC) and/or StreamingBench
-   Proactive Output. Finish `ingest_ovo()` in `scripts/ingest_dataset.py` once the real field
-   names are known, write `data/processed/dev.jsonl`.
+1. **Data.** Download OVO-Bench (Forward Active Responding: CRR / SSR / REC) and/or StreamingBench
+   Proactive Output. Finish `ingest_ovo()` in `scripts/ingest_dataset.py` against the real field
+   names and write `data/processed/dev.jsonl`.
 2. **Embedder.** Run `OpsMMEmbedder` once on the GPU box; the `get_text_embeddings` /
-   `get_video_embeddings` method names in `egogate/embed.py` are guesses, fix them from the model card.
-3. **Edge model.** Validate `HFEdgeVLM` with `Qwen/Qwen2.5-VL-3B-Instruct`, then
-   `google/gemma-3-4b-it`. Check the Yes/No token ids and the chat template per family.
-   Don't use Gemma-3n with int8 (AltUp incompatibility, see ISI SmallSat 2026).
-4. **Baselines.** Run `edge_only` and `always_cloud` on real data to bracket the problem.
-5. **Routing.** Run `band_confidence` vs `random_trigger`, then the threshold sweep.
-6. Jetson deployment of the matcher + edge model (int4) comes after the numbers look sane on a desktop GPU.
+   `get_video_embeddings` method names in `egogate/embed.py` are placeholders to fix from the model card.
+3. **Edge model.** Validate `HFEdgeVLM` with `Qwen/Qwen2.5-VL-3B-Instruct`, then `google/gemma-3-4b-it`.
+   Check the Yes/No token ids and chat template per family.
+4. **Baseline numbers.** Run on the dev split; look at F1, false positives, and cloud calls per video.
 
-Conventions: experiment names are the YAML filename; results are gitignored; every run writes
-its full resolved config into `summary.json` so it can be reproduced.
+Experiments from the project doc (random GPT calls vs. confidence, matcher variants, evidence-only
+payload, threshold sweeps, decision-by-score vs. generation) are not in the repo yet; they come
+after the baseline numbers exist.

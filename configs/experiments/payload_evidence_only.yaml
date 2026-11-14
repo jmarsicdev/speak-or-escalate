@@ -1,4 +1,0 @@
-# Payload experiment: send only scene-graph triplets to the cloud, no frames.
-name: payload_evidence_only
-policy: {kind: band, lo: 0.3, hi: 0.7}
-cloud: {payload: evidence}

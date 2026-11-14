@@ -1,3 +1,0 @@
-# Main method: cue trigger -> edge p_speak -> three-band routing.
-name: band_confidence
-policy: {kind: band, lo: 0.3, hi: 0.7}

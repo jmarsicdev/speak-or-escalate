@@ -1,9 +1,9 @@
 """CueParser: turn a user query into a handful of perceptually grounded visual cues.
 
-This is Em-Garde's IGPP, run once per query (not per frame). Three backends:
+This is Em-Garde's IGPP, run once per query (not per frame). The cloud model is NOT
+involved here: it is only called in the uncertain band of the router. Backends:
 
-  - "cloud":  GPT via the cloud client (what the project plans to use)
-  - "edge":   the on-device VLM (to test whether the Nano can parse its own cues)
+  - "edge":   the edge VLM parses its own cues (default)
   - "manual": cues given directly in the config (for controlled experiments)
 
 Cue properties from Em-Garde we want the parser to respect:
@@ -43,10 +43,12 @@ def parse_cue_json(text: str) -> list[str]:
 
 
 class CueParser:
-    def __init__(self, backend: str = "manual", n_cues: int = 3, model=None, manual: list[str] | None = None):
+    def __init__(self, backend: str = "edge", n_cues: int = 3, model=None, manual: list[str] | None = None):
+        if backend not in ("edge", "manual"):
+            raise ValueError(f"cue backend must be 'edge' or 'manual', got {backend!r}")
         self.backend = backend
         self.n_cues = n_cues
-        self.model = model  # CloudClient or EdgeVLM with a `.complete(prompt, images=None)` method
+        self.model = model  # EdgeVLM with a `.complete(prompt, images=None)` method
         self.manual = manual or []
 
     def parse(self, query: str, context_frames=None) -> list[str]:
@@ -55,7 +57,7 @@ class CueParser:
                 raise ValueError("manual cue backend selected but no cues provided")
             return list(self.manual)
         if self.model is None:
-            raise ValueError(f"cue backend '{self.backend}' needs a model")
+            raise ValueError("edge cue backend needs the edge model")
         prompt = CUE_PROMPT.format(query=query, n=self.n_cues)
         text = self.model.complete(prompt, images=context_frames)
         cues = parse_cue_json(text)
