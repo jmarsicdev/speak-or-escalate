@@ -128,13 +128,13 @@ confidence intervals where it matters.
   1 MB, no video). Videos are never committed.
 - **Splits** (seed 0): dev 73 questions / 54 videos; val 43 / 39; test 56 / 41. Rebuild with
   `python scripts/ingest_dataset.py ovo --ann <ovo_bench_new.json> --out-dir data/processed --seed 0`.
-- **Video download size.** OVO-Bench's README lists `src_videos` at about **44 GB** (all 644
-  videos, all task types) and `chunked_videos` at about **144 GB**. We need only the source
-  videos (Em-Garde also uses `src_videos`), never the chunked ones. Our 134 forward-task videos are
-  roughly a fifth of the 644, but the source videos are distributed as split tar parts
-  (`src_videos.tar.parta[a-e]`), so you probably have to download all 44 GB unless the Hugging
-  Face page offers single files (**assumed, check the Files tab**). Re-encoding to 2 fps, as
-  Em-Garde does with ffmpeg, produces a much smaller working copy.
+- **Video download size: 5.0 GB, not 44 GB.** OVO-Bench ships its source videos as one plain tar
+  archive cut into five 10 GiB parts (46.3 GB in total), plus a 144 GB chunked copy we never need.
+  Because the server supports HTTP range requests, `scripts/ovo_tar_remote.py` reads the tar headers
+  remotely, records where every video sits (`data/processed/ovo_src_index.json`, committed), and then
+  downloads only the byte ranges of our 134 videos: **5.03 GB** (dev 2.0, val 1.4, test 1.6; by source
+  COIN 1.7, thumos 1.6, MovieNet 1.2, perception_test 0.6). One video was fetched and probed as a valid mp4
+  to check the method. Decision D11.
 
 ## 7. Compute plan (RTX 4060, about 8 GB)
 
@@ -214,6 +214,14 @@ not yet built (next step).
 `third_party/em_garde/` with its license. ProactiveVideoQA has no license file, so its scorer is
 fetched at a pinned commit and not committed. *Status:* done.
 
+**D11. Fetch only the needed videos by HTTP range request instead of downloading the archive.**
+*Why:* the full archive is 46.3 GB and the laptop would need it all just to extract 134 videos.
+The archive is an uncompressed tar, so a video's location can be found by reading 512-byte headers,
+and Hugging Face honours `Range:` requests (verified: HTTP 206, valid tar header at byte 0, 645 files
+indexed). The dataset revision is pinned (`fec29e3`) so the index cannot silently go stale.
+*Cost:* about 650 small requests to build the index once; the index is committed so nobody repeats it.
+*Status:* verified end to end on one video; the full 5 GB fetch has not been run yet.
+
 ### Open on purpose
 
 **O1. Who parses the cues: GPT once, or the edge model?** The paper and project notes use GPT;
@@ -235,7 +243,6 @@ BF16 (about 15 GB). Needs a larger GPU or a quantized load, which conflicts with
 
 ## 9. Not yet verified
 
-- Whether the Hugging Face page lets us download only the forward-task videos (section 6).
 - Em-Garde's 52.3 PAUC reproduction on ProactiveVideoQA EGO (their code and weights are public;
   we have not run them).
 - That the embedder wrapper's method names work with our wiring (we vendored their file but have
@@ -256,5 +263,7 @@ BF16 (about 15 GB). Needs a larger GPU or a quantized load, which conflicts with
 
 ## 11. Changelog
 
+- 2026-11-15: Added `scripts/ovo_tar_remote.py` and the committed video index; the video download
+  drops from about 44 GB to 5 GB (D11).
 - 2026-11-15: First version. Ingestion, seeded splits, Em-Garde-faithful metric, floors, and a
   scoring CLI added. Tolerance moved from 4 s one-sided to ±2 s. Default dtype set to BF16.

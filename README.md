@@ -55,6 +55,7 @@ scripts/
   ingest_dataset.py         OVO-Bench annotations -> seeded dev/val/test jsonl
   score_detections.py       score any system's detections with the Em-Garde metric
   eval_floors.py            row 0: always-silent / always-respond / random / oracle
+  ovo_tar_remote.py         fetch only the needed OVO-Bench videos (5 GB) by HTTP range request
   fetch_proactivevideoqa.sh clone the ProactiveVideoQA scorer at a pinned commit (see third_party/)
 tests/test_core.py          matcher, router, metric, cue parsing, end-to-end mock run
 data/                       raw/ and processed/ stay local (gitignored); only .gitkeep is tracked
@@ -130,7 +131,9 @@ splits (annotations only, CC BY-NC-SA 4.0; videos are never committed).
 
 ## Next steps (in order)
 
-1. **Download videos** on the GPU laptop: OVO-Bench `src_videos` (about 44 GB). Set `data.video_root`.
+1. **Download videos** on the GPU laptop, only the 134 we use (5 GB, not 44 GB):
+   `python scripts/ovo_tar_remote.py fetch --samples data/processed/ovo_far_all.jsonl --out data/raw/ovo/src_videos`.
+   Set `data.video_root` to that folder.
 2. **Two-pass cache**: embed every window once, run the decider once, save both; replay settings on CPU.
 3. **Row 1, edge model alone**: Qwen and Gemma, BF16, one decision per 2 s, scored with `score_detections.py`.
 4. **Rows 2-5**, then the router (row 6).
