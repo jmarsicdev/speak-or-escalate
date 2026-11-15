@@ -129,6 +129,26 @@ so they live in the tests (`tests/test_eval.py`) and not here.
   4.3 and the best random setting reaches 19.7. So every model result is compared with floors at the same
   cadence, never with Em-Garde's number directly.
 
+### Floors that match the model's settings (added after the first val run)
+
+The first row 1 run showed that the cooldown (dropping a response that comes within N seconds of the previous one)
+raises F1 by roughly ten points for almost any model setting, because it removes duplicate responses around one
+event. So a model row must be compared with a floor that has the same cooldown, or the same number of responses.
+The simplest such floor is a **timer**: respond every k seconds, with no model and no video. On the val split
+(43 questions, 30 random phases):
+
+| Rule that ignores the video | Avg F1 | Responses |
+|---|---|---|
+| Respond every 4 s | 27.0 ± 0.3 | about 990 |
+| Respond every 8 s | 27.6 ± 2.2 | about 495 |
+| Respond every 12 s | 23.1 ± 3.5 | about 330 |
+| Respond every 16 s | 20.2 ± 3.6 | about 250 |
+| Random 50% + 4 s cooldown | 26.7 ± 1.8 | about 670 |
+| Random 25% + 8 s cooldown | 21.3 ± 2.7 | about 290 |
+
+Reading a model row therefore means comparing it with the timer that makes a similar number of responses.
+(`scripts/eval_floors.py` now includes the timer rows; `egogate/eval/floors.py` accepts a cooldown.)
+
 ### How we decide an improvement is real
 
 The seed spread above is only the noise from the coin flips. A bigger source of noise is that the splits are
@@ -430,6 +450,7 @@ BF16 (about 15 GB). Needs a larger GPU or a quantized load, which conflicts with
 ## 11. Changelog
 
 - 2026-11-15: Section 5 rewritten: chance-level table trimmed to the rules that ignore the video, and the rules for calling an improvement real (bootstrap intervals, paired comparison, power) added.
+- 2026-11-15: Added timer and cooldown-matched floors to section 5 after the first val run showed a cooldown alone adds about ten F1.
 - 2026-11-15: D16 added and then rewritten with the options table and GPU measurements: the decider is Qwen3-VL-2B because the 3B spilled GPU memory; other models deferred.
 - 2026-11-15: D15 (row 1 decider input and plumbing check) added; row 1 runner, replay and notebook added.
 - 2026-11-15: D12 (replay is an evaluation harness only), D13 (on-demand decider calls at trigger times) and D14 (how each component is graded) added.

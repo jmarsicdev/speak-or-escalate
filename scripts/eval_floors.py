@@ -26,14 +26,16 @@ a = ap.parse_args()
 
 samples = load_jsonl(a.samples)
 name = Path(a.samples).stem
-runs = [("always_silent", 0.0), ("always_respond", 0.0)] + [("random", r) for r in (0.1, 0.25, 0.5)] + [("oracle", 0.0)]
+runs = ([("always_silent", 0.0), ("always_respond", 0.0)] + [("random", r) for r in (0.1, 0.25, 0.5)]
+        + [("periodic", 4.0), ("periodic", 8.0), ("periodic", 16.0)] + [("oracle", 0.0)])
 out = []
 print(f"{name}: {len(samples)} questions, stride {a.stride:g}s, tol {a.tol:g}s")
 print(f"  {'policy':22s} {'REC':>6s} {'SSR':>6s} {'CRR':>6s} {'avg F1':>7s} {'detections':>11s}")
 for pol, rate in runs:
-    r = run_floor(pol, samples, a.stride, a.tol, a.seed, rate)
-    if pol == "random":  # a single coin-flip run is noisy on ~50 questions: report the mean of 10 seeds
-        reps = [run_floor(pol, samples, a.stride, a.tol, a.seed + k, rate) for k in range(10)]
+    kw = {"period_s": rate} if pol == "periodic" else {}   # for "periodic" the second field is the period in seconds
+    r = run_floor(pol, samples, a.stride, a.tol, a.seed, rate if pol != "periodic" else 0.5, **kw)
+    if pol in ("random", "periodic"):  # a single coin-flip run is noisy on ~50 questions: report the mean of 10 seeds
+        reps = [run_floor(pol, samples, a.stride, a.tol, a.seed + k, rate if pol != "periodic" else 0.5, **kw) for k in range(10)]
         for t in r["tasks"]:
             r["tasks"][t]["f1"] = sum(x["tasks"][t]["f1"] for x in reps) / len(reps)
         r["avg_f1"] = sum(x["avg_f1"] for x in reps) / len(reps)
@@ -41,7 +43,7 @@ for pol, rate in runs:
         r["n_seeds"] = len(reps)
     out.append(r)
     f = {t: r["tasks"].get(t, {}).get("f1", 0) * 100 for t in ("REC", "SSR", "CRR")}
-    label = pol if pol != "random" else f"random {rate:g} (10 seeds)"
+    label = pol if pol not in ("random", "periodic") else (f"random {rate:g} (10 seeds)" if pol == "random" else f"every {rate:g} s (10 seeds)")
     print(f"  {label:22s} {f['REC']:6.1f} {f['SSR']:6.1f} {f['CRR']:6.1f} {r['avg_f1']*100:7.2f} {r['total_detections']:11d}" + (f"  ±{r['avg_f1_std']*100:.1f}" if "avg_f1_std" in r else ""))
 Path(a.out_dir).mkdir(parents=True, exist_ok=True)
 json.dump(out, open(Path(a.out_dir) / f"{name}.json", "w"), indent=1)

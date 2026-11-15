@@ -106,3 +106,12 @@ def test_floors_sanity():
     assert run_floor("always_silent", ss)["avg_f1"] == 0.0
     assert run_floor("oracle", ss)["avg_f1"] == 1.0
     assert 0.0 < run_floor("always_respond", ss)["avg_f1"] < 1.0
+
+
+def test_periodic_and_cooldown_floors():
+    from egogate.eval.floors import apply_cooldown, detections_for
+    s = Sample(id="p", video="v.mp4", query="q", events=[Event(10.0)], task="REC", start_s=0.0, end_s=40.0)
+    rng = random.Random(0)
+    det = detections_for("periodic", s, 2.0, rng, period_s=8.0)
+    assert len(det) == 5 and all(b - a == 8.0 for a, b in zip(det, det[1:]))   # every 8 s over 40 s of video
+    assert apply_cooldown([2.0, 4.0, 6.0, 10.0], 4.0) == [2.0, 6.0, 10.0]
