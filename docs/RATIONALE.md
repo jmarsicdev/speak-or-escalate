@@ -235,15 +235,62 @@ detections; this runs once after both exist, to confirm the shortcut matches the
 deliberately ignores latency, concurrency and memory management; those belong to the hybrid build.
 *Status:* decided; the check and timers are not yet built.
 
+**D13. Decider calls for the combined rows run on demand at the exact trigger time, and are remembered.**
+
+*The catch.* The cue matcher steps every 0.5 s (Em-Garde's setting) but the baseline decider is stored
+only every 2 s (D5). When the matcher fires at, say, 13.5 s, no stored decider answer exists for that moment.
+
+*Options considered.*
+
+| Option | What it does | Trade-off |
+|---|---|---|
+| a | Store the decider every 0.5 s | Most faithful, but up to 31,620 decider calls instead of 7,863 (about 4x GPU time) |
+| b | Wait for the next 2 s tick | Cheap, but adds up to 2 s delay, which can push a correct trigger outside the +/- 2 s tolerance |
+| c | **Run the decider at the trigger time, remember the result** | Faithful to a gated system (the decider runs only when the matcher fires); costs GPU time the first time a new trigger time appears |
+| d | Reuse the verdict from the last 2 s tick | Free, but up to 2 s stale, and it assumes the decider runs continuously, which hides the compute saving the gate is meant to give |
+
+*Why c.* It is the only option that tests the real gated design: the decider sees the window that ends
+at the moment of the trigger, exactly as the live loop would show it. It also avoids paying for 0.5 s
+decider calls at moments no setting ever triggers on.
+
+*What this changes, and what we can and cannot assume.*
+- **Stage 2 is no longer purely CPU.** The first time a (video, time, prompt variant) is requested, the
+  decider runs on the GPU and the result is stored. Later requests, including every re-score with the same
+  triggers, are free. Lowering the matcher threshold creates new trigger times and so new calls. The
+  stored results are keyed by model id, precision, prompt text and frame sampling, so a changed prompt can
+  never reuse an old answer. A per-run call budget is reported.
+- **Row 1 and row 4 call the decider at different times** (the 2 s grid vs the trigger times). A difference
+  between them therefore mixes two effects: the gate, and a small timing-alignment effect. To separate them
+  we also report option d as a free control (row 4 using the stale grid verdict). If c and d agree, the
+  alignment effect is negligible; if not, we say so.
+- **The "gating cannot add recall" argument is approximate.** With the decider asked at identical times in
+  both rows, a combined detection (trigger AND decider says Yes) could never beat the decider alone on
+  recall. Under c the times differ, so the bound holds only approximately.
+- **Live and replay agree by construction for decider calls.** Under c the decider is called with the
+  window ending at the trigger time, as in the live loop, which makes the live-versus-replay check (D12) a
+  cleaner test.
+- **Cost is unknown until the matcher has run.** The ceiling is the 31,620 calls of option a. We will
+  time a few videos first and report the actual count.
+
+*Status:* decided. Not yet built.
+
+**D14. How each component is graded.** The benchmark gives only the correct response times (one or a few
+per question), so every system is graded the same way: by the times at which it responds, scored with the
++/- 2 s metric (D3). Nothing grades a component's internals. In practice:
+- *Decider alone (row 1):* its Yes decisions are the detections.
+- *Cue matcher alone (row 3):* its trigger times are the detections, with no answer text, since the metric
+  scores timing only. The cue text itself is never graded; cue quality shows up only through whether the
+  triggers land near events.
+- *Combined (row 4):* detections are the moments where the trigger fired and the decider said Yes.
+- *Diagnostics we also derive from the same ground truth* (not extra labels): a moment counts as
+  "positive" if it is within +/- 2 s of an event. That gives per-moment labels for the Gate 1 calibration
+  heatmap (is p(Yes) high where it should be?) and for Gate 2 (do cue similarities rise near events, and by
+  how much compared with elsewhere?).
+*Caveat:* one-to-one matching means a second detection near the same event counts as a false positive in
+the F1 score, while the diagnostic labels treat every moment near an event as positive. The two views will
+not agree exactly, and the Gate 1 heatmap states which one it uses.
+
 ### Open on purpose
-
-**O6. How the stored decider outputs line up with the matcher's triggers.** The matcher steps every
-0.5 s but the baseline decider is cached every 2 s (D5), so a trigger at t = 13.5 has no stored decider
-answer. Options: (a) cache the decider every 0.5 s (4x the GPU time); (b) snap each trigger to the next
-2 s decision point (also realistic: "on trigger, answer at the next tick"); (c) compute the decider on
-demand at trigger times and memoize it by (video, time, prompt variant). Leaning to (c), with (b) as the
-cheaper fallback. Needs a decision before row 4 is built.
-
 
 **O1. Who parses the cues: GPT once, or the edge model?** The paper and project notes use GPT;
 the first scaffold used the edge model. GPT costs a few cents per question but needs the network;
@@ -284,6 +331,7 @@ BF16 (about 15 GB). Needs a larger GPU or a quantized load, which conflicts with
 
 ## 11. Changelog
 
+- 2026-11-15: D12 (replay is an evaluation harness only), D13 (on-demand decider calls at trigger times) and D14 (how each component is graded) added.
 - 2026-11-15: Added `scripts/ovo_tar_remote.py` and the committed video index; the video download
   drops from about 44 GB to 5 GB (D11).
 - 2026-11-15: First version. Ingestion, seeded splits, Em-Garde-faithful metric, floors, and a
