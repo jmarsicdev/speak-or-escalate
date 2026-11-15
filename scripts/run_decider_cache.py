@@ -5,7 +5,7 @@
 
     # a full split (resumable: re-run the same command after an interruption)
     python scripts/run_decider_cache.py --samples data/processed/ovo_far_val.jsonl \
-        --set edge.model_id=Qwen/Qwen2.5-VL-3B-Instruct --set edge.backend=hf
+        --set edge.model_id=Qwen/Qwen3-VL-2B-Instruct --set edge.backend=hf
 
 Writes results/cache/decider/<model>__<variant>__<key>/<id>.jsonl (see egogate/decider_cache.py).
 """

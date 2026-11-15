@@ -1,7 +1,7 @@
 """Find out why decisions are slow. Prints where the model lives, how much GPU memory it uses, and splits the time
 per decision into input preparation (frames -> tokens) and the model forward pass, at three frame sizes.
 
-    python scripts/diagnose_speed.py --set edge.model_id=Qwen/Qwen2.5-VL-3B-Instruct
+    python scripts/diagnose_speed.py --set edge.model_id=Qwen/Qwen3-VL-2B-Instruct
 """
 from __future__ import annotations
 
