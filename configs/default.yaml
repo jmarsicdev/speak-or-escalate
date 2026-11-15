@@ -7,6 +7,7 @@ data:
   jsonl: data/processed/dev.jsonl   # produced by scripts/ingest_dataset.py
   limit: null                       # cap number of samples (null = all)
   toy: false                        # true -> synthetic samples, no video needed
+  video_root: data/raw/ovo/src_videos   # where scripts/ovo_tar_remote.py fetch put the videos
 
 video:
   fps: 2.0          # Em-Garde matcher setting: 2 fps
@@ -33,10 +34,19 @@ edge:
   device: cuda
   dtype: bfloat16
   quant: null       # null | int8 | int4  (for the Jetson work, not the baseline)
+  max_pixels: 200704  # 448*448: caps the tokens each frame costs
 
 cloud:
   backend: mock     # mock | openai  -- only called in the uncertain band
   model: gpt-4o-mini
+
+decider:            # row 1: the edge model asked "respond now?" at fixed ticks (decisions D5, D13)
+  variant: query_only   # query_only | query_cues (row 2) | query_evidence (row 5)
+  stride_s: 2.0     # one decision every 2 s
+  window_s: 2.0     # frames shown: the last 2 s
+  fps: 2.0          # 2 fps -> 4 frames per decision
+  max_side: 448     # frames resized so the long side is at most this
+  cache_dir: results/cache
 
 policy:
   lo: 0.3           # p_speak <= lo -> silent

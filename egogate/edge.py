@@ -22,13 +22,36 @@ import numpy as np
 
 from .types import EdgeOutput
 
-SPEAK_PROMPT = """You are an assistant watching a first-person video stream.
-The user asked earlier: "{query}"
-Visual cues that mean it is time to respond:
-{cue_block}
-{evidence_block}
-Based on the most recent frames, is RIGHT NOW the moment to respond to the user?
-Answer with a single word: Yes or No."""
+SPEAK_PROMPT_VERSION = "speak-v1"
+
+
+def build_speak_prompt(query: str, cues: list[str] | None = None, evidence: list[str] | None = None,
+                       n_frames: int | None = None, window_s: float | None = None) -> str:
+    """The "respond now?" question. Cues and evidence are included only when given, so the same builder
+    serves row 1 (query only), row 2 (+ cues) and row 5 (+ scene-graph evidence). Changing any wording
+    means a new SPEAK_PROMPT_VERSION, which makes the stored results use a new cache (see decider_cache.py)."""
+    parts = ["You are an assistant watching a first-person video stream."]
+    if n_frames:
+        span = f", covering the last {window_s:g} seconds" if window_s else ""
+        parts.append(f"You are shown the most recent {n_frames} frames{span}.")
+    parts.append(f'The user asked earlier: "{query}"')
+    if cues:
+        parts.append("Visual cues that mean it is time to respond:\n" + "\n".join(f"- {c}" for c in cues))
+    if evidence:
+        parts.append("Recent scene evidence:\n" + "\n".join(f"- {e}" for e in evidence))
+    parts.append("Respond only at the moment the answer becomes available: when what the user asked about "
+                 "has just happened or has just become visible. Is RIGHT NOW such a moment?\n"
+                 "Answer with a single word: Yes or No.")
+    return "\n".join(parts)
+
+
+def prompt_fingerprint() -> str:
+    """Hash of the prompt wording, stored with every cache so a changed prompt can never reuse old answers."""
+    import hashlib  # noqa: PLC0415
+
+    text = SPEAK_PROMPT_VERSION + build_speak_prompt("{q}", ["{c}"], ["{e}"], 4, 2.0) + build_speak_prompt("{q}")
+    return hashlib.sha1(text.encode()).hexdigest()[:10]
+
 
 ANSWER_PROMPT = """You are an assistant watching a first-person video stream.
 The user asked earlier: "{query}"
@@ -51,9 +74,9 @@ class EdgeVLM:
     def complete(self, prompt: str, images=None, max_new_tokens: int = 128) -> str:
         return self._generate(prompt, images, max_new_tokens)
 
-    def speak_now(self, query: str, images, evidence: list[str] | None = None, cues: list[str] | None = None) -> EdgeOutput:
-        prompt = SPEAK_PROMPT.format(query=query, cue_block=_list_block(cues),
-                                     evidence_block=_list_block(evidence, "Recent scene evidence:"))
+    def speak_now(self, query: str, images, evidence: list[str] | None = None, cues: list[str] | None = None,
+                  window_s: float | None = None) -> EdgeOutput:
+        prompt = build_speak_prompt(query, cues, evidence, n_frames=len(images or []) or None, window_s=window_s)
         lp_yes, lp_no = self._yes_no_logprobs(prompt, images)
         p = 1.0 / (1.0 + math.exp(lp_no - lp_yes))  # softmax over the two options
         return EdgeOutput(text="Yes" if p >= 0.5 else "No", p_speak=p, raw={"lp_yes": lp_yes, "lp_no": lp_no})
@@ -101,24 +124,33 @@ class HFEdgeVLM(EdgeVLM):
 
     name = "hf"
 
-    def __init__(self, model_id: str, device: str = "cuda", dtype: str = "float16", quant: str | None = None):
+    def __init__(self, model_id: str, device: str = "cuda", dtype: str = "bfloat16", quant: str | None = None,
+                 max_pixels: int | None = None):
         import torch  # noqa: PLC0415
         from transformers import AutoModelForImageTextToText, AutoProcessor  # noqa: PLC0415
 
         self.torch = torch
-        kwargs = {"torch_dtype": getattr(torch, dtype)}
+        import transformers  # noqa: PLC0415
+        from packaging.version import Version  # noqa: PLC0415
+
+        # newer transformers renamed torch_dtype -> dtype
+        dtype_key = "dtype" if Version(transformers.__version__) >= Version("4.56") else "torch_dtype"
+        kwargs = {dtype_key: getattr(torch, dtype)}
         if quant in ("int4", "int8"):
             from transformers import BitsAndBytesConfig  # noqa: PLC0415
 
             kwargs["quantization_config"] = BitsAndBytesConfig(load_in_4bit=(quant == "int4"), load_in_8bit=(quant == "int8"))
             kwargs["device_map"] = "auto"
-        self.processor = AutoProcessor.from_pretrained(model_id)
+        proc_kwargs = {"max_pixels": max_pixels} if max_pixels else {}
+        self.processor = AutoProcessor.from_pretrained(model_id, **proc_kwargs)
         self.model = AutoModelForImageTextToText.from_pretrained(model_id, **kwargs).eval()
         if "device_map" not in kwargs:
             self.model.to(device)
         tok = self.processor.tokenizer
-        self.yes_id = tok.encode("Yes", add_special_tokens=False)[0]
-        self.no_id = tok.encode("No", add_special_tokens=False)[0]
+        yes, no = tok.encode("Yes", add_special_tokens=False), tok.encode("No", add_special_tokens=False)
+        if len(yes) != 1 or len(no) != 1:
+            raise ValueError(f"'Yes'/'No' must each be one token for this tokenizer, got {yes} / {no}")
+        self.yes_id, self.no_id = yes[0], no[0]
 
     def _inputs(self, prompt, images):
         from PIL import Image  # noqa: PLC0415
@@ -138,8 +170,11 @@ class HFEdgeVLM(EdgeVLM):
         inputs = self._inputs(prompt, images)
         with self.torch.no_grad():
             logits = self.model(**inputs).logits[0, -1]
-        lp = self.torch.log_softmax(logits.float(), dim=-1)
-        return float(lp[self.yes_id]), float(lp[self.no_id])
+        lp = self.torch.log_softmax(logits.float(), dim=-1)  # over the whole vocabulary
+        out = float(lp[self.yes_id]), float(lp[self.no_id])
+        if str(self.model.device).startswith("cuda"):
+            self.torch.cuda.synchronize()   # so wall-clock timing around this call is honest
+        return out
 
 
 def build_edge_model(cfg: dict) -> EdgeVLM:
@@ -147,5 +182,6 @@ def build_edge_model(cfg: dict) -> EdgeVLM:
     if backend == "mock":
         return MockEdgeVLM()
     if backend == "hf":
-        return HFEdgeVLM(cfg["model_id"], cfg.get("device", "cuda"), cfg.get("dtype", "float16"), cfg.get("quant"))
+        return HFEdgeVLM(cfg["model_id"], cfg.get("device", "cuda"), cfg.get("dtype", "bfloat16"), cfg.get("quant"),
+                         cfg.get("max_pixels"))
     raise ValueError(f"unknown edge backend {backend}")

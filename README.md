@@ -38,6 +38,9 @@ egogate/                    the pipeline package (our code)
   video.py      frame sampling + sliding windows
   cues.py       CueParser: query -> visual cues, via the edge model
   embed.py      Embedder (Ops-MM-V1-2B wrapper, RandomEmbedder) and the surge Matcher
+  frames.py     causal 2 s frame windows at chosen decision times
+  decider_cache.py  run the decider over a video, store raw Yes/No scores, resumable
+  replay.py     stored scores -> p(Yes) -> detections, any threshold / temperature / cooldown
   evidence.py   scene-graph triplet memory with top-k retrieval
   edge.py       EdgeVLM: HF wrapper for Qwen2.5-VL / Gemma 3, MockEdgeVLM; p_speak from Yes/No logits
   cloud.py      OpenAI client with call counting, MockCloud
@@ -55,6 +58,8 @@ scripts/
   ingest_dataset.py         OVO-Bench annotations -> seeded dev/val/test jsonl
   score_detections.py       score any system's detections with the Em-Garde metric
   eval_floors.py            row 0: always-silent / always-respond / random / oracle
+  run_decider_cache.py      row 1 stage 1: edge model alone -> stored Yes/No scores (resumable)
+  replay_decider.py         row 1 stage 2: sweep threshold / cooldown on stored scores (CPU)
   ovo_tar_remote.py         fetch only the needed OVO-Bench videos (5 GB) by HTTP range request
   fetch_proactivevideoqa.sh clone the ProactiveVideoQA scorer at a pinned commit (see third_party/)
 tests/test_core.py          matcher, router, metric, cue parsing, end-to-end mock run
@@ -134,6 +139,8 @@ splits (annotations only, CC BY-NC-SA 4.0; videos are never committed).
 1. **Download videos** on the GPU laptop, only the 134 we use (5 GB, not 44 GB):
    `python scripts/ovo_tar_remote.py fetch --samples data/processed/ovo_far_all.jsonl --out data/raw/ovo/src_videos`.
    Set `data.video_root` to that folder.
-2. **Two-pass cache**: embed every window once, run the decider once, save both; replay settings on CPU.
-3. **Row 1, edge model alone**: Qwen and Gemma, BF16, one decision per 2 s, scored with `score_detections.py`.
+2. **Row 1, edge model alone** (built): open `notebooks/row1_decider_alone.ipynb`. It runs the decider every 2 s
+   (`scripts/run_decider_cache.py`), stores the Yes/No scores under `results/cache/`, and scores thresholds on CPU
+   (`scripts/replay_decider.py`). Push `results/cache/` back so it can be read. Gemma next.
+3. **Stage 1a and the on-demand decider** (D13) for rows 3-4.
 4. **Rows 2-5**, then the router (row 6).

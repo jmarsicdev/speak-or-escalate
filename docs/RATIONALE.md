@@ -290,6 +290,24 @@ per question), so every system is graded the same way: by the times at which it 
 the F1 score, while the diagnostic labels treat every moment near an event as positive. The two views will
 not agree exactly, and the Gate 1 heatmap states which one it uses.
 
+**D15. What the decider is shown in row 1, and what we verified.**
+*Input:* the user's question text and the last 4 frames (2 s at 2 fps), each resized so the long side is at
+most 448 px. No cues (row 2), no scene-graph evidence (row 5), and no earlier video, so it cannot count
+repetitions or track tutorial steps from history; that gap is what the memory is meant to fill.
+*Question asked:* "Respond only at the moment the answer becomes available ... Is RIGHT NOW such a moment? Answer
+with a single word: Yes or No." (exact text is `build_speak_prompt` in `egogate/edge.py`, version `speak-v1`).
+*Score:* the log-probabilities of the tokens "Yes" and "No" over the whole vocabulary, stored raw; p(Yes) is
+computed later as sigmoid((lp_yes - lp_no) / T). We also keep the total probability on those two tokens; if it
+is far below 1 the model is not answering in the format asked and the prompt needs work.
+*Why these choices:* four frames keep a call cheap enough for a decision every 2 s (D5); the wording is our own
+since none of the four papers fixes one for this setup, so it is versioned and hashed into the cache folder name
+(changing it creates a new cache, never silently reusing old scores). The wording is a free design choice that
+can move results, and we expect to ablate it.
+*What we verified:* a CPU smoke test of Qwen2.5-VL-3B on one 20 s val video (10 decisions, frames shrunk to 224 px)
+ran end to end: the Yes/No tokens are single tokens, 99.6-99.7% of the probability sat on them, and each call took
+about 1.5-2 s on CPU. The p(Yes) values (0.44-0.62) show nothing about accuracy; this only checks the plumbing.
+*Status:* verified for plumbing; accuracy on the GPU not yet measured.
+
 ### Open on purpose
 
 **O1. Who parses the cues: GPT once, or the edge model?** The paper and project notes use GPT;
@@ -331,6 +349,7 @@ BF16 (about 15 GB). Needs a larger GPU or a quantized load, which conflicts with
 
 ## 11. Changelog
 
+- 2026-11-15: D15 (row 1 decider input and plumbing check) added; row 1 runner, replay and notebook added.
 - 2026-11-15: D12 (replay is an evaluation harness only), D13 (on-demand decider calls at trigger times) and D14 (how each component is graded) added.
 - 2026-11-15: Added `scripts/ovo_tar_remote.py` and the committed video index; the video download
   drops from about 44 GB to 5 GB (D11).

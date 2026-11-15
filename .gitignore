@@ -14,6 +14,9 @@ results/*
 !data/processed/.gitkeep
 !data/processed/ovo_far_*.jsonl
 !results/.gitkeep
+!results/cache/
+!results/floors/
+*.part
 
 # model caches
 *.safetensors
