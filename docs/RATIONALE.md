@@ -165,8 +165,8 @@ in it. We therefore require:
   use 2, halving memory. FP16 keeps finer detail but can overflow on large values. BF16 keeps
   FP32's range with less detail and is the safer default for big models; Em-Garde's code loads
   everything in BF16. INT8/INT4 (quantization) shrink further and are a separate, later experiment.
-- **Two-pass design (to be built).** A 3-4B decider plus a 2B embedder does not fit comfortably
-  together in 8 GB. So each model runs alone over the videos and saves its outputs to disk
+- **Two-pass design (built for the decider).** A 2B decider (4.3 GB) plus the 2B embedder (about 4.4 GB) is
+  8.7 GB of weights against a GPU with 8.6 GB total, so they cannot be loaded together. So each model runs alone over the videos and saves its outputs to disk
   (embeddings and cue similarities; Yes/No log-probabilities per decision point). A second,
   CPU-only pass then applies matcher, calibration and router settings to those saved numbers.
   Trying a new threshold takes seconds and loads no model. GPT replies are the one exception:
@@ -222,8 +222,7 @@ for temperature scaling, but CRR-specific claims should use dev plus test with c
 **D7. BF16, no quantization in this stage.** *Why:* it is the precision Em-Garde runs
 (`torch_dtype=torch.bfloat16` in their model code), and keeping precision fixed means any score
 difference is not a precision effect. Quantization is a later experiment on both edge models.
-The scaffold's default of FP16 was changed to BF16. *Status:* verified for Em-Garde; assumed
-that it fits for our 2-4B decider.
+The scaffold's default of FP16 was changed to BF16. *Status:* verified for Em-Garde. Whether a decider fits in BF16 on the 8 GB GPU turned out to depend on size: see D16.
 
 **D8. Score floors first (row 0).** *Why:* the metric turned out to be generous (a coin flip
 scores about 21), so a model result is uninterpretable without the floor at the same cadence;
@@ -331,6 +330,26 @@ ran end to end: the Yes/No tokens are single tokens, 99.6-99.7% of the probabili
 about 1.5-2 s on CPU. The p(Yes) values (0.44-0.62) show nothing about accuracy; this only checks the plumbing.
 *Status:* verified for plumbing; accuracy on the GPU not yet measured.
 
+**D16. The row 1 decider is a 2B model, not the 3B we started with.**
+*What happened:* the first GPU run of Qwen2.5-VL-3B took a median of 14.4 s per decision (projected 30 hours for
+all 7,863). A diagnostic on the RTX 4060 laptop GPU (8.6 GB total, 7.5 GB free) showed the weights alone take
+7.63 GB, and time per decision exploded with input size: 2.4 s at 241 tokens (224 px frames), 7.0 s at 449
+tokens (336 px), 37.5 s at 689 tokens (448 px), while preparing the inputs took 11-14 ms. That pattern, with
+peak memory at 7.7-7.9 GB, means the extra memory each decision needs spills out of GPU memory, which is slow.
+*Decision:* use a roughly 2B-parameter decider, which leaves GPU memory for the frames. Qwen3-VL-2B-Instruct is
+the main model (4.26 GB of weights; Qwen3-VL is one of our references). Qwen2-VL-2B-Instruct (4.42 GB) is the
+model Em-Garde itself used for its direct Yes/No ablation, so it is the like-for-like comparison and is run second.
+*Not possible in BF16 on this GPU:* Qwen2.5-VL-3B (7.51 GB) and Gemma 3 4B (about 8.6 GB). A Gemma comparison
+therefore needs a smaller Gemma, or a larger GPU later; to settle before the Gemma-vs-Qwen row.
+*What we verified:* a CPU smoke test of Qwen3-VL-2B on one validation video ran end to end (10 decisions, 99.9-100%
+of the probability on Yes/No), so the template, the Yes/No tokens and the runner work for this model. Speed and
+accuracy on the GPU are not measured yet.
+*Em-Garde's own numbers for this baseline (their Table 5, OVO-Bench forward tasks, F1):* full system 31.0; a direct
+Yes/No decision module with Qwen2-VL-2B in place of the embedding matcher 14.6; a "sliding window" baseline (current
+query plus the last 2 s, decide whether to answer) 21.0. Their baselines sit at or below what a coin flip scores in
+our floor table, so a weak row 1 is plausible, and it is why section 5 requires intervals before we call anything
+an improvement. Their cadence differs from ours, so we do not compare numbers directly.
+
 ### Open on purpose
 
 **O1. Who parses the cues: GPT once, or the edge model?** The paper and project notes use GPT;
@@ -373,6 +392,7 @@ BF16 (about 15 GB). Needs a larger GPU or a quantized load, which conflicts with
 ## 11. Changelog
 
 - 2026-11-15: Section 5 rewritten: chance-level table trimmed to the rules that ignore the video, and the rules for calling an improvement real (bootstrap intervals, paired comparison, power) added.
+- 2026-11-15: D16 (switch the decider to a 2B model after the 3B spilled GPU memory) added.
 - 2026-11-15: D15 (row 1 decider input and plumbing check) added; row 1 runner, replay and notebook added.
 - 2026-11-15: D12 (replay is an evaluation harness only), D13 (on-demand decider calls at trigger times) and D14 (how each component is graded) added.
 - 2026-11-15: Added `scripts/ovo_tar_remote.py` and the committed video index; the video download

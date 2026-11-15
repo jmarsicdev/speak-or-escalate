@@ -13,7 +13,7 @@ dependencies = [
 # Model backends. Install on the machine that actually runs them.
 models = [
     "torch>=2.3",
-    "transformers>=4.49",   # Qwen2.5-VL support
+    "transformers>=4.57",   # Qwen3-VL support
     "accelerate>=0.30",
     "torchvision",          # required by the Qwen VL image/video processors
     "requests>=2.31",

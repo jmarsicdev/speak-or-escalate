@@ -42,7 +42,7 @@ egogate/                    the pipeline package (our code)
   decider_cache.py  run the decider over a video, store raw Yes/No scores, resumable
   replay.py     stored scores -> p(Yes) -> detections, any threshold / temperature / cooldown
   evidence.py   scene-graph triplet memory with top-k retrieval
-  edge.py       EdgeVLM: HF wrapper for Qwen2.5-VL / Gemma 3, MockEdgeVLM; p_speak from Yes/No logits
+  edge.py       EdgeVLM: HF wrapper for Qwen3-VL / Gemma 3, MockEdgeVLM; p_speak from Yes/No logits
   cloud.py      OpenAI client with call counting, MockCloud
   router.py     BandPolicy (lo / hi thresholds)
   pipeline.py   run_stream(): glues everything, logs sims/deltas/p_speak per window
