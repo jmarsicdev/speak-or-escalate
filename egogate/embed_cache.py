@@ -30,7 +30,8 @@ def make_meta(cfg: dict) -> dict:
     except Exception:  # noqa: BLE001
         commit = ""
     return {"embedder": m["embedder"], "model_id": m["model_id"], "attn": m.get("attn"), "stride_s": m["stride_s"],
-            "window_s": m["window_s"], "fps": m["fps"], "max_side": m["max_side"], "code_commit": commit}
+            "window_s": m["window_s"], "fps": m["fps"], "max_pixels": m["max_pixels"], "window_prompt": "newline-suffix",
+            "code_commit": commit}
 
 
 def cache_dir_for(cfg: dict, meta: dict) -> Path:
@@ -52,7 +53,7 @@ def run_sample(sample: Sample, embedder: Embedder, cues: list[str], cfg: dict, o
     ticks = decision_times(sample, m["stride_s"])
     cue_vecs = embedder.embed_text(cues)               # (n_cues, d), normalised
     ts, vecs, ms = [], [], []
-    for w in stream_windows(video_root / sample.video, ticks, m["window_s"], m["fps"], m["max_side"]):
+    for w in stream_windows(video_root / sample.video, ticks, m["window_s"], m["fps"], None, m["max_pixels"]):
         t0 = time.perf_counter()
         vecs.append(embedder.embed_window(w))
         ms.append((time.perf_counter() - t0) * 1000)

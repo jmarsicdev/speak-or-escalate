@@ -65,6 +65,9 @@ def test_metric_tolerance_is_symmetric_and_one_to_one():
 def test_parsers():
     assert parse_cue_json('blah {"cues": ["a", "b"]} blah') == ["a", "b"]
     assert parse_cue_json("- bubbling\n- steam") == ["bubbling", "steam"]
+    # small models often forget the closing brace; the cues must still come out as separate strings
+    assert parse_cue_json('{"cues": ["man lifts a book", "man puts it down"]') == ["man lifts a book", "man puts it down"]
+    assert parse_cue_json('{"cues": ["a hand", "a pot"') == ["a hand", "a pot"]
     assert [str(x) for x in parse_triplets("(hand, holds, pot)\n(water, in, pot)", t=3.0)] == ["(hand, holds, pot)", "(water, in, pot)"]
 
 

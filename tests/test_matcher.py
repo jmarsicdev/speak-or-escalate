@@ -97,3 +97,20 @@ def test_embedding_stage_end_to_end_with_random_embedder(tmp_path):
     assert sims.shape == (18, 3) and t[0] == 1.5 and t[-1] == 10.0
     assert np.load(out / "e1.npy").shape == (18, 16)
     assert run_sample(s, RandomEmbedder(dim=16), ["a", "b", "c"], cfg, out, tmp_path)["status"] == "cached"
+
+
+def test_window_prompt_gets_a_trailing_newline_but_cue_text_does_not():
+    from egogate.embed import _AppendNewline
+
+    seen = {}
+
+    class P:
+        def __call__(self, text=None, **kw):
+            seen["text"] = text
+            return "ok"
+
+        extra = 7
+
+    w = _AppendNewline(P())
+    assert w(text=["abc<|endoftext|>"], images=None) == "ok" and seen["text"] == ["abc<|endoftext|>\n"]
+    assert w.extra == 7          # other attributes still reach the real processor

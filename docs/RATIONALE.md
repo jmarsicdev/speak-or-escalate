@@ -414,19 +414,32 @@ memory verified on the GPU. Accuracy is not measured yet.
 cue's text embedding. *Why:* paper section 4.1.1 ("embeds 2-second, 2 fps video segments at a process rate of 2 fps") and
 their code (`streaming_fps=2`, `streaming_length=2`, so a 4-frame window) agree. The embedder is the vendored wrapper
 (`third_party/em_garde`), checked to load and give deterministic, unit-length vectors.
-*Differences from Em-Garde's code:*
+*Differences from Em-Garde's code, and what we measured about the main one:*
 - **No streaming shortcut.** Their code caches the visual features of earlier frames and encodes only one new frame per
-  step (the paper says this makes the matcher 2-3 times faster). That patch reaches into model internals, pins
-  `transformers==4.52.3`, and fails on current versions (we hit `'BaseModelOutputWithPooling' object has no attribute
-  'shape'` on transformers 5.23). We therefore embed each window from scratch with the model's standard path. *Cost:* about
-  2-3 times more compute per step, and small numerical differences are possible (for instance their streaming prompt ends
-  with one extra newline), so our similarities are not guaranteed to match theirs bit for bit. We check the result through
-  the Gate 2 diagnostic rather than assuming it.
+  step (the paper says this makes the matcher 2-3 times faster). The patch reaches into model internals, pins
+  `transformers==4.52.3`, and fails on current versions (`'BaseModelOutputWithPooling' object has no attribute 'shape'` on
+  transformers 5.23). We therefore embed each window from scratch with the model's standard path.
+- **That is not the same vector unless one detail is matched.** We ran their shortcut under transformers 4.52.3 (it works
+  there) and compared it, window by window, with embedding the same 4 frames from scratch. The two disagreed: cosine
+  similarity 0.91-0.93 on 12 windows. The cause is the prompt, not the caching. Their streaming prompt ends with one
+  extra newline after the end-of-text token, the standard prompt does not, and the embedding is read from the final token.
+  With the same newline added to the from-scratch prompt, the cosine becomes 0.998-1.00 on the 3 windows we tested (values just
+  above 1 are rounding in the model's 16-bit arithmetic). So embedding from scratch **with that newline reproduces their
+  vectors** without the old library. Our first version of this stage (no newline) was a different matcher from theirs;
+  the earlier statement that the difference would be "small numerical differences" was wrong. The window embedder now adds the
+  newline (cue texts keep the standard prompt, as theirs do), and the cache folder name changes, so nothing computed before
+  can be mixed in.
+- **Cost of not using the shortcut.** Each step re-encodes 4 frames instead of 1, so more compute per step. How much more is not
+  settled: on a 4-core CPU we measured 4.5 s per step for the shortcut (under 4.52.3) against 44-52 s from scratch under that
+  same version, but only 6-8 s from scratch under 5.23, so the CPU timings contradict each other and tell us little about a GPU.
+  `scripts/check_streaming.py` repeats the comparison and the timing on any machine; run it on the 4060 (in an environment
+  with transformers 4.52.3, since that is the only place the shortcut runs) to get the real ratio.
 - **Attention.** Their default is `flash_attention_2`, which is not available on this laptop setup; we use `sdpa`.
-- **Frame size.** Their loader reads frames at about 280 x 280 pixels (78k); ours are resized to a long side of 448 (448 x
-  252, 113k). Similar scale, not identical.
+- **Frame size.** Their loader resizes frames with Qwen's smart_resize to an area of at most 280 x 280 = 78,400 pixels (364 x
+  196 for a 16:9 frame, 91 visual tokens). We now use the same rule (`matcher.max_pixels: 78400`). The first version reused the
+  decider's 448 x 252 frames (144 tokens), which was an inherited default, not a choice; it is changed.
 - **The first 1.5 s of a video** have no full 4-frame window and are skipped, not padded; no true event is that early.
-*Status:* verified on CPU (one real window embedding, deterministic); GPU speed not measured yet.
+*Status:* the shortcut-vs-from-scratch equivalence is verified on CPU; the embedder's GPU speed is not measured yet.
 
 **D18. Cues come from the edge model reading only the question (this settles O1).** Qwen3-VL-2B writes 3 short visual cues
 per question (`egogate/cues.py`, versioned by a hash of its prompt), stored once in `results/cache/cues/` and reused by every

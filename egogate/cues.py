@@ -27,16 +27,28 @@ Return JSON: {{"cues": ["...", "..."]}}"""
 
 
 def parse_cue_json(text: str) -> list[str]:
-    """Robustly pull a cue list out of model output."""
+    """Pull a cue list out of model output, tolerating small formatting slips.
+
+    Order: (1) valid JSON, (2) JSON missing its closing brace/bracket (small models often forget it),
+    (3) the quoted strings inside a "cues" list, (4) one cue per line."""
     m = re.search(r"\{.*\}", text, flags=re.S)
-    if m:
+    candidates = [m.group(0)] if m else []
+    start = text.find("{")
+    if start >= 0:
+        candidates += [text[start:] + "}", text[start:] + "]}"]
+    for c in candidates:
         try:
-            data = json.loads(m.group(0))
-            cues = data.get("cues", [])
-            if isinstance(cues, list) and cues:
-                return [str(c).strip() for c in cues if str(c).strip()]
+            data = json.loads(c)
         except json.JSONDecodeError:
-            pass
+            continue
+        cues = data.get("cues", []) if isinstance(data, dict) else []
+        if isinstance(cues, list) and cues:
+            return [str(x).strip() for x in cues if str(x).strip()]
+    if '"cues"' in text:   # JSON is too broken to load: take the quoted strings that follow the "cues" key
+        tail = text[text.index('"cues"') + len('"cues"'):]
+        quoted = [q.strip() for q in re.findall(r'"([^"]+)"', tail) if q.strip()]
+        if quoted:
+            return quoted
     # fallback: one cue per line
     lines = [re.sub(r"^[\-\*\d\.\)\s]+", "", ln).strip() for ln in text.splitlines()]
     return [ln for ln in lines if ln]

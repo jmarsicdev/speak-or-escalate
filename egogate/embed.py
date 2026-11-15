@@ -42,13 +42,32 @@ class RandomEmbedder(Embedder):
         return self._norm(self.rng.standard_normal(self.dim))
 
 
+class _AppendNewline:
+    """Wrap a processor so every prompt it is given ends with a newline after the end-of-text token.
+
+    Em-Garde's streaming path builds its window prompt that way ("...<|endoftext|>\\n"), the model's standard path does
+    not, and the final token is what the embedding is read from. We measured cosine 0.91-0.93 between the two prompts'
+    vectors and 0.998-1.00 once the newline is added (docs/RATIONALE.md D17), so the newline, not the frame caching,
+    is what separates them."""
+
+    def __init__(self, processor):
+        self._p = processor
+
+    def __call__(self, text=None, **kw):
+        return self._p(text=[t + "\n" for t in text], **kw)
+
+    def __getattr__(self, name):
+        return getattr(self._p, name)
+
+
 class OpsMMEmbedder(Embedder):
     """Ops-MM-embedding-v1-2B (OpenSearch-AI), through Em-Garde's vendored wrapper (third_party/em_garde).
 
     Text and video go into the same 1536-dimension space, L2-normalised, so a dot product is a cosine similarity.
     A window is embedded from scratch with the model's standard path (the last `window_s * fps` frames as images).
     We do NOT use Em-Garde's streaming shortcut (cache the earlier frames, add one per step): its patch reaches
-    into model internals that changed in current transformers and fails there; see docs/RATIONALE.md D17.
+    into model internals that changed in current transformers and fails there. Windows are embedded from scratch, with
+    the same trailing newline their streaming prompt has, which reproduces their vectors; see docs/RATIONALE.md D17.
     """
 
     def __init__(self, model_id: str = "OpenSearch-AI/Ops-MM-embedding-v1-2B", device: str = "cuda", attn: str = "sdpa"):
@@ -74,7 +93,12 @@ class OpsMMEmbedder(Embedder):
         from PIL import Image  # noqa: PLC0415
 
         imgs = [Image.fromarray(f) for f in window.frames]
-        out = self.model.embed(images=[imgs])
+        orig = self.model.processor
+        self.model.processor = _AppendNewline(orig)     # window prompts only; cue text uses the standard prompt
+        try:
+            out = self.model.embed(images=[imgs])
+        finally:
+            self.model.processor = orig
         return self._norm(out.float().cpu().numpy())[0]
 
 
