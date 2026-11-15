@@ -434,6 +434,87 @@ BF16 (about 15 GB). Needs a larger GPU or a quantized load, which conflicts with
 - That the embedder wrapper's method names work with our wiring (we vendored their file but have
   not run it).
 
+## 9a. Results so far
+
+### Row 1, edge model alone, validation split (first run)
+
+**Setup.** Qwen3-VL-2B-Instruct in BF16 (D16). Every 2 s the model is shown the question and the last 4 frames
+(448 px) and asked "respond now?" (D15). The 43 validation questions (1,983 decisions) are scored with the Em-Garde
+metric, tolerance ±2 s. Median 300 ms per decision on the RTX 4060 laptop GPU. The model puts essentially all its
+probability on "Yes" or "No" (at least 99.95% on every decision), so the prompt works as intended.
+Source: `results/cache/decider/Qwen3-VL-2B-Instruct__query_only__1a7df950/` (`replay_ovo_far_val.json` has every setting).
+
+**What the table shows.** Each cell is average F1, with the number of responses in brackets. "Threshold" is how sure
+the model must be before we count a Yes (p(Yes) at or above it). "Cooldown" drops a response that comes within that many
+seconds of the previous one, because one event usually looks like "Yes" on two consecutive ticks and the second would
+count as a false alarm.
+
+| Threshold | No cooldown | 4 s cooldown | 8 s cooldown |
+|---|---|---|---|
+| 0.05 | 16.8 (1980) | 26.7 (1002) | 26.5 (512) |
+| 0.20 | 17.8 (1857) | 27.8 (953) | 28.2 (492) |
+| 0.50 | 17.6 (1487) | 26.3 (788) | 25.7 (422) |
+| 0.70 | 20.8 (1027) | 29.0 (580) | 27.8 (330) |
+| 0.80 | 24.5 (540) | 29.7 (345) | **32.0 (212)** |
+| 0.90 | 13.0 (76) | 13.8 (58) | 13.9 (46) |
+
+**The headline, and why not to trust it yet.** The best cell is 32.0 F1 (threshold 0.80, 8 s cooldown). It is the best of
+33 settings tried on only 43 questions, picked using those same questions, so it is flattered by the selection. A cleaner
+reading is below.
+
+**Reading 1: the model leans toward "Yes".** Its median p(Yes) is 0.73, and 75% of decisions are at or above 0.5. At a very
+low threshold it responds almost every time (1,980 of 1,983 decisions) and scores 16.8, which is exactly what the
+"respond at every decision point" floor scores (16.8). So a low threshold adds nothing.
+
+**Reading 2: the cooldown alone is worth about ten points.** Going from "no cooldown" to "4 s cooldown" lifts nearly
+every row from about 17 to about 27, with no change to the model. That is not skill; it is removing duplicate responses.
+This is why a model row has to be compared with a floor that has the same cooldown (section 5).
+
+**Reading 3: against timers with a similar number of responses, there is a modest edge at high thresholds.**
+
+| Model setting | Responses | Model F1 | Timer with a similar number of responses | Timer F1 |
+|---|---|---|---|---|
+| threshold 0.05, 4 s cooldown | 1002 | 26.7 | respond every 4 s (991) | 27.1 ± 0.2 |
+| threshold 0.50, 8 s cooldown | 422 | 25.7 | respond every 8 s (492) | 26.9 ± 2.1 |
+| threshold 0.80, 4 s cooldown | 345 | 29.7 | respond every 12 s (about 330) | 23.1 ± 3.5 |
+| threshold 0.80, 8 s cooldown | 212 | 32.0 | respond every 16 s (246) | 19.4 ± 4.1 |
+
+At low and middle thresholds the model is no better than speaking on a timer. At threshold 0.80, where it responds only
+when quite sure, it scores 6 to 13 points above a timer making a similar number of responses. (Timer rows: 10 random
+starting phases, `scripts/eval_floors.py`; the 12 s figure is from a 30-phase run on val.)
+
+**Reading 4: the ranking signal is real but weak.** Taking every decision, and labelling it "positive" when it falls within
+2 s of a true event (313 of 1,983, or 15.8%), we asked how well p(Yes) ranks positives above the rest. AUC is the chance
+that a random positive outranks a random negative: 0.5 means no skill, 1.0 is perfect.
+
+| Task | AUC of p(Yes) | Mean p(Yes) near an event | Mean p(Yes) elsewhere |
+|---|---|---|---|
+| All three tasks | 0.71 | | |
+| REC (repeated actions, 24 questions) | 0.71 | 0.81 | 0.68 |
+| SSR (tutorial steps, 12) | 0.61 | 0.67 | 0.60 |
+| CRR (clue reveal, 7) | 0.61 | 0.56 | 0.45 |
+
+**Per task for the best cell** (threshold 0.80, 8 s cooldown): REC 50.4, SSR 29.9, CRR 15.6. The timer that responds every
+16 s scores REC 28.5, SSR 15.7, CRR 13.9. REC accounts for most of the gap; CRR (7 questions, long videos) is barely above the timer.
+
+**What this means.**
+- The decider alone is weakly informative: when it is very sure, it is right more often than a timer would be. It is not
+  good at deciding *when*, and it says Yes far too often.
+- That fits the plan. A model that over-answers Yes is exactly what a cheap gate (the cue matcher, row 3 to 4) should
+  help with, and calibration (Gate 1) should help with the threshold. We have not tested either yet.
+- Nothing here shows the approach works. It shows the baseline is weak, which is the starting point we expected
+  (Em-Garde's own sliding-window baseline scores 21.0 on its metric, and its direct Yes/No module 14.6).
+
+**Caveats.**
+- The setting was chosen on val and scored on val, so the numbers are optimistic. A fair number needs a split the
+  setting was not chosen on (dev, 73 questions, or test, 56).
+- 43 questions is small; CRR has 7. No confidence intervals yet (section 5 describes the plan).
+- One prompt wording, one model, one frame size. The prompt is a free choice that can move results.
+- The test split has not been touched.
+
+**Next.** Stage 1a: the cue matcher (row 3), then the matcher-gated decider (row 4). Confirming on dev is optional
+and can wait.
+
 ## 10. Glossary
 
 - **Edge model / edge VLM**: the small vision-language model that runs on the device.
@@ -450,6 +531,7 @@ BF16 (about 15 GB). Needs a larger GPU or a quantized load, which conflicts with
 ## 11. Changelog
 
 - 2026-11-15: Section 5 rewritten: chance-level table trimmed to the rules that ignore the video, and the rules for calling an improvement real (bootstrap intervals, paired comparison, power) added.
+- 2026-11-15: Section 9a added: first row 1 results on val, with the cooldown and timer comparison.
 - 2026-11-15: Added timer and cooldown-matched floors to section 5 after the first val run showed a cooldown alone adds about ten F1.
 - 2026-11-15: D16 added and then rewritten with the options table and GPU measurements: the decider is Qwen3-VL-2B because the 3B spilled GPU memory; other models deferred.
 - 2026-11-15: D15 (row 1 decider input and plumbing check) added; row 1 runner, replay and notebook added.
