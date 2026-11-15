@@ -43,35 +43,38 @@ class RandomEmbedder(Embedder):
 
 
 class OpsMMEmbedder(Embedder):
-    """Ops-MM-embedding-v1-2B (OpenSearch-AI).
+    """Ops-MM-embedding-v1-2B (OpenSearch-AI), through Em-Garde's vendored wrapper (third_party/em_garde).
 
-    TODO(models): confirm preprocessing and method names against the model card
-    (https://huggingface.co/OpenSearch-AI/Ops-MM-embedding-v1-2B) on the first GPU run.
+    Text and video go into the same 1536-dimension space, L2-normalised, so a dot product is a cosine similarity.
+    A window is embedded from scratch with the model's standard path (the last `window_s * fps` frames as images).
+    We do NOT use Em-Garde's streaming shortcut (cache the earlier frames, add one per step): its patch reaches
+    into model internals that changed in current transformers and fails there; see docs/RATIONALE.md D17.
     """
 
-    def __init__(self, model_id: str = "OpenSearch-AI/Ops-MM-embedding-v1-2B", device: str = "cuda", dtype: str = "bfloat16"):
-        import torch  # noqa: PLC0415
-        from transformers import AutoModel, AutoProcessor  # noqa: PLC0415
+    def __init__(self, model_id: str = "OpenSearch-AI/Ops-MM-embedding-v1-2B", device: str = "cuda", attn: str = "sdpa"):
+        import importlib.util  # noqa: PLC0415
+        from pathlib import Path  # noqa: PLC0415
 
-        self.torch = torch
-        self.processor = AutoProcessor.from_pretrained(model_id, trust_remote_code=True)
-        self.model = AutoModel.from_pretrained(model_id, torch_dtype=getattr(torch, dtype), trust_remote_code=True).to(device).eval()
+        path = Path(__file__).resolve().parent.parent / "third_party" / "em_garde" / "ops_mm_embedding_v1.py"
+        spec = importlib.util.spec_from_file_location("ops_mm_embedding_v1", path)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        self.model = mod.OpsMMEmbeddingV1(model_id, device=device, attn_implementation=attn)
+        self.model.eval()
 
     @staticmethod
     def _norm(v):
         return v / (np.linalg.norm(v, axis=-1, keepdims=True) + 1e-8)
 
     def embed_text(self, texts):
-        with self.torch.no_grad():
-            out = self.model.get_text_embeddings(texts=texts)  # TODO: verify method name
+        out = self.model.get_text_embeddings(list(texts))
         return self._norm(out.float().cpu().numpy())
 
     def embed_window(self, window):
         from PIL import Image  # noqa: PLC0415
 
         imgs = [Image.fromarray(f) for f in window.frames]
-        with self.torch.no_grad():
-            out = self.model.get_video_embeddings(videos=[imgs])  # TODO: verify method name
+        out = self.model.embed(images=[imgs])
         return self._norm(out.float().cpu().numpy())[0]
 
 

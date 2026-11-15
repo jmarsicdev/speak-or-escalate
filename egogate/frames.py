@@ -37,6 +37,8 @@ def stream_windows(video_path, ticks: Iterable[float], window_s: float = 2.0, fp
         return max(int(round(sec * src_fps)), 0)
 
     need = {t: window_sample_times(t, window_s, fps) for t in ticks}
+    # a tick needs a full window; ticks too early in the video (frames before time 0) are skipped, not padded
+    ticks = [t for t in ticks if min(need[t]) >= -1e-9]
     needed_idx = sorted({idx_of(s) for ss in need.values() for s in ss if s >= 0})
     keep: dict[int, np.ndarray] = {}
     pos = -1          # index of the last frame grabbed
@@ -63,10 +65,7 @@ def stream_windows(video_path, ticks: Iterable[float], window_s: float = 2.0, fp
         # emit every tick whose frames are all available
         while ti < len(ticks):
             idxs = [idx_of(s) for s in need[ticks[ti]]]
-            if min(idxs) < 0 or any(i > target for i in idxs):
-                if min(idxs) < 0:
-                    ti += 1          # tick too early for a full window: skip
-                    continue
+            if any(i > target for i in idxs):
                 break
             t = ticks[ti]
             yield Window(frames=[keep[i] for i in idxs], t_start=need[t][0], t_end=t)

@@ -408,21 +408,63 @@ improvement. Their cadence differs from ours, so we do not compare numbers direc
 *Status.* Plumbing verified by a CPU smoke test (10 decisions, 99.9-100% of the probability on Yes/No) and speed and
 memory verified on the GPU. Accuracy is not measured yet.
 
+**D17. How the cue matcher embeds video (stage 1a), and where it differs from Em-Garde's code.**
+*What we do:* every 0.5 s, the last 2 s of video (4 frames at 2 fps) are embedded with Ops-MM-embedding-v1-2B
+(`OpenSearch-AI/Ops-MM-embedding-v1-2B`, 1536 dimensions, length-normalised) and compared by cosine similarity with each
+cue's text embedding. *Why:* paper section 4.1.1 ("embeds 2-second, 2 fps video segments at a process rate of 2 fps") and
+their code (`streaming_fps=2`, `streaming_length=2`, so a 4-frame window) agree. The embedder is the vendored wrapper
+(`third_party/em_garde`), checked to load and give deterministic, unit-length vectors.
+*Differences from Em-Garde's code:*
+- **No streaming shortcut.** Their code caches the visual features of earlier frames and encodes only one new frame per
+  step (the paper says this makes the matcher 2-3 times faster). That patch reaches into model internals, pins
+  `transformers==4.52.3`, and fails on current versions (we hit `'BaseModelOutputWithPooling' object has no attribute
+  'shape'` on transformers 5.23). We therefore embed each window from scratch with the model's standard path. *Cost:* about
+  2-3 times more compute per step, and small numerical differences are possible (for instance their streaming prompt ends
+  with one extra newline), so our similarities are not guaranteed to match theirs bit for bit. We check the result through
+  the Gate 2 diagnostic rather than assuming it.
+- **Attention.** Their default is `flash_attention_2`, which is not available on this laptop setup; we use `sdpa`.
+- **Frame size.** Their loader reads frames at about 280 x 280 pixels (78k); ours are resized to a long side of 448 (448 x
+  252, 113k). Similar scale, not identical.
+- **The first 1.5 s of a video** have no full 4-frame window and are skipped, not padded; no true event is that early.
+*Status:* verified on CPU (one real window embedding, deterministic); GPU speed not measured yet.
+
+**D18. Cues come from the edge model reading only the question (this settles O1).** Qwen3-VL-2B writes 3 short visual cues
+per question (`egogate/cues.py`, versioned by a hash of its prompt), stored once in `results/cache/cues/` and reused by every
+later row. *Why the edge model:* it keeps the whole system on the device, and the stage costs nothing in API money.
+*What is weaker than Em-Garde's version:* their cue proposer is a 7B model trained with supervised learning and
+reinforcement learning, it sees 5 s of video history at 1 fps as well as the question, and its proposals can include
+"negative" cues (things that should not be visible) combined by a logic rule. Ours is an untrained 2B model, text only,
+positive cues only, any one of them counts. *Expected consequence:* weaker cues, so a weaker matcher than the published one.
+In the one question we looked at, the cues were plausible but invented specifics ("hand strikes a metal surface with a
+hammer" for "hitting something against/with something"). *Escape hatch, if row 3 is poor and the cues look like the cause:*
+give the proposer a few frames, or have GPT write the cues (a few cents per question; the cue file format is the same).
+Not pursued unless the matcher results point at it.
+
+**D19. Trigger rules and what we sweep for row 3 (this settles O3 and O4).** The matcher is scored by treating every trigger
+as a response. Everything below is computed from the stored similarities, on CPU, so we try all of it in one table:
+- *Rule "paper":* trigger when any cue's similarity rose by more than theta since the previous step (paper section 3.4, theta
+  0.04). *Rule "code":* the rule in their released code: the similarity must be more than theta above its value one second
+  earlier and above the average of the older history (history trimmed to the latest 500-600 steps). A unit test confirms our
+  version gives the same triggers as their `trigger_detection.py` on random data, including past 600 steps.
+- *Cue combination (Gate 2):* apply the rule to each cue and fire if any cue fires ("any"), or to the average similarity of
+  the cues ("mean").
+- *Duplicate handling:* a time-based cooldown (0, 4 or 8 s), or Em-Garde's rule (skip a trigger within 5 s of the last one if
+  the window looks at least 0.8 similar to the window at that trigger; needs the stored window vectors).
+- *Thresholds:* 0.01 to 0.08 around their 0.04 (their sweep covered 0.03 to 0.04 after reinforcement training of the
+  proposer, so we treat it as a starting point, not a target).
+To avoid an ablation maze, the sweep is one table; we carry a single combination, chosen on val, into row 4. A diagnostic
+accompanies it: how well the similarity, and its rise, separate steps near a true event from the rest (AUC; 0.5 means no
+separation), which tells us whether the cues carry any signal before any threshold is applied.
+
 ### Open on purpose
 
-**O1. Who parses the cues: GPT once, or the edge model?** The paper and project notes use GPT;
-the first scaffold used the edge model. GPT costs a few cents per question but needs the network;
-the edge model keeps everything on-device. We will run both as a factor in rows 2-5.
+**O1.** Settled: see D18 (edge model, text only).
 
 **O2. Put the question into the memory (scene-graph) prompt or not?** Response-G1 does
 (query-guided generation, section 3.2). Our notes say it makes the model hallucinate early
 triggers. Direct disagreement, tested as a sub-row of row 5.
 
-**O3. Which trigger rule.** Em-Garde's paper: any cue rose by more than 0.04 since the previous
-step. Their released code adds two stricter conditions (compared with the value `fps` steps back,
-and above the recent average). Both are tested; the saved similarities make that free.
-
-**O4. Cue score: any cue vs the average across cues** (Gate 2).
+**O3, O4.** Settled: see D19 (both trigger rules and both cue combinations are swept in one table).
 
 **O5. The 7B reference run.** Em-Garde's proposer is a 7B model that does not fit on the 4060 in
 BF16 (about 15 GB). Needs a larger GPU or a quantized load, which conflicts with D7.
@@ -531,6 +573,7 @@ and can wait.
 ## 11. Changelog
 
 - 2026-11-15: Section 5 rewritten: chance-level table trimmed to the rules that ignore the video, and the rules for calling an improvement real (bootstrap intervals, paired comparison, power) added.
+- 2026-11-15: D17-D19 added (cue matcher design: embedding path, cue source, trigger rules); stages 0 and 1a built.
 - 2026-11-15: Section 9a added: first row 1 results on val, with the cooldown and timer comparison.
 - 2026-11-15: Added timer and cooldown-matched floors to section 5 after the first val run showed a cooldown alone adds about ten F1.
 - 2026-11-15: D16 added and then rewritten with the options table and GPU measurements: the decider is Qwen3-VL-2B because the 3B spilled GPU memory; other models deferred.

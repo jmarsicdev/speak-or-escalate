@@ -29,3 +29,6 @@ CLAUDE.md
 
 # fetched third-party repos
 third_party/ProactiveVideoQA/
+
+# window embeddings are large and recomputable; keep them local
+results/cache/**/*.npy

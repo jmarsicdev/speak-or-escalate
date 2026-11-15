@@ -19,6 +19,13 @@ cues:
 
 matcher:
   embedder: random  # random | opsmm
+  attn: sdpa        # use sdpa on Windows / consumer GPUs (flash_attention_2 is not available there)
+  device: cuda
+  stride_s: 0.5     # one matcher step every 0.5 s (Em-Garde: 2 fps processing rate)
+  window_s: 2.0     # each step embeds the last 2 s ...
+  fps: 2.0          # ... at 2 fps = 4 frames
+  max_side: 448     # frames resized so the long side is at most this
+  cache_dir: results/cache
   model_id: OpenSearch-AI/Ops-MM-embedding-v1-2B
   threshold: 0.04   # Em-Garde default theta (surge in cosine sim, any cue)
   cooldown_s: 0.0

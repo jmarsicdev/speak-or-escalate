@@ -38,6 +38,7 @@ egogate/                    the pipeline package (our code)
   video.py      frame sampling + sliding windows
   cues.py       CueParser: query -> visual cues, via the edge model
   embed.py      Embedder (Ops-MM-V1-2B wrapper, RandomEmbedder) and the surge Matcher
+  cue_cache.py / embed_cache.py / matcher_replay.py   cues, window embeddings, and trigger rules for the matcher
   frames.py     causal 2 s frame windows at chosen decision times
   decider_cache.py  run the decider over a video, store raw Yes/No scores, resumable
   replay.py     stored scores -> p(Yes) -> detections, any threshold / temperature / cooldown
@@ -58,6 +59,9 @@ scripts/
   ingest_dataset.py         OVO-Bench annotations -> seeded dev/val/test jsonl
   score_detections.py       score any system's detections with the Em-Garde metric
   eval_floors.py            row 0: always-silent / always-respond / random / oracle
+  run_cues.py               stage 0: edge model writes 3 visual cues per question (stored)
+  run_embed_cache.py        stage 1a: embed 2 s windows every 0.5 s, store similarity to each cue
+  replay_matcher.py         row 3 stage 2: trigger rules / thresholds / dedup on stored similarities (CPU)
   run_decider_cache.py      row 1 stage 1: edge model alone -> stored Yes/No scores (resumable)
   replay_decider.py         row 1 stage 2: sweep threshold / cooldown on stored scores (CPU)
   ovo_tar_remote.py         fetch only the needed OVO-Bench videos (5 GB) by HTTP range request
@@ -142,5 +146,5 @@ splits (annotations only, CC BY-NC-SA 4.0; videos are never committed).
 2. **Row 1, edge model alone** (built): open `notebooks/row1_decider_alone.ipynb`. It runs the decider every 2 s
    (`scripts/run_decider_cache.py`), stores the Yes/No scores under `results/cache/`, and scores thresholds on CPU
    (`scripts/replay_decider.py`). Push `results/cache/` back so it can be read. Gemma next.
-3. **Stage 1a and the on-demand decider** (D13) for rows 3-4.
+3. **Row 3, the cue matcher alone** (built): `notebooks/row3_cue_matcher.ipynb`. Then the on-demand decider (D13) for row 4.
 4. **Rows 2-5**, then the router (row 6).
