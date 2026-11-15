@@ -336,11 +336,14 @@ all 7,863). A diagnostic on the RTX 4060 laptop GPU (8.6 GB total, 7.5 GB free) 
 7.63 GB, and time per decision exploded with input size: 2.4 s at 241 tokens (224 px frames), 7.0 s at 449
 tokens (336 px), 37.5 s at 689 tokens (448 px), while preparing the inputs took 11-14 ms. That pattern, with
 peak memory at 7.7-7.9 GB, means the extra memory each decision needs spills out of GPU memory, which is slow.
-*Decision:* use a roughly 2B-parameter decider, which leaves GPU memory for the frames. Qwen3-VL-2B-Instruct is
-the main model (4.26 GB of weights; Qwen3-VL is one of our references). Qwen2-VL-2B-Instruct (4.42 GB) is the
-model Em-Garde itself used for its direct Yes/No ablation, so it is the like-for-like comparison and is run second.
-*Not possible in BF16 on this GPU:* Qwen2.5-VL-3B (7.51 GB) and Gemma 3 4B (about 8.6 GB). A Gemma comparison
-therefore needs a smaller Gemma, or a larger GPU later; to settle before the Gemma-vs-Qwen row.
+*Decision:* use one roughly 2B-parameter decider, **Qwen3-VL-2B-Instruct** (4.26 GB of weights, which leaves GPU
+memory for the frames). It fits, it is the newest of the options, and Qwen3-VL is one of our references, so it is
+the model most likely to be kept. The goal of this stage is to learn whether the *approach* works (the gates), not
+to compare models, so the whole experiment ladder runs on this one model first.
+*Deferred, only if needed:* Qwen2-VL-2B-Instruct (4.42 GB), the model Em-Garde used for its direct Yes/No ablation,
+is run only if row 1 looks suspicious and we need to separate "our setup" from "this model". A Gemma comparison
+waits for a larger GPU or a reason: Qwen2.5-VL-3B (7.51 GB) and Gemma 3 4B (about 8.6 GB) do not fit in BF16 on
+this GPU.
 *What we verified:* a CPU smoke test of Qwen3-VL-2B on one validation video ran end to end (10 decisions, 99.9-100%
 of the probability on Yes/No), so the template, the Yes/No tokens and the runner work for this model. Speed and
 accuracy on the GPU are not measured yet.
