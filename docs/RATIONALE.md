@@ -103,23 +103,46 @@ is the thing proactive systems get wrong, it is free to compute, it is determini
 the metric Em-Garde reports. ProactiveVideoQA, which does judge answer text with GPT-4.1, comes
 later and costs money from our budget of about $100.
 
-**What the floors tell us (row 0, all 172 questions, decision every 2 s, ±2 s):**
+### What chance scores on this metric (no model, no video)
 
-| System | REC | SSR | CRR | avg F1 |
-|---|---|---|---|---|
-| always silent | 0.0 | 0.0 | 0.0 | 0.0 |
-| always respond | 29.4 | 9.0 | 8.3 | 15.6 |
-| random, 25% chance | 33.9 | 15.8 | 14.5 | 21.4 ±1.1 |
-| random, 50% chance | 37.9 | 13.8 | 13.4 | 21.7 ±0.6 |
-| oracle (sanity) | 100 | 100 | 100 | 100 |
+To know what counts as an improvement, we first measured what simple rules score on this metric, with no
+model and no video. At each 2 s decision point, a rule decides "respond" or "stay quiet" without looking at
+the video, and the scoring code grades the result against the true response times. Scores below are F1 over
+all 172 forward-task questions, at a 2 s decision cadence and a ±2 s tolerance (`scripts/eval_floors.py`).
 
-Reading it: **a coin flip scores about 21 on this metric.** Em-Garde reports 30.99 for its 2B
-setup at 2 fps, so the whole room between "no skill" and "published result" is only about ten
-points. Two cautions follow. First, the floor depends on how often the system is allowed to
-respond: at a 0.5 s cadence, always-respond falls to 4.3 and the best random setting to 19.7.
-So we always compare to floors **at the same cadence**, never to Em-Garde's number directly.
-Second, with only 43 to 73 questions per split, single runs are noisy; we report seeds or
-confidence intervals where it matters.
+| Rule that ignores the video | Avg F1 |
+|---|---|
+| Respond at every decision point | 15.6 |
+| Random, 10% chance per decision point | 16.4 ± 1.8 |
+| Random, 25% chance | 21.4 ± 1.1 |
+| Random, 50% chance | 21.7 ± 0.6 |
+
+The ± is the spread across 10 random seeds. The always-silent and oracle checks only confirm that the
+scoring code works (silent must score 0, a system that responds exactly at the true times must score 100),
+so they live in the tests (`tests/test_eval.py`) and not here.
+
+**What this tells us**
+
+- A coin flip scores about 21 F1. Em-Garde reports 30.99 for its setup, so the gap between guessing and a
+  published result is only about ten points.
+- The floor depends on how often a system is allowed to respond. At a 0.5 s cadence, always-respond falls to
+  4.3 and the best random setting reaches 19.7. So every model result is compared with floors at the same
+  cadence, never with Em-Garde's number directly.
+
+### How we decide an improvement is real
+
+The seed spread above is only the noise from the coin flips. A bigger source of noise is that the splits are
+small (43 val, 56 test, 73 dev questions), so a score can move a lot just because of which questions landed
+in it. We therefore require:
+
+1. **A confidence interval on every score.** Bootstrap over questions, resampling whole videos, since several
+   questions share one video. Models and the random baseline each get an interval.
+2. **A paired comparison between systems.** Resample the same questions for both systems and compute the
+   interval of the difference. A gain counts only if that interval excludes zero.
+3. **Honesty about power.** With 56 test questions, only fairly large gaps can be detected. Results are
+   reported per split, and small differences are called inconclusive.
+
+*Status:* the floors are measured. The bootstrap helper and the intervals are not built yet.
 
 ## 6. Data and splits
 
@@ -349,6 +372,7 @@ BF16 (about 15 GB). Needs a larger GPU or a quantized load, which conflicts with
 
 ## 11. Changelog
 
+- 2026-11-15: Section 5 rewritten: chance-level table trimmed to the rules that ignore the video, and the rules for calling an improvement real (bootstrap intervals, paired comparison, power) added.
 - 2026-11-15: D15 (row 1 decider input and plumbing check) added; row 1 runner, replay and notebook added.
 - 2026-11-15: D12 (replay is an evaluation harness only), D13 (on-demand decider calls at trigger times) and D14 (how each component is graded) added.
 - 2026-11-15: Added `scripts/ovo_tar_remote.py` and the committed video index; the video download
