@@ -434,11 +434,23 @@ later row. *Why the edge model:* it keeps the whole system on the device, and th
 *What is weaker than Em-Garde's version:* their cue proposer is a 7B model trained with supervised learning and
 reinforcement learning, it sees 5 s of video history at 1 fps as well as the question, and its proposals can include
 "negative" cues (things that should not be visible) combined by a logic rule. Ours is an untrained 2B model, text only,
-positive cues only, any one of them counts. *Expected consequence:* weaker cues, so a weaker matcher than the published one.
+positive cues only, any one of them counts. The embedding model itself is the same as theirs and is not trained for this: the paper says they "employ an
+off-the-shelf embedding model, Ops-MM-V1, for the LPMM without any training" (section 4). What they train is the cue
+writer, so that its cues are "perception-friendly" for that embedder. *Evidence on how much that matters (their Table 5,
+OVO-Bench forward tasks, F1):* full system 31.0; replacing the trained proposer with plain prompt rewriting by an untrained
+Qwen2.5-VL-7B 24.0. Our writer is smaller and untrained, so we should expect to land at or below that 24.0 level, and their
+limitations section notes that the embedder struggles to tell subtly different cues apart.
+*Expected consequence:* weaker cues, so a weaker matcher than the published one.
 In the one question we looked at, the cues were plausible but invented specifics ("hand strikes a metal surface with a
 hammer" for "hitting something against/with something"). *Escape hatch, if row 3 is poor and the cues look like the cause:*
 give the proposer a few frames, or have GPT write the cues (a few cents per question; the cue file format is the same).
 Not pursued unless the matcher results point at it.
+*How we decide:* read the printed cues and the Gate 2 diagnostic (AUC of the similarity near events) before the full run is
+trusted. Because the window embeddings are stored locally, trying a different set of cues later costs only embedding the
+new cue text, not re-running the video. The edge model as writer saves no memory or compute worth mentioning (it runs once per
+question and is the same model as the decider), so the only real argument for it is keeping the system on-device; if cue
+quality is the bottleneck, GPT-written cues (one call per question, as the project notes originally assumed) are the first
+alternative.
 
 **D19. Trigger rules and what we sweep for row 3 (this settles O3 and O4).** The matcher is scored by treating every trigger
 as a response. Everything below is computed from the stored similarities, on CPU, so we try all of it in one table:
