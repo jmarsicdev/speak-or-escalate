@@ -330,28 +330,63 @@ ran end to end: the Yes/No tokens are single tokens, 99.6-99.7% of the probabili
 about 1.5-2 s on CPU. The p(Yes) values (0.44-0.62) show nothing about accuracy; this only checks the plumbing.
 *Status:* verified for plumbing; accuracy on the GPU not yet measured.
 
-**D16. The row 1 decider is a 2B model, not the 3B we started with.**
-*What happened:* the first GPU run of Qwen2.5-VL-3B took a median of 14.4 s per decision (projected 30 hours for
-all 7,863). A diagnostic on the RTX 4060 laptop GPU (8.6 GB total, 7.5 GB free) showed the weights alone take
-7.63 GB, and time per decision exploded with input size: 2.4 s at 241 tokens (224 px frames), 7.0 s at 449
-tokens (336 px), 37.5 s at 689 tokens (448 px), while preparing the inputs took 11-14 ms. That pattern, with
-peak memory at 7.7-7.9 GB, means the extra memory each decision needs spills out of GPU memory, which is slow.
-*Decision:* use one roughly 2B-parameter decider, **Qwen3-VL-2B-Instruct** (4.26 GB of weights, which leaves GPU
-memory for the frames). It fits, it is the newest of the options, and Qwen3-VL is one of our references, so it is
-the model most likely to be kept. The goal of this stage is to learn whether the *approach* works (the gates), not
-to compare models, so the whole experiment ladder runs on this one model first.
-*Deferred, only if needed:* Qwen2-VL-2B-Instruct (4.42 GB), the model Em-Garde used for its direct Yes/No ablation,
-is run only if row 1 looks suspicious and we need to separate "our setup" from "this model". A Gemma comparison
-waits for a larger GPU or a reason: Qwen2.5-VL-3B (7.51 GB) and Gemma 3 4B (about 8.6 GB) do not fit in BF16 on
-this GPU.
-*What we verified:* a CPU smoke test of Qwen3-VL-2B on one validation video ran end to end (10 decisions, 99.9-100%
-of the probability on Yes/No), so the template, the Yes/No tokens and the runner work for this model. Speed and
-accuracy on the GPU are not measured yet.
+**D16. The row 1 decider is Qwen3-VL-2B-Instruct (it started as a 3B model that did not fit).**
+
+*What happened.* Our first choice was Qwen2.5-VL-3B-Instruct. On the RTX 4060 laptop GPU (8.6 GB total, 7.5 GB free)
+it took a median of 14.4 s per decision, which projects to about 30 hours for all 7,863 decisions. A diagnostic
+(`scripts/diagnose_speed.py`) found why. The weights alone take 7.63 GB, so almost nothing is left for the frames,
+and the time per decision grew far faster than the input did while input preparation stayed at 11-14 ms:
+
+| Frame long side | Tokens | Forward time | Peak GPU memory |
+|---|---|---|---|
+| 224 px | 241 | 2.4 s | 7.72 GB |
+| 336 px | 449 | 7.0 s | 7.80 GB |
+| 448 px | 689 | 37.5 s | 7.89 GB |
+
+That pattern, with peak memory at 7.7-7.9 GB of 8.6, means the memory each decision needs spills out of GPU memory
+into slower shared system memory. Shrinking the frames would not have fixed it, because the weights themselves
+were the problem.
+
+*Options considered.*
+
+| Model | Weights (BF16) | Fits with room for frames on this GPU? | Decision |
+|---|---|---|---|
+| Qwen2.5-VL-3B-Instruct | 7.51 GB | No: measured above | dropped |
+| **Qwen3-VL-2B-Instruct** | 4.26 GB | Yes: measured below | **chosen** |
+| Qwen2-VL-2B-Instruct | 4.42 GB | Yes (not measured) | deferred; run only if row 1 looks suspicious (it is the model Em-Garde used for its direct Yes/No ablation, so it separates "our setup" from "this model") |
+| Gemma 3 4B | about 8.6 GB | No | deferred until a larger GPU or a reason |
+
+*Why Qwen3-VL-2B.* It fits with room to spare, it is the newest of the options, and Qwen3-VL is one of our
+references, so it is the model most likely to be kept. The goal of this stage is to learn whether the approach
+works (the gates), not to compare models, so the whole experiment ladder runs on this one model first. Comparing
+models is a later, optional step, not part of getting the core result.
+
+*Measured on the chosen model (same diagnostic, same GPU, BF16, random-noise frames):*
+
+| Frame long side | Tokens | Forward time | Peak GPU memory |
+|---|---|---|---|
+| 224 px | 366 | 161 ms | 4.43 GB |
+| 336 px | 366 | 159 ms | 4.43 GB |
+| 448 px (our default) | 550 | 257 ms | 4.51 GB |
+
+The weights take 4.26 GB, the peak is 4.5 GB, and about 4 GB of the GPU is left over, so there is no spill. At
+roughly 0.27 s per decision, all 7,863 decisions take about 35 minutes of model time (val alone, 1,983 decisions,
+about 9 minutes), plus video decoding. The 224 px and 336 px rows have the same token count because the model
+enforces a minimum image size, so frames smaller than about 448 px would not have saved anything; we stay at 448.
+
+*What this does to other decisions.* The 2B decider (4.26 GB) plus the 2B embedder (about 4.4 GB) is about 8.7 GB
+of weights against 8.6 GB of GPU, so the two cannot be loaded together. This confirms the sequential two-pass
+design (D9, D12) as a requirement on this hardware, not only a convenience. On the larger GPU we may get later, a
+bigger decider or a Gemma comparison becomes possible.
+
 *Em-Garde's own numbers for this baseline (their Table 5, OVO-Bench forward tasks, F1):* full system 31.0; a direct
 Yes/No decision module with Qwen2-VL-2B in place of the embedding matcher 14.6; a "sliding window" baseline (current
 query plus the last 2 s, decide whether to answer) 21.0. Their baselines sit at or below what a coin flip scores in
-our floor table, so a weak row 1 is plausible, and it is why section 5 requires intervals before we call anything
-an improvement. Their cadence differs from ours, so we do not compare numbers directly.
+our floor table, so a weak row 1 is plausible, and it is why section 5 requires intervals before we call anything an
+improvement. Their cadence differs from ours, so we do not compare numbers directly.
+
+*Status.* Plumbing verified by a CPU smoke test (10 decisions, 99.9-100% of the probability on Yes/No) and speed and
+memory verified on the GPU. Accuracy is not measured yet.
 
 ### Open on purpose
 
@@ -395,7 +430,7 @@ BF16 (about 15 GB). Needs a larger GPU or a quantized load, which conflicts with
 ## 11. Changelog
 
 - 2026-11-15: Section 5 rewritten: chance-level table trimmed to the rules that ignore the video, and the rules for calling an improvement real (bootstrap intervals, paired comparison, power) added.
-- 2026-11-15: D16 (switch the decider to a 2B model after the 3B spilled GPU memory) added.
+- 2026-11-15: D16 added and then rewritten with the options table and GPU measurements: the decider is Qwen3-VL-2B because the 3B spilled GPU memory; other models deferred.
 - 2026-11-15: D15 (row 1 decider input and plumbing check) added; row 1 runner, replay and notebook added.
 - 2026-11-15: D12 (replay is an evaluation harness only), D13 (on-demand decider calls at trigger times) and D14 (how each component is graded) added.
 - 2026-11-15: Added `scripts/ovo_tar_remote.py` and the committed video index; the video download
