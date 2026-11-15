@@ -12,6 +12,7 @@ data/processed/*
 results/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
+!data/processed/ovo_far_*.jsonl
 !results/.gitkeep
 
 # model caches

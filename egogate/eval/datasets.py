@@ -28,6 +28,8 @@ class Sample:
     events: list[Event]
     task: str = ""
     meta: dict = field(default_factory=dict)
+    start_s: float = 0.0          # where the stream starts being judged (the question is "asked" here)
+    end_s: float | None = None    # last moment judged; None = end of video
 
 
 def load_jsonl(path: str | Path, limit: int | None = None) -> list[Sample]:
@@ -41,6 +43,8 @@ def load_jsonl(path: str | Path, limit: int | None = None) -> list[Sample]:
                 id=r["id"], video=Path(r["video"]), query=r["query"],
                 events=[Event(t=float(e["t"]), answer=e.get("answer")) for e in r["events"]],
                 task=r.get("task", ""), meta=r.get("meta", {}),
+                start_s=float(r.get("start_s", 0.0)),
+                end_s=None if r.get("end_s") is None else float(r["end_s"]),
             ))
             if limit and len(out) >= limit:
                 break
@@ -54,6 +58,7 @@ def write_jsonl(samples: list[Sample], path: str | Path) -> None:
             f.write(json.dumps({
                 "id": s.id, "video": str(s.video), "query": s.query, "task": s.task,
                 "events": [{"t": e.t, "answer": e.answer} for e in s.events], "meta": s.meta,
+                "start_s": s.start_s, "end_s": s.end_s,
             }) + "\n")
 
 

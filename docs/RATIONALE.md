@@ -1,0 +1,260 @@
+# Rationale: what we are building, why, and how we will know it works
+
+This is a living document. It is written so that someone who has not followed the project can
+understand what we did, why we did it, what each experiment tests, and where we are going.
+Every design decision has an entry in the **Decision log** (section 8) with the reasoning and
+the evidence behind it. When we change our mind, we add a new entry; we do not rewrite history.
+
+Status key used throughout: **verified** (we checked it in a paper's text or code),
+**assumed** (reasonable, not yet checked), **open** (undecided on purpose).
+
+---
+
+## 1. The problem in plain words
+
+You wear a camera and ask one question at the start, such as "tell me when the water boils".
+The system must **speak up by itself, at the moment the answer appears**, without being asked
+again. Existing systems either run a very large model on every frame (accurate, but costly and
+slow) or use a small model that is often wrong about *when* to speak.
+
+Our idea: a **small model on the edge device** watches everything and answers when it is
+confident. When it is unsure, it **escalates** to a large cloud model (GPT). We want to keep
+most of the quality while sending far less video and making far fewer cloud calls.
+
+Two questions follow, and the whole project is built to answer them:
+
+1. **Is the small model's confidence trustworthy?** If it says "I'm 90% sure", is it right about 90% of the time?
+2. **Does asking GPT when the model is unsure beat asking GPT at random?** At the same number of
+   GPT calls, does choosing *which* moments to escalate by confidence actually help?
+
+## 2. The system, one step at a time
+
+See the architecture diagram: https://claude.ai/artifact/UzmwnghvVgb5XnrienCCUG
+
+1. **Cue parsing (once per question).** The question is turned into about 3 short descriptions of
+   what the camera would see at the right moment ("bubbles rising in a pot"). *From Em-Garde.*
+2. **Cue matching (cheap, always on).** Every 2 seconds of video is turned into a vector by an
+   embedding model; its cosine similarity to each cue's vector is computed. A **sudden rise** in
+   similarity (not a high absolute value) marks a candidate moment. *From Em-Garde.*
+3. **Memory.** Every ~5 seconds the small model writes down what it sees as scene-graph triplets,
+   like `(hand, holds, pot)`. When a decision is needed, the few most relevant triplets are
+   retrieved by comparing their text embeddings to the question's. *From Response-G1.*
+4. **Decider.** The small model reads the recent frames plus the retrieved triplets and is asked
+   "is now the moment to respond? Yes or No". We read the probability of "Yes" directly from the
+   model's output scores. We then calibrate that probability (temperature scaling). *Yes/No
+   trigger from Response-G1 and VideoLLM-online; reading a score instead of generated text from
+   VideoJev; calibration from Guo et al., ICML 2017.*
+5. **Router.** High probability: the edge model answers. Low: stay silent. In between: ask GPT.
+   *This part is ours. None of the four papers tests escalating to a cloud model.*
+6. **What GPT receives** (three options, tested later): raw frames, scene graphs only, or both.
+
+## 3. What we borrow, and from which paper
+
+| Idea | Paper | Where to look |
+|---|---|---|
+| Parse the question into cues once; match with a cheap embedder; trigger on a similarity surge, threshold 0.04 | Em-Garde (arXiv 2603.19054) | `docs/papers/em-garde_2603.19054.pdf`, section 3.4 and 4.1.1 |
+| Online recall / precision metric that needs no LLM judge | Em-Garde | appendix, eq. 10; code in `third_party` notes below |
+| Scene-graph memory, query turned into triplet form, top-K retrieval by cosine similarity | Response-G1 (arXiv 2605.07575) | section 3.3 |
+| Yes/No token as the "speak now" decision | Response-G1, VideoLLM-online | Response-G1 section 3.3 end |
+| A score instead of generated text for the decision | VideoJev (arXiv 2610.18615) | treated as a low-priority extension (Gate 5) |
+| Temperature scaling for calibration | Guo et al., ICML 2017 | section 4 |
+| The benchmark we start with | OVO-Bench (CVPR 2025) | Forward Active Responding tasks |
+| The benchmark we use later (needs a GPT judge) | ProactiveVideoQA (arXiv 2507.09313) | scorer fetched by `scripts/fetch_proactivevideoqa.sh` |
+
+## 4. What we test: the experiment ladder
+
+**Principle:** every row changes exactly one thing relative to the row above or to the edge-only
+baseline, so any difference in score can be blamed on that one thing. We do not build the
+combined ("hybrid") system until we know what each piece is worth by itself.
+
+| Row | System | The question it answers | Gate |
+|---|---|---|---|
+| 0 | **Floors**: always silent, always respond, random, oracle | What does "no skill" score? (And does our scoring code work: oracle must be 100, silent must be 0.) | sanity |
+| 1 | **Edge model alone** (the baseline): every 2 s, "respond now?" from the last window and the question | How good is the small model by itself? Is its confidence accurate? | **Gate 1** |
+| 2 | Row 1 + the cues written into the prompt | Do cues help the decider? | |
+| 3 | **Embedding matcher alone**: a similarity surge fires the response, no decider | How far does the cheap path get? | **Gate 2** (how to combine cue scores, what level counts) |
+| 4 | Matcher trigger, then decider | Does gating beat either alone? | |
+| 5 | Row 4 + scene-graph evidence in the decider prompt. Sub-tests: raw question vs question-as-triplet; K=1 vs K=5; question in the memory prompt or not | Does the memory help? Which details matter? | **Gate 4** (text-only payload) |
+| 6 | **Router with GPT**: confidence routing vs random routing at the same number of GPT calls, with edge-only and GPT-everywhere as the two ends | Does confidence earn its place? | **Gate 3** |
+| later | Score head instead of Yes/No readout (VideoJev style) | Does a trained score help? | **Gate 5** (low priority) |
+| later | Hybrid: the cue trigger also decides when to pull scene graphs for the decider | Do the pieces compound? | |
+
+Rows 0 to 5 call no GPT, so they cost nothing but GPU time. GPT enters at row 6.
+
+## 5. How we measure (no LLM judge)
+
+**Benchmark:** OVO-Bench "Forward Active Responding", three task types:
+- **REC** (repetition counting): respond when the repeated action has happened again.
+- **SSR** (step-by-step tutorials): respond as each step finishes.
+- **CRR** (clue reveal): respond when the clue that answers the question appears.
+
+172 questions on 134 videos (82 REC, 42 SSR, 48 CRR), about 4.4 hours of video to judge.
+
+**Metric:** a response is correct if it lands within **±2 seconds** of a ground-truth time.
+Each ground-truth time can be matched once; extra responses near the same event count as false
+positives. Per question: recall = correct / events, precision = correct / responses (0 if the
+system never responded). Per task: average recall and precision across questions, then take the
+F1 of those two averages. Overall: the mean of the three task F1s. This is Em-Garde's scoring
+code, copied in logic exactly (decision D3, D4), with a test that checks our implementation
+against their loop on 500 random cases.
+
+**Why no LLM judge for now:** the metric scores *when* the system speaks, not what it says. That
+is the thing proactive systems get wrong, it is free to compute, it is deterministic, and it is
+the metric Em-Garde reports. ProactiveVideoQA, which does judge answer text with GPT-4.1, comes
+later and costs money from our budget of about $100.
+
+**What the floors tell us (row 0, all 172 questions, decision every 2 s, ±2 s):**
+
+| System | REC | SSR | CRR | avg F1 |
+|---|---|---|---|---|
+| always silent | 0.0 | 0.0 | 0.0 | 0.0 |
+| always respond | 29.4 | 9.0 | 8.3 | 15.6 |
+| random, 25% chance | 33.9 | 15.8 | 14.5 | 21.4 ±1.1 |
+| random, 50% chance | 37.9 | 13.8 | 13.4 | 21.7 ±0.6 |
+| oracle (sanity) | 100 | 100 | 100 | 100 |
+
+Reading it: **a coin flip scores about 21 on this metric.** Em-Garde reports 30.99 for its 2B
+setup at 2 fps, so the whole room between "no skill" and "published result" is only about ten
+points. Two cautions follow. First, the floor depends on how often the system is allowed to
+respond: at a 0.5 s cadence, always-respond falls to 4.3 and the best random setting to 19.7.
+So we always compare to floors **at the same cadence**, never to Em-Garde's number directly.
+Second, with only 43 to 73 questions per split, single runs are noisy; we report seeds or
+confidence intervals where it matters.
+
+## 6. Data and splits
+
+- Source: `data/ovo_bench_new.json` from github.com/JoeLeelyf/OVO-Bench (CC BY-NC-SA 4.0). We keep
+  only the annotations of the three forward tasks in `data/processed/ovo_far_*.jsonl` (about
+  1 MB, no video). Videos are never committed.
+- **Splits** (seed 0): dev 73 questions / 54 videos; val 43 / 39; test 56 / 41. Rebuild with
+  `python scripts/ingest_dataset.py ovo --ann <ovo_bench_new.json> --out-dir data/processed --seed 0`.
+- **Video download size.** OVO-Bench's README lists `src_videos` at about **44 GB** (all 644
+  videos, all task types) and `chunked_videos` at about **144 GB**. We need only the source
+  videos (Em-Garde also uses `src_videos`), never the chunked ones. Our 134 forward-task videos are
+  roughly a fifth of the 644, but the source videos are distributed as split tar parts
+  (`src_videos.tar.parta[a-e]`), so you probably have to download all 44 GB unless the Hugging
+  Face page offers single files (**assumed, check the Files tab**). Re-encoding to 2 fps, as
+  Em-Garde does with ffmpeg, produces a much smaller working copy.
+
+## 7. Compute plan (RTX 4060, about 8 GB)
+
+- **What BF16 is.** Model weights are stored as numbers. FP32 uses 4 bytes each; FP16 and BF16
+  use 2, halving memory. FP16 keeps finer detail but can overflow on large values. BF16 keeps
+  FP32's range with less detail and is the safer default for big models; Em-Garde's code loads
+  everything in BF16. INT8/INT4 (quantization) shrink further and are a separate, later experiment.
+- **Two-pass design (to be built).** A 3-4B decider plus a 2B embedder does not fit comfortably
+  together in 8 GB. So each model runs alone over the videos and saves its outputs to disk
+  (embeddings and cue similarities; Yes/No log-probabilities per decision point). A second,
+  CPU-only pass then applies matcher, calibration and router settings to those saved numbers.
+  Trying a new threshold takes seconds and loads no model. GPT replies are the one exception:
+  they are fetched the first time a setting needs one and cached.
+- **Decision cadence.** The decider runs every 2 s of video: 7,863 decision points over all 172
+  questions, against 31,620 at 0.5 s.
+
+## 8. Decision log
+
+Each entry: what we decided, why, the evidence, and its status.
+
+**D1. One variable per experiment, compared against the edge-only baseline.**
+*Why:* four papers each claim a component helps, in different setups, on different models and
+data. If we combine them first, we cannot tell which part earned the score or which hurt. With
+one change per row, the table is the argument. *Status:* decided with the team lead (user).
+
+**D2. Start on OVO-Bench Forward Active Responding, not ProactiveVideoQA.**
+*Why:* its score is computed from response times alone, so it needs no LLM judge, is free and
+repeatable, and is the benchmark Em-Garde reports numbers on. ProactiveVideoQA's PAUC uses a
+GPT-4.1 judge (verified in `judge_llm_scores_openai.py`), which spends budget and adds noise.
+*Evidence:* Em-Garde appendix; ProactiveVideoQA scorer. *Status:* verified.
+
+**D3. Use Em-Garde's ground truth and scoring logic exactly, with a tolerance of ±2 s.**
+*Why:* a comparison to a published number is only meaningful if the ground truth and matching
+rules are identical. Ground truth: CRR uses `clue_time`; REC and SSR use each event's start time
+plus 2 s; REC and SSR are judged from 0, CRR from `ask_time`; all stop at the last test point.
+*Evidence:* `eval/ovo_bench/ovo_bench_eval_online.py` in the Em-Garde repo (`abs(t - gt) <= 2`);
+appendix eq. 10 says "within a 2-second window". *A trap we avoided:* section 3.3.2 of the paper
+mentions a **4 s** window after the event, but that is the reward used for *training* the
+proposer, not the evaluation metric. The earlier scaffold used 4 s one-sided; we replaced it.
+*Status:* verified. A test compares our code to their loop on 500 random cases.
+
+**D4. Aggregate the way Em-Garde does: average recall and precision per task, then F1.**
+*Why:* it matches their reported numbers. *Consequence we accept and watch:* a question where
+the system never speaks scores precision 0, so silence is punished, and averaging before F1
+behaves differently from averaging per-question F1s (a unit test pins this). *Status:* verified.
+
+**D5. Baseline decision cadence is every 2 s.**
+*Why:* it cuts decider calls about 4x (7,863 vs 31,620 over the full set), which matters on a
+laptop GPU; a response within ±2 s of the event is still credited, so a 2 s grid can still land
+inside the window. *Cost:* coarser timing, and floors at this cadence are higher (see section 5),
+so every comparison uses same-cadence floors. We will test a finer cadence once the pipeline
+runs. *Status:* decided with the team lead.
+
+**D6. Seeded splits grouped by video; dev 40% / val 30% / test 30%.**
+*Why grouped:* ten videos carry several questions (one has nine). Splitting by question would let
+a threshold tuned on dev see test footage. *Why val is separate:* temperature scaling and the
+router thresholds are fit on data the model has not been scored against (Guo et al.). Test is
+used once, at the end. *Known weakness:* val has only 7 CRR questions; val windows are plentiful
+for temperature scaling, but CRR-specific claims should use dev plus test with care.
+*Status:* decided; revisit if val is too thin.
+
+**D7. BF16, no quantization in this stage.** *Why:* it is the precision Em-Garde runs
+(`torch_dtype=torch.bfloat16` in their model code), and keeping precision fixed means any score
+difference is not a precision effect. Quantization is a later experiment on both edge models.
+The scaffold's default of FP16 was changed to BF16. *Status:* verified for Em-Garde; assumed
+that it fits for our 2-4B decider.
+
+**D8. Score floors first (row 0).** *Why:* the metric turned out to be generous (a coin flip
+scores about 21), so a model result is uninterpretable without the floor at the same cadence;
+the oracle row also proves the scoring code works. *Status:* done.
+
+**D9. Two-pass cache-and-replay architecture.** *Why:* 8 GB cannot hold both models, and we
+want threshold sweeps and the random-routing control (Gate 3) to cost nothing. *Status:* decided;
+not yet built (next step).
+
+**D10. Vendor MIT-licensed code, fetch the rest.** Em-Garde's Ops-MM wrapper is copied into
+`third_party/em_garde/` with its license. ProactiveVideoQA has no license file, so its scorer is
+fetched at a pinned commit and not committed. *Status:* done.
+
+### Open on purpose
+
+**O1. Who parses the cues: GPT once, or the edge model?** The paper and project notes use GPT;
+the first scaffold used the edge model. GPT costs a few cents per question but needs the network;
+the edge model keeps everything on-device. We will run both as a factor in rows 2-5.
+
+**O2. Put the question into the memory (scene-graph) prompt or not?** Response-G1 does
+(query-guided generation, section 3.2). Our notes say it makes the model hallucinate early
+triggers. Direct disagreement, tested as a sub-row of row 5.
+
+**O3. Which trigger rule.** Em-Garde's paper: any cue rose by more than 0.04 since the previous
+step. Their released code adds two stricter conditions (compared with the value `fps` steps back,
+and above the recent average). Both are tested; the saved similarities make that free.
+
+**O4. Cue score: any cue vs the average across cues** (Gate 2).
+
+**O5. The 7B reference run.** Em-Garde's proposer is a 7B model that does not fit on the 4060 in
+BF16 (about 15 GB). Needs a larger GPU or a quantized load, which conflicts with D7.
+
+## 9. Not yet verified
+
+- Whether the Hugging Face page lets us download only the forward-task videos (section 6).
+- Em-Garde's 52.3 PAUC reproduction on ProactiveVideoQA EGO (their code and weights are public;
+  we have not run them).
+- That the embedder wrapper's method names work with our wiring (we vendored their file but have
+  not run it).
+
+## 10. Glossary
+
+- **Edge model / edge VLM**: the small vision-language model that runs on the device.
+- **Cue**: a short description of what the camera would see at the moment of the answer.
+- **Embedding**: a list of numbers representing a piece of text or video so similarity can be measured.
+- **Cosine similarity**: how aligned two embeddings are, from -1 to 1.
+- **Scene graph / triplet**: a note like `(hand, holds, pot)`: subject, relation, object.
+- **p(Yes)**: the model's probability of answering "Yes" to "respond now?", read from its output scores.
+- **Calibration / temperature scaling**: adjusting p(Yes) so that "90%" means right about 90% of the time.
+- **Router**: the rule that sends a moment to the edge, to silence, or to GPT based on p(Yes).
+- **Floor / oracle**: the score of a system with no skill / one that knows the answer times.
+- **Gate**: a checkpoint experiment that must pass before we trust the next step.
+
+## 11. Changelog
+
+- 2026-11-15: First version. Ingestion, seeded splits, Em-Garde-faithful metric, floors, and a
+  scoring CLI added. Tolerance moved from 4 s one-sided to ±2 s. Default dtype set to BF16.

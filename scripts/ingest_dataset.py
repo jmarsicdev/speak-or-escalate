@@ -1,65 +1,50 @@
-"""Convert a raw benchmark download into data/processed/<split>.jsonl.
+"""Turn a raw benchmark annotation file into seeded dev/val/test JSONL splits.
 
-    python scripts/ingest_dataset.py ovo  --raw data/raw/ovo --out data/processed/dev.jsonl
-    python scripts/ingest_dataset.py toy  --out data/processed/toy.jsonl
+    # real annotations: data/ovo_bench_new.json from https://github.com/JoeLeelyf/OVO-Bench
+    python scripts/ingest_dataset.py ovo --ann path/to/ovo_bench_new.json --out-dir data/processed --seed 0
 
-TODO(data): fill in the OVO-Bench and StreamingBench parsers once the raw files are
-downloaded. Both ship a JSON annotation file plus a videos/ folder; the fields we need
-are video path, the query text, and the ground-truth response timestamps (OVO calls
-them `realtime`/`gt_timestamp` depending on task; StreamingBench PO has `ground_truth_time`).
-Verify the exact keys against the downloaded files before relying on this.
+    python scripts/ingest_dataset.py toy --out-dir data/processed
+
+Writes <out-dir>/ovo_far_{all,dev,val,test}.jsonl. Only annotations are written, never video.
+Videos are located later through data.video_root + each sample's relative `video` path.
 """
 from __future__ import annotations
 
 import argparse
-import json
-from pathlib import Path
-
+import collections
 import sys
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from egogate.eval.datasets import Sample, toy_samples, write_jsonl  # noqa: E402
-from egogate.types import Event  # noqa: E402
-
-
-def ingest_ovo(raw: Path) -> list[Sample]:
-    """OVO-Bench Forward Active Responding (CRR / SSR / REC)."""
-    ann_files = list(raw.glob("*.json"))
-    if not ann_files:
-        raise FileNotFoundError(f"no annotation json under {raw}")
-    samples = []
-    for ann in ann_files:
-        for r in json.load(open(ann)):
-            task = r.get("task", ann.stem)
-            if task not in ("CRR", "SSR", "REC"):
-                continue
-            # TODO(data): confirm field names
-            events = [Event(t=float(t), answer=None) for t in r.get("gt_timestamps", [])]
-            samples.append(Sample(id=f"ovo_{task}_{r['id']}", video=raw / "videos" / r["video"],
-                                  query=r["question"], events=events, task=task))
-    return samples
-
-
-def ingest_streamingbench(raw: Path) -> list[Sample]:
-    """StreamingBench Proactive Output task."""
-    raise NotImplementedError("TODO(data): implement after download")
+from egogate.eval.datasets import toy_samples, write_jsonl  # noqa: E402
+from egogate.eval.ovo import decision_times, parse_ovo  # noqa: E402
+from egogate.eval.splits import split_samples  # noqa: E402
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("source", choices=["ovo", "streamingbench", "toy"])
-    ap.add_argument("--raw", type=Path, default=None)
-    ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument("source", choices=["ovo", "toy"])
+    ap.add_argument("--ann", type=Path, default=None, help="OVO-Bench ovo_bench_new.json")
+    ap.add_argument("--out-dir", type=Path, required=True)
+    ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()
+
     if args.source == "toy":
-        samples = toy_samples(5)
-    elif args.source == "ovo":
-        samples = ingest_ovo(args.raw)
-    else:
-        samples = ingest_streamingbench(args.raw)
-    write_jsonl(samples, args.out)
-    print(f"wrote {len(samples)} samples -> {args.out}")
+        write_jsonl(toy_samples(5), args.out_dir / "toy.jsonl")
+        print(f"wrote toy samples -> {args.out_dir / 'toy.jsonl'}")
+        return
+
+    samples = parse_ovo(args.ann)
+    splits = split_samples(samples, seed=args.seed)
+    write_jsonl(samples, args.out_dir / "ovo_far_all.jsonl")
+    for name, ss in splits.items():
+        write_jsonl(ss, args.out_dir / f"ovo_far_{name}.jsonl")
+        tasks = dict(collections.Counter(s.task for s in ss))
+        hours = sum((s.end_s or 0) - s.start_s for s in ss) / 3600
+        pts = sum(len(decision_times(s, 2.0)) for s in ss)
+        print(f"{name:5s} {len(ss):4d} questions  {len({str(s.video) for s in ss}):3d} videos  {tasks}  "
+              f"{hours:.2f} h judged  {pts} decision points @2s")
 
 
 if __name__ == "__main__":

@@ -31,7 +31,7 @@ edge:
   backend: mock     # mock | hf
   model_id: Qwen/Qwen2.5-VL-3B-Instruct   # or google/gemma-3-4b-it
   device: cuda
-  dtype: float16
+  dtype: bfloat16
   quant: null       # null | int8 | int4  (for the Jetson work, not the baseline)
 
 cloud:
@@ -43,7 +43,7 @@ policy:
   hi: 0.7           # p_speak >= hi -> edge answers; in between -> cloud
 
 eval:
-  tol_s: 4.0        # correct if response within [event, event + tol]
+  tol_s: 2.0        # correct if within +/- tol of an event (Em-Garde uses 2)
   calib_bins: 10
 
 output:

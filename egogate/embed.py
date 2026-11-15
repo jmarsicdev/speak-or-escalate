@@ -49,7 +49,7 @@ class OpsMMEmbedder(Embedder):
     (https://huggingface.co/OpenSearch-AI/Ops-MM-embedding-v1-2B) on the first GPU run.
     """
 
-    def __init__(self, model_id: str = "OpenSearch-AI/Ops-MM-embedding-v1-2B", device: str = "cuda", dtype: str = "float16"):
+    def __init__(self, model_id: str = "OpenSearch-AI/Ops-MM-embedding-v1-2B", device: str = "cuda", dtype: str = "bfloat16"):
         import torch  # noqa: PLC0415
         from transformers import AutoModel, AutoProcessor  # noqa: PLC0415
 

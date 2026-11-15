@@ -6,7 +6,7 @@ from egogate.cloud import MockCloud
 from egogate.cues import CueParser, parse_cue_json
 from egogate.edge import MockEdgeVLM
 from egogate.embed import Embedder, Matcher, MatcherConfig
-from egogate.eval.metrics import calibration_table, online_pr, summarize_run
+from egogate.eval.metrics import calibration_table, match_detections, score_question, summarize_run
 from egogate.evidence import parse_triplets
 from egogate.pipeline import Components, run_stream
 from egogate.router import BandPolicy, RoutingThresholds
@@ -52,12 +52,14 @@ def test_band_policy():
     assert p.decide(0.9, False) == Action.SILENT
 
 
-def test_online_pr_tolerance_and_one_to_one():
-    events = [Event(10.0), Event(30.0)]
-    pr = online_pr([11.0, 12.0, 50.0], events, tol=4.0)  # one hit, one dup, one miss
-    assert (pr.n_correct, pr.n_pred, pr.n_gt) == (1, 3, 2)
-    assert pr.recall == 0.5 and abs(pr.precision - 1 / 3) < 1e-9
-    assert online_pr([9.0], events, tol=4.0).n_correct == 0  # before the event doesn't count
+def test_metric_tolerance_is_symmetric_and_one_to_one():
+    # Em-Garde counts a response within +/- tol of the event, one detection per event
+    q = score_question([11.0, 12.0, 50.0], [10.0, 30.0], tol=2.0)  # one hit, one dup, one miss
+    assert (q.n_correct, q.n_det, q.n_gt) == (1, 3, 2)
+    assert q.recall == 0.5 and abs(q.precision - 1 / 3) < 1e-9
+    assert score_question([9.0], [10.0], tol=2.0).n_correct == 1  # slightly early still counts
+    assert score_question([7.9], [10.0], tol=2.0).n_correct == 0
+    assert score_question([], [10.0]).precision == 0.0  # no detections -> precision 0, as in Em-Garde
 
 
 def test_parsers():
@@ -98,6 +100,6 @@ def test_end_to_end_mock_pipeline():
     assert [d.t for d in decisions] == [10.0, 30.0]
     assert [d.source for d in decisions] == ["edge", "cloud"]
     assert cloud.n_calls == 1  # cloud only in the uncertain band
-    summ = summarize_run(decisions, [Event(10.0), Event(30.0)], tol=4.0)
+    summ = summarize_run(decisions, [Event(10.0), Event(30.0)], tol=2.0)
     assert summ["recall"] == 1.0 and summ["precision"] == 1.0 and summ["n_cloud_calls"] == 1
     assert calibration_table(decisions, [Event(10.0), Event(30.0)])

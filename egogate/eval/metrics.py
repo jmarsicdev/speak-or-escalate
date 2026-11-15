@@ -1,76 +1,98 @@
-"""Scoring without an LLM judge.
+"""Scoring without an LLM judge: Em-Garde's online recall / precision / F1 on OVO-Bench.
 
-online_pr: Em-Garde's online recall/precision for response *timing*.
-  A predicted response time is correct if it falls within [event_t, event_t + tol]
-  of a ground-truth event; each event can be matched at most once.
-  (OVO-Bench's original offline accuracy can be gamed by always answering "yes";
-   this metric cannot.)
+This reproduces the scoring loop in Em-Garde's `eval/ovo_bench/ovo_bench_eval_online.py`
+(MIT licence, https://github.com/air-embodied-brain/Em-Garde), so our numbers are comparable
+to theirs. The rules, in plain terms:
 
-calibration_table: bins p_speak and reports how often a response in each bin was
-  actually correct, for the "is the model's confidence accurate?" question and the
-  F1/recall heatmap over (lo, hi) thresholds.
+  * A detection is correct if it is within +/- `tol` seconds of a ground-truth time
+    (symmetric: a response slightly BEFORE the event also counts). Em-Garde uses tol = 2.
+  * Matching is one-to-one. For each ground-truth time, in order, the first unused
+    detection within tol is consumed. Extra detections near the same event are false positives.
+  * Per question: recall = correct / n_gt;  precision = correct / n_detections
+    (0 when the model made no detection at all).
+  * Per task: average recall and precision over questions, THEN F1 of those two averages
+    (not the average of per-question F1s).
+  * Overall: the unweighted mean of the per-task F1s.
 
-summarize_run: one row per (video, query, policy) with timing F1, cloud calls, etc.
+See docs/RATIONALE.md, decisions D3 and D4, for why we copy this exactly.
 """
 from __future__ import annotations
 
+from collections import defaultdict
 from dataclasses import dataclass
 
 import numpy as np
 
 from ..types import Action, Decision, Event
 
+DEFAULT_TOL_S = 2.0
+
+
+def match_detections(det_times: list[float], gt_times: list[float], tol: float = DEFAULT_TOL_S) -> list[bool]:
+    """Which detections are correct. Same greedy order as Em-Garde: loop over GT, take the
+    first still-unused detection within tol. Returns one flag per detection, in input order."""
+    used = [False] * len(det_times)
+    for gt in gt_times:
+        for i, t in enumerate(det_times):
+            if not used[i] and abs(t - gt) <= tol:
+                used[i] = True
+                break
+    return used
+
 
 @dataclass
-class PR:
+class QuestionScore:
     recall: float
     precision: float
-    f1: float
     n_correct: int
-    n_pred: int
+    n_det: int
     n_gt: int
 
 
-def match_responses(pred_times: list[float], events: list[Event], tol: float = 4.0) -> list[bool]:
-    """Greedy one-to-one matching in time order. Returns correctness per prediction."""
-    unmatched = sorted(e.t for e in events)
-    correct = []
-    for t in sorted(pred_times):
-        hit = None
-        for i, et in enumerate(unmatched):
-            if et <= t <= et + tol:
-                hit = i
-                break
-        if hit is not None:
-            unmatched.pop(hit)
-        correct.append(hit is not None)
-    return correct
+def score_question(det_times: list[float], gt_times: list[float], tol: float = DEFAULT_TOL_S) -> QuestionScore:
+    n_correct = sum(match_detections(det_times, gt_times, tol))
+    n_det, n_gt = len(det_times), len(gt_times)
+    recall = n_correct / n_gt if n_gt else 0.0
+    precision = n_correct / n_det if n_det else 0.0
+    return QuestionScore(recall, precision, n_correct, n_det, n_gt)
 
 
-def online_pr(pred_times: list[float], events: list[Event], tol: float = 4.0) -> PR:
-    correct = match_responses(pred_times, events, tol)
-    n_c, n_p, n_g = sum(correct), len(pred_times), len(events)
-    rec = n_c / n_g if n_g else 0.0
-    pre = n_c / n_p if n_p else 0.0
-    f1 = 2 * rec * pre / (rec + pre) if (rec + pre) else 0.0
-    return PR(rec, pre, f1, n_c, n_p, n_g)
+def f1_of(recall: float, precision: float) -> float:
+    return 2 * recall * precision / (recall + precision) if (recall + precision) > 0 else 0.0
+
+
+def aggregate(per_question: list[dict]) -> dict:
+    """per_question rows need keys: task, recall, precision. Returns per-task and overall scores."""
+    by_task: dict[str, list[dict]] = defaultdict(list)
+    for r in per_question:
+        by_task[r["task"]].append(r)
+    out: dict = {"tasks": {}}
+    for task, rows in sorted(by_task.items()):
+        rec = float(np.mean([r["recall"] for r in rows]))
+        pre = float(np.mean([r["precision"] for r in rows]))
+        out["tasks"][task] = {"recall": rec, "precision": pre, "f1": f1_of(rec, pre), "n_questions": len(rows)}
+    f1s = [t["f1"] for t in out["tasks"].values()]
+    out["avg_f1"] = float(np.mean(f1s)) if f1s else 0.0
+    return out
+
+
+def detection_times(decisions: list[Decision]) -> list[float]:
+    """Times at which the system chose to respond (edge answer or cloud answer)."""
+    return [d.t for d in decisions
+            if d.action in (Action.EDGE_ANSWER, Action.ESCALATE) and d.answer is not None]
 
 
 def responded(decisions: list[Decision]) -> list[Decision]:
     return [d for d in decisions if d.action in (Action.EDGE_ANSWER, Action.ESCALATE) and d.answer is not None]
 
 
-def calibration_table(decisions: list[Decision], events: list[Event], tol: float = 4.0, bins: int = 10) -> list[dict]:
-    """For every *triggered* decision (silent or not), was 'now' actually a response time?
-    Groups by p_speak bin so we can see whether high confidence means correct."""
-    trig = [d for d in decisions if d.meta.get("triggered")]
+def calibration_table(decisions: list[Decision], events: list[Event], tol: float = DEFAULT_TOL_S, bins: int = 10) -> list[dict]:
+    """For every *triggered* decision (silent or not), was 'now' a correct response time?
+    Groups by p_speak bin: does high confidence mean correct?  (Gate 1)."""
+    trig = sorted((d for d in decisions if d.meta.get("triggered")), key=lambda d: d.t)
     if not trig:
         return []
-    labels = match_responses([d.t for d in trig], events, tol)
-    # match_responses sorts by time; re-align to trig order
-    order = np.argsort([d.t for d in trig])
-    lab = np.empty(len(trig), dtype=bool)
-    lab[order] = labels
+    lab = np.array(match_detections([d.t for d in trig], [e.t for e in events], tol))
     ps = np.array([d.p_speak for d in trig])
     edges = np.linspace(0, 1, bins + 1)
     rows = []
@@ -82,16 +104,15 @@ def calibration_table(decisions: list[Decision], events: list[Event], tol: float
     return rows
 
 
-def summarize_run(decisions: list[Decision], events: list[Event], tol: float = 4.0) -> dict:
+def summarize_run(decisions: list[Decision], events: list[Event], tol: float = DEFAULT_TOL_S) -> dict:
     resp = responded(decisions)
-    pr = online_pr([d.t for d in resp], events, tol)
+    qs = score_question([d.t for d in resp], [e.t for e in events], tol)
     n_trig = sum(1 for d in decisions if d.meta.get("triggered"))
-    n_cloud = sum(1 for d in decisions if d.cost > 0)
     return {
-        "recall": pr.recall, "precision": pr.precision, "f1": pr.f1,
-        "n_gt": pr.n_gt, "n_responses": pr.n_pred, "n_correct": pr.n_correct,
-        "n_false_positives": pr.n_pred - pr.n_correct,
-        "n_triggers": n_trig, "n_cloud_calls": n_cloud,
+        "recall": qs.recall, "precision": qs.precision, "f1": f1_of(qs.recall, qs.precision),
+        "n_gt": qs.n_gt, "n_responses": qs.n_det, "n_correct": qs.n_correct,
+        "n_false_positives": qs.n_det - qs.n_correct,
+        "n_triggers": n_trig, "n_cloud_calls": sum(1 for d in decisions if d.cost > 0),
         "n_edge_answers": sum(1 for d in resp if d.source == "edge"),
         "n_cloud_answers": sum(1 for d in resp if d.source == "cloud"),
     }

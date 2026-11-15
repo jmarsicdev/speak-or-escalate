@@ -44,16 +44,22 @@ egogate/                    the pipeline package (our code)
   router.py     BandPolicy (lo / hi thresholds)
   pipeline.py   run_stream(): glues everything, logs sims/deltas/p_speak per window
   eval/
-    metrics.py  online recall/precision with tolerance window, calibration table, run summary
+    metrics.py  Em-Garde online recall/precision/F1 (+/- 2 s), calibration table, run summary
     datasets.py normalised JSONL loader, toy samples
+    ovo.py      OVO-Bench forward-task parsing and the decision-time grid
+    splits.py   seeded dev/val/test split, grouped by video
+    floors.py   no-skill reference systems
 configs/default.yaml        every knob with its default
 scripts/
   run_baseline.py           run the pipeline -> results/baseline/{summary.json, <id>.jsonl, <id>.calib.json}
-  ingest_dataset.py         raw benchmark -> data/processed/*.jsonl   (OVO parser is a TODO)
+  ingest_dataset.py         OVO-Bench annotations -> seeded dev/val/test jsonl
+  score_detections.py       score any system's detections with the Em-Garde metric
+  eval_floors.py            row 0: always-silent / always-respond / random / oracle
   fetch_proactivevideoqa.sh clone the ProactiveVideoQA scorer at a pinned commit (see third_party/)
 tests/test_core.py          matcher, router, metric, cue parsing, end-to-end mock run
 data/                       raw/ and processed/ stay local (gitignored); only .gitkeep is tracked
 results/                    run outputs; small JSON/CSV/JSONL that we read back from git
+docs/RATIONALE.md           what we do, why, the experiment ladder, gates and the decision log
 docs/papers/                the 8 reference PDFs, named <short-name>_<arxiv-id>.pdf, with a README
                             saying what we take from each. Kept in the repo so they are read page by
                             page when a detail matters, instead of pasted into a chat.
@@ -99,24 +105,32 @@ Any config key can be overridden with `--set dotted.key=value`; the resolved con
 
 ## Metric
 
-Response timing is scored with online recall/precision: a response counts if it lands within
-`[event_t, event_t + tol_s]` (default 4 s) of a ground-truth event, one match per event.
-No LLM-as-judge. OVO-Bench's original offline accuracy is gameable (always answering "yes"
-scores ~60%), so we don't use it. `summary.json` also reports trigger count, false positives,
-and cloud calls per sample; `<id>.calib.json` bins p_speak against whether the trigger was a
-real response time.
+Response timing is scored the way Em-Garde scores OVO-Bench Forward Active Responding: a response is
+correct if it lands within **+/- 2 s** of a ground-truth time, one match per event; recall and precision
+are averaged per task and combined into F1. No LLM-as-judge. The implementation is
+`egogate/eval/metrics.py` and is tested against Em-Garde's own scoring loop. Why these exact rules, and
+what a coin-flip system scores on this metric (about 21 F1), is in `docs/RATIONALE.md`.
+
+## Experiments and rationale
+
+`docs/RATIONALE.md` is the document to read first: the problem, the experiment ladder (rows 0-6, one change
+per row, compared against the edge-only baseline), the gates, the data and splits, and a decision log that
+records each choice with the paper or code behind it.
+
+Evaluation tooling that exists now (no models or video needed):
+
+```bash
+python scripts/ingest_dataset.py ovo --ann path/to/ovo_bench_new.json --out-dir data/processed --seed 0
+python scripts/eval_floors.py --samples data/processed/ovo_far_val.jsonl     # row 0: no-skill baselines
+python scripts/score_detections.py --samples data/processed/ovo_far_val.jsonl --detections <file>.jsonl
+```
+
+`data/processed/ovo_far_{all,dev,val,test}.jsonl` hold the OVO-Bench forward-task annotations and the seeded
+splits (annotations only, CC BY-NC-SA 4.0; videos are never committed).
 
 ## Next steps (in order)
 
-1. **Data.** Download OVO-Bench (Forward Active Responding: CRR / SSR / REC) and/or StreamingBench
-   Proactive Output. Finish `ingest_ovo()` in `scripts/ingest_dataset.py` against the real field
-   names and write `data/processed/dev.jsonl`.
-2. **Embedder.** Run `OpsMMEmbedder` once on the GPU box; the `get_text_embeddings` /
-   `get_video_embeddings` method names in `egogate/embed.py` are placeholders to fix from the model card.
-3. **Edge model.** Validate `HFEdgeVLM` with `Qwen/Qwen2.5-VL-3B-Instruct`, then `google/gemma-3-4b-it`.
-   Check the Yes/No token ids and chat template per family.
-4. **Baseline numbers.** Run on the dev split; look at F1, false positives, and cloud calls per video.
-
-Experiments from the project doc (random GPT calls vs. confidence, matcher variants, evidence-only
-payload, threshold sweeps, decision-by-score vs. generation) are not in the repo yet; they come
-after the baseline numbers exist.
+1. **Download videos** on the GPU laptop: OVO-Bench `src_videos` (about 44 GB). Set `data.video_root`.
+2. **Two-pass cache**: embed every window once, run the decider once, save both; replay settings on CPU.
+3. **Row 1, edge model alone**: Qwen and Gemma, BF16, one decision per 2 s, scored with `score_detections.py`.
+4. **Rows 2-5**, then the router (row 6).
