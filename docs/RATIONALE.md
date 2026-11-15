@@ -222,7 +222,28 @@ indexed). The dataset revision is pinned (`fec29e3`) so the index cannot silentl
 *Cost:* about 650 small requests to build the index once; the index is committed so nobody repeats it.
 *Status:* verified end to end on one video; the full 5 GB fetch has not been run yet.
 
+**D12. The cache-and-replay design is an evaluation harness only, with two validity rules and one check.**
+*What it is:* we run each model once on a recorded benchmark video, store its raw outputs, and then
+combine and re-score them under many settings. *What it is not:* the deployed system. The deployed
+system is streaming and causal (frames up to time `t` only), with both models resident and running
+concurrently. *Rule 1, causality:* every stored number at time `t` may use only video up to `t`.
+*Rule 2, no feedback:* a stored stage's inputs must not depend on the system's own earlier decisions
+(cooldowns and the router are applied in stage 2 for that reason). *Check:* on a few videos, run the
+real frame-by-frame loop (`run_stream`) and the replay with identical settings and require identical
+detections; this runs once after both exist, to confirm the shortcut matches the real thing.
+*Also:* latency is logged per component (matcher, decider, memory) in the live loop, since replay
+deliberately ignores latency, concurrency and memory management; those belong to the hybrid build.
+*Status:* decided; the check and timers are not yet built.
+
 ### Open on purpose
+
+**O6. How the stored decider outputs line up with the matcher's triggers.** The matcher steps every
+0.5 s but the baseline decider is cached every 2 s (D5), so a trigger at t = 13.5 has no stored decider
+answer. Options: (a) cache the decider every 0.5 s (4x the GPU time); (b) snap each trigger to the next
+2 s decision point (also realistic: "on trigger, answer at the next tick"); (c) compute the decider on
+demand at trigger times and memoize it by (video, time, prompt variant). Leaning to (c), with (b) as the
+cheaper fallback. Needs a decision before row 4 is built.
+
 
 **O1. Who parses the cues: GPT once, or the edge model?** The paper and project notes use GPT;
 the first scaffold used the edge model. GPT costs a few cents per question but needs the network;
