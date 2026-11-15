@@ -474,14 +474,14 @@ This is why a model row has to be compared with a floor that has the same cooldo
 
 | Model setting | Responses | Model F1 | Timer with a similar number of responses | Timer F1 |
 |---|---|---|---|---|
-| threshold 0.05, 4 s cooldown | 1002 | 26.7 | respond every 4 s (991) | 27.1 ± 0.2 |
-| threshold 0.50, 8 s cooldown | 422 | 25.7 | respond every 8 s (492) | 26.9 ± 2.1 |
+| threshold 0.05, 4 s cooldown | 1002 | 26.7 | respond every 4 s (about 990) | 27.0 ± 0.3 |
+| threshold 0.50, 8 s cooldown | 422 | 25.7 | respond every 8 s (about 495) | 27.6 ± 2.2 |
 | threshold 0.80, 4 s cooldown | 345 | 29.7 | respond every 12 s (about 330) | 23.1 ± 3.5 |
-| threshold 0.80, 8 s cooldown | 212 | 32.0 | respond every 16 s (246) | 19.4 ± 4.1 |
+| threshold 0.80, 8 s cooldown | 212 | 32.0 | respond every 16 s (about 250) | 20.2 ± 3.6 |
 
 At low and middle thresholds the model is no better than speaking on a timer. At threshold 0.80, where it responds only
-when quite sure, it scores 6 to 13 points above a timer making a similar number of responses. (Timer rows: 10 random
-starting phases, `scripts/eval_floors.py`; the 12 s figure is from a 30-phase run on val.)
+when quite sure, it scores 7 to 12 points above a timer making a similar number of responses. (Timer rows are the 30-phase
+figures from section 5; the ± is the spread across phases, not a confidence interval.)
 
 **Reading 4: the ranking signal is real but weak.** Taking every decision, and labelling it "positive" when it falls within
 2 s of a true event (313 of 1,983, or 15.8%), we asked how well p(Yes) ranks positives above the rest. AUC is the chance
@@ -495,7 +495,7 @@ that a random positive outranks a random negative: 0.5 means no skill, 1.0 is pe
 | CRR (clue reveal, 7) | 0.61 | 0.56 | 0.45 |
 
 **Per task for the best cell** (threshold 0.80, 8 s cooldown): REC 50.4, SSR 29.9, CRR 15.6. The timer that responds every
-16 s scores REC 28.5, SSR 15.7, CRR 13.9. REC accounts for most of the gap; CRR (7 questions, long videos) is barely above the timer.
+16 s scores REC 28.5, SSR 15.7, CRR 13.9 (10 phases, `scripts/eval_floors.py`). REC accounts for most of the gap; CRR (7 questions, long videos) is barely above the timer.
 
 **What this means.**
 - The decider alone is weakly informative: when it is very sure, it is right more often than a timer would be. It is not
