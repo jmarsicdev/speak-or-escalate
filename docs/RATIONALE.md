@@ -566,7 +566,7 @@ At low and middle thresholds the model is no better than speaking on a timer. At
 when quite sure, it scores 7 to 12 points above a timer making a similar number of responses. (Timer rows are the 30-phase
 figures from section 5; the ± is the spread across phases, not a confidence interval.)
 
-**Reading 4: the ranking signal is real but weak.** Taking every decision, and labelling it "positive" when it falls within
+**Reading 4: the ranking signal is real but weak.** (*Correction added after row 3:* the figures below pool every decision from every question, which mixes in differences between questions, such as REC questions having higher p(Yes) everywhere. Averaging the AUC within each question instead gives 0.614, not 0.71. That is the number to compare with the matcher; see the row 3 section.) Taking every decision, and labelling it "positive" when it falls within
 2 s of a true event (313 of 1,983, or 15.8%), we asked how well p(Yes) ranks positives above the rest. AUC is the chance
 that a random positive outranks a random negative: 0.5 means no skill, 1.0 is perfect.
 
@@ -614,8 +614,18 @@ output of `notebooks/row3_cue_matcher.ipynb`; the stored similarities are not in
 | largest one-step rise (the quantity the paper's rule thresholds) | 0.540 |
 | *for comparison, row 1: the decider's p(Yes)* | *0.706* |
 
-The cues carry some signal, weaker than the decider's. The rise, which is what a trigger rule actually looks at, is the weakest on this
-step-by-step measure. This measure averages over all steps; the F1 below depends only on the strongest triggers, so the two do not have to agree.
+Those figures pool all steps from all questions, which mixes in differences *between* questions (each question has its own cues and so its own typical
+similarity level). Averaging the AUC within each question instead gives a cleaner picture, and it changes the comparison with row 1:
+
+| Signal (AUC computed within each question, then averaged; 43 questions) | AUC |
+|---|---|
+| matcher: highest similarity among the cues | 0.612 |
+| matcher: average similarity across the cues | 0.624 |
+| matcher: largest one-step rise | 0.554 |
+| decider (row 1): p(Yes) | 0.614 |
+
+So the matcher and the decider are about equally informative, and both only weakly (0.5 is no skill). The 0.71 quoted for row 1 above was inflated by the pooling. The rise, which is
+what a trigger rule actually looks at, is the weakest of the four. This measure averages over all steps; the F1 below depends only on the strongest triggers, so the two need not agree.
 
 **What the sweep shows.** Average F1 (number of responses in brackets) for the rule in Em-Garde's released code, any cue may fire, with a 4 s
 cooldown, across thresholds (higher threshold means fewer, more selective triggers):
@@ -647,11 +657,27 @@ questions, so we keep "any cue" (the paper's choice, and it is robust to the thr
 
 **Reading 4 (duplicates).** Removing near-duplicate triggers matters a lot: with no cooldown the best is 22.3, against 31.8 with a 4 s cooldown. Em-Garde's own embedding-based rule is about the same as the 4 s cooldown (31.0).
 
-**What this means.** The matcher with our small, untrained cue writer is not useless: it finds events somewhat better than a timer, about as well as the
-decider alone. Neither is strong, and nothing has been combined yet. The cue-quality hypothesis from D18 (sports clips and tutorials do better than everyday objects, clue-reveal questions worst) is not yet tested; it needs the per-question results.
+**Reading 5: where it works (the cue-quality question from D18).** Splitting the best setting (released rule, any cue, threshold 0.03, 4 s cooldown) by question type. The
+type and the video source coincide: clue-reveal questions are all MovieNet clips, tutorials all COIN, and the counting questions split into sports clips (thumos) and everyday-object clips (perception_test).
+The timer is the "respond every k seconds" system whose number of responses is closest to the matcher's in that group (30 random phases).
 
-**Caveats.** One split of 43 questions; settings chosen and scored on the same questions; no confidence intervals yet; timer figures interpolated; the per-task numbers and the stored similarities are not in the repository, so
-this section only uses what the notebook printed.
+| Group | Questions | Matcher F1 | Recall / precision | Responses | Closest timer | AUC within question (matcher highest similarity / decider) |
+|---|---|---|---|---|---|---|
+| Counting, sports clips | 10 | **57.0** | 68% / 49% | 99 | 32.7 ± 5.2 (103 responses) | 0.67 / 0.70 |
+| Counting, everyday objects | 14 | 40.2 | 38% / 43% | 37 | 38.4 ± 6.3 (40) | 0.60 / 0.62 |
+| Tutorial steps | 12 | 26.2 | 68% / 16% | 249 | 18.2 ± 2.4 (271) | 0.67 / 0.60 |
+| Clue reveal | 7 | 21.5 | 71% / 13% | 41 | 20.3 ± 8.5 (38) | 0.46 / 0.50 |
+
+This matches what the cues looked like (D18): sports clips, where the cues were concrete and on topic, gain about 24 points over a timer; tutorials gain about 8 but with many
+false alarms (precision 16%); everyday-object counting and clue reveal gain nothing, and for those the cues were the weakest (invented scenes, or guesses at an answer that a text-only writer cannot know).
+For clue-reveal questions neither the matcher nor the decider separates event from non-event at all (AUC 0.46 and 0.50). *Caution:* this cannot separate "better cues" from "different kind of video"; sports
+broadcasts are visually distinctive and may suit an embedding model regardless of cue wording. The groups are 7 to 14 questions each, so these are indications, not measurements.
+
+**What this means.** The matcher with our small, untrained cue writer is not useless: it finds events better than a timer in some kinds of video (clearly in sports clips, somewhat in tutorials) and
+not at all in others. Within a question, it is about as informative as the decider alone (AUC 0.61 each), and the two differ by group (the matcher is better on tutorials, the decider on sports and everyday objects),
+which is some reason to think they could complement each other; row 4 tests that directly. Nothing has been combined yet.
+
+**Caveats.** One split of 43 questions; settings chosen and scored on the same questions; no confidence intervals yet; timer figures interpolated; the per-group numbers come from `scripts/analyze_matcher.py` on the stored similarities (now in the repository).
 
 
 ## 10. Glossary
