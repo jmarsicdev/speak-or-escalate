@@ -1,0 +1,11 @@
+{
+ "embedder": "opsmm",
+ "model_id": "OpenSearch-AI/Ops-MM-embedding-v1-2B",
+ "attn": "sdpa",
+ "stride_s": 0.5,
+ "window_s": 2.0,
+ "fps": 2.0,
+ "max_pixels": 78400,
+ "window_prompt": "newline-suffix",
+ "code_commit": "3c0a33a"
+}

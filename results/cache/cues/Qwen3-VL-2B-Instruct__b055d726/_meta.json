@@ -1,0 +1,7 @@
+{
+ "model_id": "Qwen/Qwen3-VL-2B-Instruct",
+ "dtype": "bfloat16",
+ "n_cues": 3,
+ "prompt_hash": "4c08b7bec0",
+ "source": "edge_text_only"
+}
