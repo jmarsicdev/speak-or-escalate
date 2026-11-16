@@ -435,11 +435,21 @@ their code (`streaming_fps=2`, `streaming_length=2`, so a 4-frame window) agree.
   `scripts/check_streaming.py` repeats the comparison and the timing on any machine; run it on the 4060 (in an environment
   with transformers 4.52.3, since that is the only place the shortcut runs) to get the real ratio.
 - **Attention.** Their default is `flash_attention_2`, which is not available on this laptop setup; we use `sdpa`.
-- **Frame size.** Their loader resizes frames with Qwen's smart_resize to an area of at most 280 x 280 = 78,400 pixels (364 x
-  196 for a 16:9 frame, 91 visual tokens). We now use the same rule (`matcher.max_pixels: 78400`). The first version reused the
-  decider's 448 x 252 frames (144 tokens), which was an inherited default, not a choice; it is changed.
+- **Frame size, and a hidden upscaling step.** Their loader decodes frames with Qwen's smart_resize to an area of at most 280 x
+  280 = 78,400 pixels (364 x 196 for a 16:9 frame, 91 visual tokens). We use the same rule (`matcher.max_pixels: 78400`); the
+  first version reused the decider's 448 x 252 frames, an inherited default, not a choice. **However**, the embedding wrapper then
+  resizes every frame *up* to a minimum of 256 x 28 x 28 = 200,704 pixels (256 visual tokens) before the model sees it, in both
+  their streaming path and the standard path. A 4-frame window is therefore about 1,085 tokens, not the roughly 400 that the
+  decoded size suggests. I had not noticed this; the first GPU timing (720 ms per step, about 95 minutes for the val split) is
+  what exposed it.
+- **What the upscaling costs and changes (`scripts/diagnose_embed_speed.py`, measured on a 4-core CPU, so read the ratios, not
+  the milliseconds):** without it a window is 393 tokens and a step takes 2.1 s against 7.1 s with it (3.3 times faster), but the
+  vector changes: cosine 0.94 against the upscaled one. That is a larger change than the cosine of 0.998-1.00 we accepted for
+  the newline fix, so we do not assume it is harmless. *Decision:* keep Em-Garde's upscaling as the default, because the goal
+  of row 3 is to test their matcher as published, and the run is a one-time, resumable cost. A cheaper variant exists
+  (`matcher.min_pixels`, cache keyed separately) and can be compared on the Gate 2 diagnostic later if time becomes the constraint.
 - **The first 1.5 s of a video** have no full 4-frame window and are skipped, not padded; no true event is that early.
-*Status:* the shortcut-vs-from-scratch equivalence is verified on CPU; the embedder's GPU speed is not measured yet.
+*Status:* the shortcut-vs-from-scratch equivalence is verified on CPU. Measured on the RTX 4060: median 720 ms per step from scratch, about 95 minutes for the 7,900 val steps and roughly 6 hours for all 31,600 steps of the three splits.
 
 **D18. Cues come from the edge model reading only the question (this settles O1).** Qwen3-VL-2B writes 3 short visual cues
 per question (`egogate/cues.py`, versioned by a hash of its prompt), stored once in `results/cache/cues/` and reused by every

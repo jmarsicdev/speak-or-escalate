@@ -30,7 +30,7 @@ def make_meta(cfg: dict) -> dict:
     except Exception:  # noqa: BLE001
         commit = ""
     return {"embedder": m["embedder"], "model_id": m["model_id"], "attn": m.get("attn"), "stride_s": m["stride_s"],
-            "window_s": m["window_s"], "fps": m["fps"], "max_pixels": m["max_pixels"], "window_prompt": "newline-suffix",
+            "window_s": m["window_s"], "fps": m["fps"], "max_pixels": m["max_pixels"], "min_pixels": m.get("min_pixels"), "window_prompt": "newline-suffix",
             "code_commit": commit}
 
 

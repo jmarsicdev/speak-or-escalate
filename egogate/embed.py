@@ -70,7 +70,8 @@ class OpsMMEmbedder(Embedder):
     the same trailing newline their streaming prompt has, which reproduces their vectors; see docs/RATIONALE.md D17.
     """
 
-    def __init__(self, model_id: str = "OpenSearch-AI/Ops-MM-embedding-v1-2B", device: str = "cuda", attn: str = "sdpa"):
+    def __init__(self, model_id: str = "OpenSearch-AI/Ops-MM-embedding-v1-2B", device: str = "cuda", attn: str = "sdpa",
+                 min_pixels: int | None = None):
         import importlib.util  # noqa: PLC0415
         from pathlib import Path  # noqa: PLC0415
 
@@ -80,6 +81,11 @@ class OpsMMEmbedder(Embedder):
         spec.loader.exec_module(mod)
         self.model = mod.OpsMMEmbeddingV1(model_id, device=device, attn_implementation=attn)
         self.model.eval()
+        if min_pixels is not None:
+            # The wrapper resizes every frame UP to at least MIN_PIXELS = 256*28*28 (256 visual tokens per frame) before
+            # embedding. That is what Em-Garde runs, so it is our default; a smaller minimum is faster but gives different
+            # vectors (cosine about 0.94 in our check). See docs/RATIONALE.md D17.
+            self.model._process_images = lambda imgs: [mod.fetch_image(i, min_pixels=min_pixels) for i in imgs]
 
     @staticmethod
     def _norm(v):

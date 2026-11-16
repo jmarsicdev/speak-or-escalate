@@ -49,7 +49,7 @@ out_dir.mkdir(parents=True, exist_ok=True)
 json.dump(meta, open(out_dir / "_meta.json", "w"), indent=1)
 print(f"cache: {out_dir}  ({len(samples)} questions with cues)")
 
-embedder = OpsMMEmbedder(m["model_id"], m["device"], m["attn"]) if m["embedder"] == "opsmm" else RandomEmbedder(seed=cfg["seed"])
+embedder = OpsMMEmbedder(m["model_id"], m["device"], m["attn"], m.get("min_pixels")) if m["embedder"] == "opsmm" else RandomEmbedder(seed=cfg["seed"])
 video_root = Path(cfg["data"]["video_root"])
 t0 = time.time()
 for i, s in enumerate(samples, 1):

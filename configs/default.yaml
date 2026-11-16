@@ -24,6 +24,7 @@ matcher:
   stride_s: 0.5     # one matcher step every 0.5 s (Em-Garde: 2 fps processing rate)
   window_s: 2.0     # each step embeds the last 2 s ...
   fps: 2.0          # ... at 2 fps = 4 frames
+  min_pixels: null  # null = the wrapper's own minimum (256 visual tokens per frame, as Em-Garde runs); e.g. 7056 = faster, different vectors (D17)
   max_pixels: 78400 # frame area cap, Qwen smart_resize; Em-Garde's matcher uses 280*280 (about 364 x 196 for 16:9)
   cache_dir: results/cache
   model_id: OpenSearch-AI/Ops-MM-embedding-v1-2B
