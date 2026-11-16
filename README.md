@@ -62,6 +62,8 @@ scripts/
   run_cues.py               stage 0: edge model writes 3 visual cues per question (stored)
   run_embed_cache.py        stage 1a: embed 2 s windows every 0.5 s, store similarity to each cue
   replay_matcher.py         row 3 stage 2: trigger rules / thresholds / dedup on stored similarities (CPU)
+  run_gated_decider.py      row 4: run the decider on demand at the matcher's trigger moments (memoised)
+  replay_gated.py           row 4: score 'matcher fires AND decider says Yes' (CPU)
   run_decider_cache.py      row 1 stage 1: edge model alone -> stored Yes/No scores (resumable)
   replay_decider.py         row 1 stage 2: sweep threshold / cooldown on stored scores (CPU)
   ovo_tar_remote.py         fetch only the needed OVO-Bench videos (5 GB) by HTTP range request
@@ -146,5 +148,6 @@ splits (annotations only, CC BY-NC-SA 4.0; videos are never committed).
 2. **Row 1, edge model alone** (built): open `notebooks/row1_decider_alone.ipynb`. It runs the decider every 2 s
    (`scripts/run_decider_cache.py`), stores the Yes/No scores under `results/cache/`, and scores thresholds on CPU
    (`scripts/replay_decider.py`). Push `results/cache/` back so it can be read. Gemma next.
-3. **Row 3, the cue matcher alone** (built): `notebooks/row3_cue_matcher.ipynb`. Then the on-demand decider (D13) for row 4.
+3. **Row 3, the cue matcher alone** (done on val): `notebooks/row3_cue_matcher.ipynb`.
+4. **Row 4, matcher-gated decider** (built): `notebooks/row4_gated_decider.ipynb` (reuses rows 1 and 3, about 10 minutes of GPU on val).
 4. **Rows 2-5**, then the router (row 6).

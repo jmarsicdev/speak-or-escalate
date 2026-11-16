@@ -491,6 +491,12 @@ To avoid an ablation maze, the sweep is one table; we carry a single combination
 accompanies it: how well the similarity, and its rise, separate steps near a true event from the rest (AUC; 0.5 means no
 separation), which tells us whether the cues carry any signal before any threshold is applied.
 
+**D20. What row 4 takes from row 3, and how it is run.** Row 4 asks the decider "respond now?" only at the moments the matcher fires, and reports a response where
+both agree. *Candidates:* the trigger times of the released-code rule with "any cue", a threshold of 0.02 and no duplicate removal. *Why this setting:* for this rule, a higher threshold fires at a subset of the steps a lower one fires at, so one set of
+decider answers at the 0.02 triggers serves every threshold from 0.02 up, and duplicates and cooldowns can be applied afterwards, as in row 1. Lower thresholds than 0.02 gave no gain over a timer in row 3, so they are not worth the cost. *Cost:*
+1,841 decider calls on val, about 10 minutes at 300 ms. *Chosen, not tuned:* the same Yes/No threshold sweep and cooldown grid as row 1; thresholds picked on val only, and the test split stays untouched. *What it measures:* whether gating a
+decider that says Yes too often with a weak cue trigger raises precision more than it loses in recall (a combined response needs both to agree, so recall cannot go up).
+
 ### Open on purpose
 
 **O1.** Settled: see D18 (edge model, text only).
@@ -589,8 +595,64 @@ that a random positive outranks a random negative: 0.5 means no skill, 1.0 is pe
 - One prompt wording, one model, one frame size. The prompt is a free choice that can move results.
 - The test split has not been touched.
 
-**Next.** Stage 1a: the cue matcher (row 3), then the matcher-gated decider (row 4). Confirming on dev is optional
-and can wait.
+**Next.** Row 4, the matcher-gated decider (D20). Confirming on dev is optional and can wait.
+
+### Row 3, the cue matcher alone, validation split (first run)
+
+**Setup.** Cues written by Qwen3-VL-2B from the question text only (D18); windows embedded by Ops-MM-embedding-v1-2B exactly as Em-Garde
+runs it, including the upscaling and the trailing newline (D17); every 0.5 s, 7,903 steps over the 43 val questions. Each trigger is
+counted as a response and scored with the same metric as row 1. The run took 6,845 s (114 minutes), against 95 minutes projected: the median time per step
+drifted from 727 ms on the first question to 917 ms on the last, which looks like heat or power throttling (not verified). Source: the saved
+output of `notebooks/row3_cue_matcher.ipynb`; the stored similarities are not in the repository yet.
+
+**Gate 2 diagnostic: how well does the similarity itself separate steps near an event from the rest?** (AUC; 0.5 means no separation, 1.0 is perfect.)
+
+| Signal | AUC |
+|---|---|
+| highest similarity among the cues | 0.598 |
+| average similarity across the cues | 0.617 |
+| largest one-step rise (the quantity the paper's rule thresholds) | 0.540 |
+| *for comparison, row 1: the decider's p(Yes)* | *0.706* |
+
+The cues carry some signal, weaker than the decider's. The rise, which is what a trigger rule actually looks at, is the weakest on this
+step-by-step measure. This measure averages over all steps; the F1 below depends only on the strongest triggers, so the two do not have to agree.
+
+**What the sweep shows.** Average F1 (number of responses in brackets) for the rule in Em-Garde's released code, any cue may fire, with a 4 s
+cooldown, across thresholds (higher threshold means fewer, more selective triggers):
+
+| Threshold | 0.01 | 0.02 | 0.03 | 0.04 | 0.05 | 0.06 | 0.08 |
+|---|---|---|---|---|---|---|---|
+| F1 (responses) | 28.6 (698) | 29.4 (539) | **31.8 (426)** | 29.9 (329) | 26.2 (270) | 24.2 (210) | 16.1 (130) |
+
+**Reading 1: it beats a timer, modestly, at moderate response counts.** Compared with the "respond every k seconds" floors of section 5 (30 phases) at
+a similar number of responses (interpolating between them where needed, so approximate):
+
+| Matcher cell | Responses | Matcher F1 | Timer with a similar count | Gain |
+|---|---|---|---|---|
+| threshold 0.01 | 698 | 28.6 | about 27 | about 1 (nothing) |
+| threshold 0.02 | 539 | 29.4 | about 27.6 | about 2 (nothing) |
+| threshold 0.03 | 426 | 31.8 | about 25.7 | about 6 |
+| threshold 0.04 | 329 | 29.9 | 23.1 ± 3.5 | about 7 |
+| threshold 0.05 | 270 | 26.2 | about 21 | about 5 |
+
+With many responses it is no better than speaking on a timer; with 270 to 430 responses it is roughly 5 to 7 points above one. The 31.8 best cell
+is the best of 112 settings on 43 questions, so it is flattered; the neighbouring cells (29 to 30) are the more honest level. The similar scores of row 1
+(32.0 best, about 30 at comparable response counts) and row 3 mean the two parts are about equally good on their own.
+
+**Reading 2 (Gate 2, how to combine the cues).** At the paper's threshold of 0.04, "any cue may fire" is far better than "average of the cues" (29.9 against 11.3 with a 4 s cooldown), because
+averaging smooths out the rise. But the average's best setting is a lower threshold (31.6 at 0.02), which ties "any cue" at its best (31.8). We cannot separate them with 43
+questions, so we keep "any cue" (the paper's choice, and it is robust to the threshold).
+
+**Reading 3 (which rule).** The released code's rule is as good as the paper's at their best settings (31.8 against 31.6) and much steadier across thresholds: 26 to 32 from 0.01 to 0.05, against a fall from 31.6 to 20.0 for the paper's rule.
+
+**Reading 4 (duplicates).** Removing near-duplicate triggers matters a lot: with no cooldown the best is 22.3, against 31.8 with a 4 s cooldown. Em-Garde's own embedding-based rule is about the same as the 4 s cooldown (31.0).
+
+**What this means.** The matcher with our small, untrained cue writer is not useless: it finds events somewhat better than a timer, about as well as the
+decider alone. Neither is strong, and nothing has been combined yet. The cue-quality hypothesis from D18 (sports clips and tutorials do better than everyday objects, clue-reveal questions worst) is not yet tested; it needs the per-question results.
+
+**Caveats.** One split of 43 questions; settings chosen and scored on the same questions; no confidence intervals yet; timer figures interpolated; the per-task numbers and the stored similarities are not in the repository, so
+this section only uses what the notebook printed.
+
 
 ## 10. Glossary
 
@@ -608,6 +670,7 @@ and can wait.
 ## 11. Changelog
 
 - 2026-11-15: Section 5 rewritten: chance-level table trimmed to the rules that ignore the video, and the rules for calling an improvement real (bootstrap intervals, paired comparison, power) added.
+- 2026-11-16: Row 3 val results added to 9a; D20 (row 4 design).
 - 2026-11-15: D17-D19 added (cue matcher design: embedding path, cue source, trigger rules); stages 0 and 1a built.
 - 2026-11-15: Section 9a added: first row 1 results on val, with the cooldown and timer comparison.
 - 2026-11-15: Added timer and cooldown-matched floors to section 5 after the first val run showed a cooldown alone adds about ten F1.
