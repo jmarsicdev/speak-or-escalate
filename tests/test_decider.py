@@ -114,3 +114,41 @@ def test_changing_the_prompt_or_model_changes_the_cache_folder(tmp_path):
     cfg2 = load_config(None, {"decider.cache_dir": str(tmp_path), "edge.dtype": "float16"})
     c = cache_dir_for(cfg2, make_meta(cfg2, "Qwen/Qwen2.5-VL-3B-Instruct"))
     assert len({a, b, c}) == 3
+
+
+def test_cues_reach_the_prompt_only_for_the_cue_variants_and_change_the_cache_folder(tmp_path):
+    make_video(tmp_path / "v.avi")
+    prompts = []
+
+    class Capture(MockEdgeVLM):
+        def _yes_no_logprobs(self, prompt, images):
+            prompts.append(prompt)
+            return 0.0, 0.0
+
+    s = Sample(id="c", video="v.avi", query="when does it boil?", events=[Event(6.0)], task="REC", start_s=0.0, end_s=6.0)
+    for variant, expect in (("query_only", False), ("query_cues", True)):
+        prompts.clear()
+        cfg = load_config(None, {"decider.cache_dir": str(tmp_path / variant), "decider.variant": variant, "edge.backend": "mock"})
+        out = cache_dir_for(cfg, make_meta(cfg, "mock/m", "abc" if expect else None))
+        out.mkdir(parents=True)
+        run_sample(s, Capture(), cfg, out, tmp_path, cues=["bubbles rising", "steam above the pot"])
+        assert prompts and all(("- bubbles rising" in p) == expect for p in prompts)
+    cfg = load_config(None, {"decider.cache_dir": str(tmp_path), "decider.variant": "query_cues"})
+    assert cache_dir_for(cfg, make_meta(cfg, "m", "aaaa")) != cache_dir_for(cfg, make_meta(cfg, "m", "bbbb"))   # other cues, other cache
+
+
+def test_bootstrap_paired_interval_finds_a_real_gain_and_a_null_one():
+    from egogate.eval.bootstrap import bootstrap, paired_diff
+
+    rng = np.random.default_rng(0)
+    ids = [f"q{i}" for i in range(60)]
+    video_of = {q: f"v{i // 2}" for i, q in enumerate(ids)}                      # two questions per video
+    base = rng.normal(0.6, 0.1, 60)
+    better = base + 0.08 + rng.normal(0, 0.02, 60)
+    mean = lambda v: float(np.mean(v))  # noqa: E731
+    gain = paired_diff(list(better), list(base), mean, ids, video_of, n=500)
+    assert gain["excludes_zero"] and 0.05 < gain["diff"] < 0.11
+    null = paired_diff(list(base + rng.normal(0, 0.05, 60)), list(base), mean, ids, video_of, n=500)
+    assert not null["excludes_zero"]
+    ci = bootstrap(list(base), mean, [[i] for i in range(60)], n=500)
+    assert ci["lo"] < ci["point"] < ci["hi"]

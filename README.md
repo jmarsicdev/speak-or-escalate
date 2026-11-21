@@ -53,6 +53,7 @@ egogate/                    the pipeline package (our code)
     ovo.py      OVO-Bench forward-task parsing and the decision-time grid
     splits.py   seeded dev/val/test split, grouped by video
     floors.py   no-skill reference systems
+    bootstrap.py  confidence intervals that resample whole videos; paired difference between two systems
 configs/default.yaml        every knob with its default
 scripts/
   run_baseline.py           run the pipeline -> results/baseline/{summary.json, <id>.jsonl, <id>.calib.json}
@@ -63,6 +64,8 @@ scripts/
   run_embed_cache.py        stage 1a: embed 2 s windows every 0.5 s, store similarity to each cue
   replay_matcher.py         row 3 stage 2: trigger rules / thresholds / dedup on stored similarities (CPU)
   run_gated_decider.py      row 4: run the decider on demand at the matcher's trigger moments (memoised)
+  compare_deciders.py       row 2: paired comparison of two stored deciders, AUC per question with a 95% interval
+  analyze_matcher.py        row 3: results by task and video source with matched timers
   replay_gated.py           row 4: score 'matcher fires AND decider says Yes' (CPU)
   run_decider_cache.py      row 1 stage 1: edge model alone -> stored Yes/No scores (resumable)
   replay_decider.py         row 1 stage 2: sweep threshold / cooldown on stored scores (CPU)
@@ -149,5 +152,6 @@ splits (annotations only, CC BY-NC-SA 4.0; videos are never committed).
    (`scripts/run_decider_cache.py`), stores the Yes/No scores under `results/cache/`, and scores thresholds on CPU
    (`scripts/replay_decider.py`). Push `results/cache/` back so it can be read. Gemma next.
 3. **Row 3, the cue matcher alone** (done on val): `notebooks/row3_cue_matcher.ipynb`.
-4. **Row 4, matcher-gated decider** (built): `notebooks/row4_gated_decider.ipynb` (reuses rows 1 and 3, about 10 minutes of GPU on val).
+4. **Row 4, matcher-gated decider** (done on val; the decider did not improve on the matcher): `notebooks/row4_gated_decider.ipynb`.
+5. **Row 2, decider with cues in its prompt** (built): `notebooks/row2_decider_with_cues.ipynb`, with a paired comparison against row 1 and an interval.
 4. **Rows 2-5**, then the router (row 6).

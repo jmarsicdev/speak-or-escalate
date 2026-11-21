@@ -40,7 +40,8 @@ def _known_rows(dec_dir: Path, sample_id: str) -> dict[float, dict]:
     return rows
 
 
-def run_ondemand(sample: Sample, edge, cfg: dict, times: list[float], dec_dir: Path, video_root: Path) -> dict[float, dict]:
+def run_ondemand(sample: Sample, edge, cfg: dict, times: list[float], dec_dir: Path, video_root: Path,
+                 cues: list[str] | None = None) -> dict[float, dict]:
     """Decider answers at `times`, computing only the ones not already stored. Returns {t: row} for the times that exist."""
     d = cfg["decider"]
     known = _known_rows(dec_dir, sample.id)
@@ -52,7 +53,7 @@ def run_ondemand(sample: Sample, edge, cfg: dict, times: list[float], dec_dir: P
         with open(out_dir / f"{sample.id}.jsonl", "a") as f:
             for w in stream_windows(video_root / sample.video, missing, d["window_s"], d["fps"], d["max_side"]):
                 t0 = time.perf_counter()
-                o = edge.speak_now(sample.query, w.frames, None, None, window_s=d["window_s"])
+                o = edge.speak_now(sample.query, w.frames, None, cues, window_s=d["window_s"])
                 row = {"t": round(w.t_end, 6), "lp_yes": o.raw["lp_yes"], "lp_no": o.raw["lp_no"],
                        "ms": round((time.perf_counter() - t0) * 1000, 1), "n_frames": len(w.frames)}
                 f.write(json.dumps(row) + "\n")

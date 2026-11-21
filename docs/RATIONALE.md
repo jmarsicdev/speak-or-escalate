@@ -497,6 +497,16 @@ decider answers at the 0.02 triggers serves every threshold from 0.02 up, and du
 1,841 decider calls on val, about 10 minutes at 300 ms. *Chosen, not tuned:* the same Yes/No threshold sweep and cooldown grid as row 1; thresholds picked on val only, and the test split stays untouched. *What it measures:* whether gating a
 decider that says Yes too often with a weak cue trigger raises precision more than it loses in recall (a combined response needs both to agree, so recall cannot go up).
 
+**D21. Row 2: the decider with the cues in its prompt, and how we will call the difference real.**
+*What changes:* the decider (Qwen3-VL-2B, same frames, same question, same wording) gets one extra block in its prompt, "Visual cues that mean it is time to respond:" followed by
+the three cues from row 3's cue file. Nothing else differs, so any change is due to the cues. The cues' identity (a hash of the cue file) is part of the decider's cache key, so decider answers computed with one set of cues can never be
+reused for another. *Why this row before the scene-graph row:* it needs no new model run beyond the decider (about 10 minutes on val for the regular ticks, about 8 more at the matcher's trigger moments), and it asks the cheapest version of the question
+"does giving the decider more context help?". *How we compare:* for each question, the AUC of p(Yes) for separating moments near an event from the rest (no threshold or cooldown is chosen, so nothing on the val set is selected to flatter the result), averaged over questions;
+the change from row 1 to row 2 comes with a 95% interval from resampling whole videos (several questions share one video), for all questions and for each group. *Rule:* a gain counts only if the interval excludes zero (section 5). This is the first use of the interval
+tooling (`egogate/eval/bootstrap.py`, `scripts/compare_deciders.py`); it is checked with a synthetic test that it finds a real gain and does not invent a null one. *What each outcome would mean:* if the cues help the decider, row 4 is redone with the cue-aware decider (included in the same
+notebook); if they do not, the next thing to try is scene-graph evidence (row 5), not more prompt variants.
+*Status:* built; the runner was checked on CPU with the real model on one video (the cues change p(Yes) from the question-only values, and 100% of the probability stays on Yes/No); not yet run on the GPU.
+
 ### Open on purpose
 
 **O1.** Settled: see D18 (edge model, text only).
@@ -748,6 +758,7 @@ confidence-based routing over random routing unless the decider improves. We wil
 ## 11. Changelog
 
 - 2026-11-15: Section 5 rewritten: chance-level table trimmed to the rules that ignore the video, and the rules for calling an improvement real (bootstrap intervals, paired comparison, power) added.
+- 2026-11-21: D21 (row 2 design) added; row 2 notebook, cue-aware decider cache, interval tooling built.
 - 2026-11-21: Row 4 val results added to 9a: the decider did not improve on the matcher.
 - 2026-11-16: Row 3 val results added to 9a; D20 (row 4 design).
 - 2026-11-15: D17-D19 added (cue matcher design: embedding path, cue source, trigger rules); stages 0 and 1a built.
