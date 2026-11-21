@@ -595,7 +595,7 @@ that a random positive outranks a random negative: 0.5 means no skill, 1.0 is pe
 - One prompt wording, one model, one frame size. The prompt is a free choice that can move results.
 - The test split has not been touched.
 
-**Next.** Row 4, the matcher-gated decider (D20). Confirming on dev is optional and can wait.
+**Next.** Row 4 is below.
 
 ### Row 3, the cue matcher alone, validation split (first run)
 
@@ -680,6 +680,58 @@ which is some reason to think they could complement each other; row 4 tests that
 **Caveats.** One split of 43 questions; settings chosen and scored on the same questions; no confidence intervals yet; timer figures interpolated; the per-group numbers come from `scripts/analyze_matcher.py` on the stored similarities (now in the repository).
 
 
+### Row 4, matcher fires AND decider says Yes, validation split (first run)
+
+**Setup.** Candidates are the matcher's trigger moments (released-code rule, any cue, threshold 0.02, no duplicate removal): 1,841 moments over the 43 val questions (D20). The decider (Qwen3-VL-2B, question only, as in row 1)
+was run at exactly those moments: 1,395 new on-demand calls at a median of 258 ms, plus the stored answers from row 1 where a trigger fell on a 2 s tick. A response needs the matcher to fire and p(Yes) to reach a threshold tau;
+a cooldown is applied to the responses afterwards, as in row 1. tau = 0 is the matcher alone.
+
+**Result: adding the decider did not help.** Average F1 (responses in brackets) for matcher threshold 0.03 with a 4 s cooldown:
+
+| tau (how sure the decider must be) | 0 (matcher alone) | 0.3 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 |
+|---|---|---|---|---|---|---|---|
+| F1 (responses) | **31.8 (426)** | 30.1 (403) | 28.2 (377) | 28.2 (342) | 28.7 (299) | 26.2 (193) | 12.6 (43) |
+
+The best cell in the whole table is the matcher alone. Across the other thresholds and cooldowns the decider moves the score by a point or two in either direction (for example 25.0 to 26.8 at threshold 0.02 with an 8 s cooldown and tau 0.8, but 29.4 down to 27.8 with a 4 s cooldown),
+which is within the noise of a 43-question split. Comparing with the matcher alone at a similar number of responses (matcher at threshold 0.04: 29.9 with 329 responses; matcher plus decider at 0.03 and tau 0.7: 28.7 with 299) shows no gain either.
+So on this data the two parts do not compound.
+
+**Why: the decider carries some information at these moments, but not enough.** Among the 1,841 candidate moments, 19.8% are within 2 s of an event. Grouping them by the decider's p(Yes):
+
+| p(Yes) | Moments | Share really near an event |
+|---|---|---|
+| below 0.3 | 138 | 9.4% |
+| 0.3 to 0.5 | 162 | 7.4% |
+| 0.5 to 0.7 | 395 | 7.6% |
+| 0.7 to 0.8 | 489 | 20.0% |
+| 0.8 to 0.9 | 554 | 30.9% |
+| above 0.9 | 103 | 39.8% |
+
+So the decider does rank: moments it is very sure about are near an event four times as often as moments it is unsure about, and the ranking is steeper than "on average 0.78 vs 0.67" suggests. Within a question the AUC is 0.62 (pooled over questions
+0.70), the same as on all moments in row 1 (0.61). But it is a weak ranking, with a big jump at 0.7 and not much below it, and it is weakest where the matcher is also weakest.
+
+**By kind of question** (threshold 0.03, 4 s cooldown; F1 with responses in brackets):
+
+| Group | matcher alone | tau 0.5 | tau 0.7 | tau 0.8 | AUC of p(Yes) among candidates |
+|---|---|---|---|---|---|
+| Counting, sports clips | 57.0 (99) | 55.9 (91) | 56.6 (76) | 47.6 (54) | 0.69 |
+| Counting, everyday objects | 40.2 (37) | 40.2 (37) | 42.1 (33) | 36.3 (24) | 0.65 |
+| Tutorial steps | 26.2 (249) | 24.0 (226) | 24.4 (171) | 30.3 (105) | 0.64 |
+| Clue reveal | 21.5 (41) | 13.5 (23) | 13.5 (19) | 7.1 (10) | 0.40 |
+
+The decider is neutral on sports clips, perhaps slightly helpful on everyday objects at tau 0.7 (+2 points, within noise), helpful on tutorials only at tau 0.8, and harmful on clue reveal, where it points the wrong way (AUC 0.40 on 5 questions).
+
+**One more thing tried (exploratory, after seeing the results, on val only, so treat it as a hint).** Instead of "the first trigger in a time window wins", keep the best-scoring one. Using the matcher's own rise as the score:
+32.3 (4 s window) against 29.4 for first-wins; using the decider's p(Yes): 29.2. The decider's score does not choose better than the matcher's own.
+
+**What this means.** With a generic question-only prompt and a 2B model, the decider is too weak to improve on the matcher. That is a result about this decider, not about gating as an idea. Its prompt contains neither the cues nor any scene evidence,
+and those are exactly the things rows 2 and 5 add. Gate 1 is also touched: the decider's confidence is informative but weak (AUC about 0.62), and a router that sends uncertain moments to GPT can be no better than the signal it is routing on, so Gate 3 may show little advantage for
+confidence-based routing over random routing unless the decider improves. We will find that out, not assume it.
+
+**Caveats.** One split of 43 questions; thresholds read off val; no confidence intervals; the clue-reveal group is 7 questions (5 with both kinds of moment); the tau, cooldown and window comparisons are post hoc.
+
+**Next.** Row 2: give the decider the cues in its prompt (a decider rerun, about 10 minutes on val, no new embedding), and compare with row 1 on the same moments.
+
 ## 10. Glossary
 
 - **Edge model / edge VLM**: the small vision-language model that runs on the device.
@@ -696,6 +748,7 @@ which is some reason to think they could complement each other; row 4 tests that
 ## 11. Changelog
 
 - 2026-11-15: Section 5 rewritten: chance-level table trimmed to the rules that ignore the video, and the rules for calling an improvement real (bootstrap intervals, paired comparison, power) added.
+- 2026-11-21: Row 4 val results added to 9a: the decider did not improve on the matcher.
 - 2026-11-16: Row 3 val results added to 9a; D20 (row 4 design).
 - 2026-11-15: D17-D19 added (cue matcher design: embedding path, cue source, trigger rules); stages 0 and 1a built.
 - 2026-11-15: Section 9a added: first row 1 results on val, with the cooldown and timer comparison.
