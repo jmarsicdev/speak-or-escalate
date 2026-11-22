@@ -742,6 +742,43 @@ confidence-based routing over random routing unless the decider improves. We wil
 
 **Next.** Row 2: give the decider the cues in its prompt (a decider rerun, about 10 minutes on val, no new embedding), and compare with row 1 on the same moments.
 
+### Row 2, the decider with the cues in its prompt, validation split (first run)
+
+**Setup.** Exactly row 1 (Qwen3-VL-2B, same frames and question) with the three cues written into the prompt (D21). Speed is unchanged: median 242 ms per decision on the regular ticks and 246 ms at the matcher's trigger moments
+(row 1: 300 and 258 ms; the differences are within what the GPU's state could explain). Compared with row 1 by the within-question AUC of p(Yes), with 95% intervals that resample whole videos.
+
+**The pre-planned test, all 43 questions: no change.** AUC 0.614 without cues, 0.618 with: a difference of +0.003, interval [-0.038, +0.041]. The cues did not make the decider better at telling moments near an event from the rest. The share of moments it says Yes to
+changed little (80% to 76%).
+
+**By group (not pre-planned, ten unadjusted intervals in the two tables, so one or two crossing zero by luck is expected):**
+
+| Group | Questions | AUC without cues | AUC with cues | Change | 95% interval |
+|---|---|---|---|---|---|
+| Counting, sports clips | 10 | 0.699 | 0.735 | +0.036 | [+0.003, +0.068] |
+| Counting, everyday objects | 14 | 0.618 | 0.627 | +0.009 | [-0.055, +0.084] |
+| Tutorial steps | 12 | 0.604 | 0.525 | **-0.080** | [-0.162, -0.016] |
+| Clue reveal | 7 | 0.504 | 0.592 | +0.088 | [-0.004, +0.131] |
+
+Cues look slightly useful for sports clips, where the cues were good (the interval only just clears zero), and **harmful for tutorials** (the decider drops to 0.525, almost no skill), where the cues were generic or wrong. For clue reveal the change is large but uncertain with 7 questions, and
+the cues there were guesses, so I would not read it as a benefit.
+
+**At the matcher's trigger moments** (38 questions with both kinds of moment): all questions 0.619 without cues, 0.569 with (change -0.050, interval [-0.123, +0.015]); tutorials 0.636 to 0.506 (change -0.130, interval [-0.215, -0.059]). Again no overall gain, and again a clear loss on tutorials.
+
+**Row 2 on its own, scored like row 1.** Best on val: 27.4 F1 (cooldown 8 s, p(Yes) at least 0.1), against row 1's 32.0 (tuned on the same val, cooldown 8 s, p(Yes) at least 0.8). Row 1's score *rose* as the decider was made more demanding (0.7 to 0.8); with cues it *falls* (23.2 and 19.9
+at 0.7 and 0.8 with an 8 s cooldown). So with cues, the moments the decider is most sure about are less often the right ones. At a 4 s cooldown the cue decider scores 26 to 27 at low thresholds, the same as a timer making a similar number of responses (about 27).
+
+**Row 4 redone with the cue-aware decider: worse.** Matcher threshold 0.03, 4 s cooldown, F1 by how sure the decider must be: matcher alone 31.8; with cues in the decider 31.5 (0.3), 26.1 (0.5), 21.8 (0.7), 15.0 (0.8). Row 4 with the question-only decider gave 30.1, 28.2, 28.7, 26.2 at the same
+thresholds. So the cue-aware decider removes true events faster than false alarms, and the best cell in the whole table is still the matcher alone.
+
+**What this means.**
+- Giving a 2B decider the cues does not make it a better judge of timing. On the questions where the cues are weak it makes it worse, as if it were agreeing with plausible-sounding but wrong descriptions.
+- Rows 1, 2 and 4 together say the same thing: the 2B decider, shown the last 2 s of video, ranks moments only weakly (AUC about 0.6) however we prompt it, and it does not add to what the matcher already finds.
+- This is the point where it is fair to ask what limits the decider, because there are two quite different answers: the model is too small, or the task as posed (judging timing from a 2 s window with no history) is the limit. A scene-graph memory (row 5) addresses the second; a stronger decider addresses the first.
+  A cheap way to tell them apart is to run a strong model, GPT with the same frames and prompt, on the same moments. That also gives the "GPT everywhere" end of the Gate 3 plot. If GPT also lands near AUC 0.6, the limit is the task or the labels, and routing to GPT would not help; if GPT is much better, there is headroom that routing could capture.
+  Not yet run; it needs an OpenAI key and costs very little (about 2,000 calls on val).
+
+**Caveats.** One split of 43 questions; the group intervals are unadjusted and not pre-planned; the F1 comparisons use settings chosen on val; no test split has been used.
+
 ## 10. Glossary
 
 - **Edge model / edge VLM**: the small vision-language model that runs on the device.
@@ -758,6 +795,7 @@ confidence-based routing over random routing unless the decider improves. We wil
 ## 11. Changelog
 
 - 2026-11-15: Section 5 rewritten: chance-level table trimmed to the rules that ignore the video, and the rules for calling an improvement real (bootstrap intervals, paired comparison, power) added.
+- 2026-11-22: Row 2 val results added to 9a: cues do not help the decider overall and hurt it on tutorials; row 4 redone with cues is worse.
 - 2026-11-21: D21 (row 2 design) added; row 2 notebook, cue-aware decider cache, interval tooling built.
 - 2026-11-21: Row 4 val results added to 9a: the decider did not improve on the matcher.
 - 2026-11-16: Row 3 val results added to 9a; D20 (row 4 design).
