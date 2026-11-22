@@ -10,6 +10,71 @@ Status key used throughout: **verified** (we checked it in a paper's text or cod
 
 ---
 
+## 0. Where we stand (written 2026-11-22; everything below is on the validation split, 43 questions, with the test split untouched)
+
+**Bottom line.** Nothing yet shows that the approach works. Each edge-only part finds events modestly better than a timer that speaks every few seconds. Combining the parts did not compound, and the part that is the point of the project, routing
+uncertain moments to GPT, has not been tested. The one question that decides what to do next is whether there is headroom at all: does a much stronger judge do far better than our 2B model on the same moments?
+
+### What we ran
+
+| Row | System | Result (average F1; "timer" = respond every k seconds with no model, same number of responses) | Verdict |
+|---|---|---|---|
+| 0 | No-skill floors | A coin flip scores about 21; a timer every 4 to 8 s about 27 on val | The metric is generous |
+| 1 | 2B decider alone, every 2 s, question only | Best 32.0 (tuned on val); about 30 at 200 to 600 responses against a timer's 20 to 27; within-question AUC 0.61; says Yes to 75 to 80% of moments | Weak |
+| 3 | Cue matcher alone (Em-Garde's embedder, cues written by our 2B model) | Best 31.8; about 5 to 7 points above a timer at 270 to 430 responses, no gain at 540 or more; AUC 0.61 | Modest, uneven |
+| 4 | Matcher fires AND decider says Yes | Best cell is the matcher alone; the decider only moves the score a point or two either way | No compounding |
+| 2 | Decider with cues in its prompt | AUC change +0.003, interval [-0.038, +0.041]; hurts tutorials (-0.08); row 4 redone with it is worse | No help |
+
+By kind of video (matcher alone, against the closest timer): sports clips 57.0 vs 32.7; tutorials 26.2 vs 18.2 (many false alarms); everyday-object counting 40.2 vs 38.4; clue reveal 21.5 vs 20.3. Groups of 7 to 14 questions, so indications only.
+
+### What we have learned
+
+*Fairly solid:*
+1. The score is generous, so every number has to be read against a timer with the same number of responses. Duplicate removal alone (a cooldown) is worth about ten points.
+2. The 2B decider, shown the last 2 s with no history, ranks moments only weakly (AUC about 0.6), and prompting it differently (rows 1, 2, 4) has not changed that.
+3. The matcher's signal is modest and uneven: clearly useful on visually distinctive clips, near nothing on clue-reveal questions.
+4. Gating the matcher with this decider does not help; the decider is informative at the trigger moments (moments it is very sure about are near an event 40% of the time against 7% when unsure) but too weakly to improve the F1.
+
+*Tentative:* that cue quality explains the matcher's differences between groups (it is confounded with the kind of video); that cues hurt the decider on tutorials (an unadjusted group interval).
+
+*Engineering findings that shaped the setup:* the 3B model did not fit the 8.6 GB GPU (D16); Em-Garde's embedding wrapper upscales every frame to 256 tokens and uses a prompt detail that changes the vectors (D17); averaging AUC over pooled questions misleads (corrected in 9a).
+
+### What limits each part
+
+| Part | Limit | Evidence | How we would test it |
+|---|---|---|---|
+| Cue writer | Text only (never sees the video), small, untrained; cannot know the answer in clue-reveal questions; vague activity names | Invented details, "red" in 22 of 43 cue sets, matcher gains vanish where cues were weakest | Raw question as the only cue; GPT-written cues; a few hand-written cues, all from the stored window vectors |
+| Matcher | Weak step-by-step signal (AUC 0.55 to 0.62); expensive (about 720 to 900 ms per step, 114 minutes for val) | Gate 2 diagnostic | Better cues first; Em-Garde's trained cue writer or a 7B proposer would need more compute |
+| Decider | 2B model, 2 s window, no memory, says Yes too often | AUC 0.61 under three different setups | **GPT on the same frames and prompt** (model size or task?); scene-graph memory (row 5) for history |
+| Scene-graph memory (row 5) | Not tested; the only part that gives the decider history (matters for counting repetitions and tracking steps) | None yet | About 40 minutes of GPU for generation on val (unmeasured estimate) plus decider reruns |
+| Router and GPT (rows 6, Gates 3 and 4) | Not tested; can be no better than the confidence it routes on, which is weak | Row 4 calibration table | Confidence routing against random routing at equal GPT calls, once a decider worth routing exists |
+| Evaluation | 43 questions, clue reveal only 7; settings chosen and scored on the same split; F1 intervals not yet built (AUC intervals are) | Throughout | Intervals on F1; confirm chosen settings on dev, then test once |
+| Compute | 8.6 GB laptop GPU: no model above about 2B, a 6-hour matcher run for all splits | D16, D17 | A cluster or rented GPU for dev, test, a 7B decider and Gemma |
+
+### Still to test, in the order I would do it
+
+1. **GPT ceiling check.** The same frames and prompt on the same moments (about 2,000 calls on val, a few dollars). It also gives the "GPT everywhere" end of the Gate 3 plot. High GPT AUC means there is headroom for routing to capture; AUC near 0.6 means the task or labels are the limit.
+2. **Cue-source checks** (raw question, GPT cues, hand cues): cheap, and they say whether the matcher's weakness is the writer or the embedder.
+3. **Row 5, scene-graph memory** (with the sub-tests K = 1 or 5, and the question as triplets or raw).
+4. **Row 6 and Gate 3, the router.** Only after step 1 shows there is something to route.
+5. **Gate 4** (text-only GPT payloads) and **Gate 5** (a trained score head), both low priority.
+6. **Confirmation:** F1 intervals, the chosen settings on dev, and test once.
+7. **Systems work for the hybrid:** live-versus-replay equivalence check, latency per component, running the matcher and decider together, memory management, the streaming shortcut's real speed, quantization (teammates).
+
+### What I would not do
+
+- More prompt variants for the 2B decider: three results say the prompt is not the lever.
+- Finer tuning of thresholds and cooldowns on val: 112 matcher settings and dozens of decider settings have been tried on 43 questions, and selection noise already dominates.
+- Quoting a best cell as a result, or comparing with Em-Garde's 31.0 directly (their cadence, their trained cue writer, the full benchmark).
+- Treating group-level numbers as findings.
+- Running dev and test embeddings (about 6 hours) before we know which design is worth it.
+- Quantization, or a Gemma comparison, before the strategy shows any promise.
+
+### How the next result changes the plan
+
+If the GPT ceiling is high, the project is promising: the work becomes making the edge confidence informative (scene-graph memory, a larger decider with more compute) and then testing routing. If it is low, the decider's job as posed (judge timing from a short window) is the problem, and we should
+rethink what the decider is asked, lean on the matcher, and use GPT where it can see more than the edge model, for example on a longer clip.
+
 ## 1. The problem in plain words
 
 You wear a camera and ask one question at the start, such as "tell me when the water boils".
@@ -795,6 +860,7 @@ thresholds. So the cue-aware decider removes true events faster than false alarm
 ## 11. Changelog
 
 - 2026-11-15: Section 5 rewritten: chance-level table trimmed to the rules that ignore the video, and the rules for calling an improvement real (bootstrap intervals, paired comparison, power) added.
+- 2026-11-22: Section 0 (overall status, bottlenecks, what to test and what not to do) added.
 - 2026-11-22: Row 2 val results added to 9a: cues do not help the decider overall and hurt it on tutorials; row 4 redone with cues is worse.
 - 2026-11-21: D21 (row 2 design) added; row 2 notebook, cue-aware decider cache, interval tooling built.
 - 2026-11-21: Row 4 val results added to 9a: the decider did not improve on the matcher.
