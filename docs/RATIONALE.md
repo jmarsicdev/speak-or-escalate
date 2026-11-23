@@ -913,6 +913,34 @@ thresholds. So the cue-aware decider removes true events faster than false alarm
 **Relevance check** (`scripts/pilot_triplet_relevance.py`, text against text with Ops-MM, separate process). For each tick, the highest cosine between any of its triplets and the cue (oracle phrase, or the question). Within-question AUC of near-event ticks against other ticks: 0.53 with the oracle cue, 0.65 with the question, averaged over 4 questions, one of which has a single near-event tick. That is noise at this size and does not support using a similarity threshold to drop triplets. Raw similarities were low (0.25 to 0.52), so any threshold would also have thrown away most ticks.
 
 **Reading.** The extraction problem was mostly prompt and decoding, and is largely fixed. Whether the triplets carry the event signal is not shown: the one proxy we have is the same embedder that is weak on video, and 31 ticks cannot settle it. A better test of the memory is downstream (does retrieval of triplets help the decider, row 5), not a similarity filter.
+### Row 5 short validation: decider with scene-graph evidence, and "what is new" scoring (14 and 12 val questions, 2026-11-23)
+
+**Why short.** Before an hour of extraction for all of val, both ideas were tried on a small subset: the 3 shortest questions of each source plus the 2 other clue-reveal questions already extracted (14 questions, 112 five-second ticks, 8 minutes of extraction). Settings are those of the step B second try (`scripts/run_scene_graph_cache.py`). The full-val extraction was started and stopped after 4 questions; those are kept.
+
+**Test 1, the decider with evidence** (`scripts/run_decider_evidence.py`; question plus the triplets of the last two extraction ticks, up to 10 lines, no cues, only past ticks; 111 s). Compared with row 1 on the same 14 questions by within-question AUC with a video-level bootstrap interval (`scripts/compare_deciders.py`):
+
+| Group | Questions | Row 1 AUC | With evidence | Change | 95% interval |
+|---|---|---|---|---|---|
+| All | 14 | 0.574 | 0.454 | **-0.120** | [-0.240, -0.017] |
+| Sports counting | 3 | 0.802 | 0.722 | -0.079 | [-0.236, +0.079] |
+| Everyday-object counting | 3 | 0.453 | 0.322 | -0.131 | [-0.393, +0.083] |
+| Tutorials | 3 | 0.596 | 0.300 | **-0.296** | [-0.491, -0.063] |
+| Clue reveal | 5 | 0.496 | 0.466 | -0.031 | [-0.312, +0.145] |
+
+The share of moments where the decider says Yes rose from 0.78 to 0.89. So the evidence made the decider say Yes more often and rank moments worse, the same pattern as cues in row 2 (more text in the prompt, more agreement, less discrimination). 14 questions and unadjusted intervals: the overall interval only just excludes zero, so this is a warning, not a firm loss; but there is no sign of a gain.
+
+**Test 2, scoring what is new** (`scripts/pilot_triplet_novelty.py`; text against text with Ops-MM; a tick counts as near an event if an event lies in [t-5, t+2]; within-question AUC averaged over 12 questions with both kinds of tick):
+
+| Score | Oracle cues | Question text as cue |
+|---|---|---|
+| relevance: best cosine between a triplet and a cue | 0.664 | 0.577 |
+| new: how unlike the previous tick the triplets are (no cue) | 0.557 | 0.557 |
+| new and relevant: cue cosine times novelty | 0.600 | 0.540 |
+| rise in relevance since the previous tick | 0.402 | 0.436 |
+
+Scoring what is new does not beat plain relevance (0.60 and 0.54 against 0.66 and 0.58), novelty without any cue is close to chance, and the rise is below 0.5. Small sample, no bootstrap interval; relevance with oracle cues at 0.66 is the only score that looks above chance, and it needs cues no deployed system has.
+
+**Reading.** Neither idea is validated at this size. Putting triplets in the decider's prompt hurt, and the embedder on triplets gives no better event signal than it gave on video. Taken with step A and B, the weak part is not specifically the video embedder, the cue wording or the extraction format: neither the matcher, the decider, nor a text comparison picks event moments out reliably from a 2 s to 5 s view of the stream. We have not yet tried: longer or smarter views (several windows, frame differences), a different embedder, or a larger decider.
 ## 10. Glossary
 
 - **Edge model / edge VLM**: the small vision-language model that runs on the device.

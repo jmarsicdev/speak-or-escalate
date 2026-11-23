@@ -63,12 +63,19 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--samples", required=True)
     ap.add_argument("--limit", type=int, default=None)
+    ap.add_argument("--per-source", type=int, default=None, help="short pilot: only the N shortest questions of each source")
     ap.add_argument("--set", action="append", default=[])
     a = ap.parse_args()
     over = {k: yaml.safe_load(v) for k, v in (p.split("=", 1) for p in a.set)}
     over.setdefault("edge.backend", "hf")
     cfg = load_config(None, over)
     samples = load_jsonl(a.samples)[: a.limit]
+    if a.per_source:
+        by: dict = {}
+        for s in sorted(samples, key=lambda s: (s.end_s or 0) - s.start_s):
+            by.setdefault(s.meta.get("source", s.task), []).append(s)
+        samples = [s for v in by.values() for s in v[: a.per_source]]
+        print("pilot subset:", [s.id for s in samples])
     out = cache_dir(cfg)
     out.mkdir(parents=True, exist_ok=True)
     json.dump({**SETTINGS, "prompt": PROMPT, "model_id": cfg["edge"]["model_id"]}, open(out / "_meta.json", "w"), indent=1)

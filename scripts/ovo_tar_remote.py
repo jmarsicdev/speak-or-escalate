@@ -115,7 +115,7 @@ def build_index() -> dict:
 def fetch(samples_path: str, out: Path, index: dict):
     from egogate.eval.datasets import load_jsonl
     rt = RemoteTar()
-    wanted = sorted({str(s.video) for s in load_jsonl(samples_path)})
+    wanted = sorted({s.video.as_posix() for s in load_jsonl(samples_path)})
     missing = [w for w in wanted if w not in index["files"]]
     if missing:
         print(f"WARNING: {len(missing)} videos not in the index, e.g. {missing[:3]}")

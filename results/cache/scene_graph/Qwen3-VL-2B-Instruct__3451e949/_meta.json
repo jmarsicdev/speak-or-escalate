@@ -1,0 +1,10 @@
+{
+ "every_s": 5.0,
+ "per_clip": 8,
+ "rep_penalty": 1.15,
+ "max_new": 80,
+ "fps": 1.0,
+ "version": "sg-v2",
+ "prompt": "You are watching a first-person video clip of the last {secs} seconds.\nWrite at most {k} scene-graph triplets, one per line, as (subject, relation, object), in English only.\nDescribe what the people DO (the actions and what changed), not what they wear or what the room contains.\nEach line must be different. Do not repeat a line. Do not write the word \"relation\".\n{prev}",
+ "model_id": "Qwen/Qwen3-VL-2B-Instruct"
+}
