@@ -1,0 +1,179 @@
+{
+ "id": "ovo_SSR_1546",
+ "query": "Describe the steps of make slime with glue",
+ "oracle": [
+  "add different kinds of ingredients",
+  "mix the raw materials",
+  "rub and drag the materials"
+ ],
+ "events": [
+  7.0,
+  20.0,
+  43.0
+ ],
+ "ticks": [
+  {
+   "t": 5.0,
+   "ms": 4584,
+   "raw": "(Subject: hand, action: holding, Object: plastic cup)\n(Subject: hand, action: pouring, Object: liquid from bottle into cup)\n(Subject: hand, action: placing, Object: plastic cup on table)\n(Subject: hand, action: picking up, Object: glue bottle)\n(Subject: hand, action: squeezing, Object: glue bottle)",
+   "triplets": [
+    "(Subject: hand, action: holding, Object: plastic cup)",
+    "(Subject: hand, action: pouring, Object: liquid from bottle into cup)",
+    "(Subject: hand, action: placing, Object: plastic cup on table)",
+    "(Subject: hand, action: picking up, Object: glue bottle)",
+    "(Subject: hand, action: squeezing, Object: glue bottle)"
+   ],
+   "near_event": true
+  },
+  {
+   "t": 10.0,
+   "ms": 4676,
+   "raw": "(Subject: hand, action: pouring, Object: liquid from bottle into cup) (Subject: hand, action: adding, Object: dark liquid to cup) (Subject: hand, action: opening, Object: small black bottle with white cap) (Subject: hand, action: closing, Object: small black bottle with white cap) (Subject: hand, action: moving, Object:",
+   "triplets": [
+    "(Subject: hand, action: pouring, Object: liquid from bottle into cup)",
+    "(Subject: hand, action: adding, Object: dark liquid to cup)",
+    "(Subject: hand, action: opening, Object: small black bottle with white cap)",
+    "(Subject: hand, action: closing, Object: small black bottle with white cap)"
+   ],
+   "near_event": true
+  },
+  {
+   "t": 15.0,
+   "ms": 4495,
+   "raw": "(Subject: hand, action: stirring, Object: liquid in cup) (Subject: hand, action: mixing, Object: blue liquid in cup) (Subject: hand, action: swirling, Object: mixture in cup) (Subject: hand, action: stirring, Object: blue liquid in cup) (Subject: hand, action: moving, Object: wooden stick in cup) (Subject",
+   "triplets": [
+    "(Subject: hand, action: stirring, Object: liquid in cup)",
+    "(Subject: hand, action: mixing, Object: blue liquid in cup)",
+    "(Subject: hand, action: swirling, Object: mixture in cup)",
+    "(Subject: hand, action: stirring, Object: blue liquid in cup)",
+    "(Subject: hand, action: moving, Object: wooden stick in cup)"
+   ],
+   "near_event": true
+  },
+  {
+   "t": 20.0,
+   "ms": 4673,
+   "raw": "(Subject: hand, action: pouring, Object: water from measuring cylinder into cup)  \n(Subject: hand, action: stirring, Object: blue liquid in cup)  \n(Subject: hand, action: holding, Object: wooden stirrer in cup)  \n(Subject: hand, action: removing, Object: wooden stirrer from cup)  \n(Subject: hand, action: placing",
+   "triplets": [
+    "(Subject: hand, action: pouring, Object: water from measuring cylinder into cup)",
+    "(Subject: hand, action: stirring, Object: blue liquid in cup)",
+    "(Subject: hand, action: holding, Object: wooden stirrer in cup)",
+    "(Subject: hand, action: removing, Object: wooden stirrer from cup)"
+   ],
+   "near_event": true
+  },
+  {
+   "t": 25.0,
+   "ms": 4532,
+   "raw": "(Subject: hand, action: stirring, Object: blue liquid in cup)  \n(Subject: hand, action: mixing, Object: blue liquid in cup)  \n(Subject: hand, action: swirling, Object: blue liquid in cup)  \n(Subject: hand, action: stirring, Object: blue liquid in cup)  \n(Subject: hand, action: moving, Object: wooden",
+   "triplets": [
+    "(Subject: hand, action: stirring, Object: blue liquid in cup)",
+    "(Subject: hand, action: mixing, Object: blue liquid in cup)",
+    "(Subject: hand, action: swirling, Object: blue liquid in cup)",
+    "(Subject: hand, action: stirring, Object: blue liquid in cup)"
+   ],
+   "near_event": true
+  },
+  {
+   "t": 30.0,
+   "ms": 4609,
+   "raw": "(Subject: hand, action: stirring, Object: blue liquid in cup)  \n(Subject: hand, action: moving, Object: wooden stick)  \n(Subject: hand, action: pushing, Object: blue liquid in cup)  \n(Subject: hand, action: pulling, Object: wooden stick)  \n(Subject: hand, action: lifting, Object: wooden stick)  \n(",
+   "triplets": [
+    "(Subject: hand, action: stirring, Object: blue liquid in cup)",
+    "(Subject: hand, action: moving, Object: wooden stick)",
+    "(Subject: hand, action: pushing, Object: blue liquid in cup)",
+    "(Subject: hand, action: pulling, Object: wooden stick)",
+    "(Subject: hand, action: lifting, Object: wooden stick)"
+   ],
+   "near_event": false
+  },
+  {
+   "t": 35.0,
+   "ms": 4454,
+   "raw": "(Subject: hand, action: stirring, Object: blue liquid in cup)  \n(Subject: hand, action: mixing, Object: blue liquid in cup)  \n(Subject: hand, action: scraping, Object: blue liquid in cup)  \n(Subject: hand, action: rotating, Object: wooden stick)  \n(Subject: hand, action: pressing, Object: blue liquid in",
+   "triplets": [
+    "(Subject: hand, action: stirring, Object: blue liquid in cup)",
+    "(Subject: hand, action: mixing, Object: blue liquid in cup)",
+    "(Subject: hand, action: scraping, Object: blue liquid in cup)",
+    "(Subject: hand, action: rotating, Object: wooden stick)"
+   ],
+   "near_event": false
+  },
+  {
+   "t": 40.0,
+   "ms": 4538,
+   "raw": "(Subject: hand, action: pouring, Object: blue liquid from cup into sink)  \n(Subject: hand, action: holding, Object: plastic cup containing blue liquid)  \n(Subject: hand, action: using, Object: wooden stick to stir blue liquid)  \n(Subject: hand, action: removing, Object: wooden stick from blue liquid)  \n(Subject: hand, action",
+   "triplets": [
+    "(Subject: hand, action: pouring, Object: blue liquid from cup into sink)",
+    "(Subject: hand, action: holding, Object: plastic cup containing blue liquid)",
+    "(Subject: hand, action: using, Object: wooden stick to stir blue liquid)",
+    "(Subject: hand, action: removing, Object: wooden stick from blue liquid)"
+   ],
+   "near_event": true
+  },
+  {
+   "t": 45.0,
+   "ms": 4637,
+   "raw": "(Subject: hand, action: squeezing, Object: blue sponge)  \n(Subject: hand, action: pressing, Object: blue sponge)  \n(Subject: hand, action: rubbing, Object: blue sponge)  \n(Subject: hand, action: rinsing, Object: blue sponge)  \n(Subject: hand, action: washing, Object: blue sponge)  \n(Subject: hand",
+   "triplets": [
+    "(Subject: hand, action: squeezing, Object: blue sponge)",
+    "(Subject: hand, action: pressing, Object: blue sponge)",
+    "(Subject: hand, action: rubbing, Object: blue sponge)",
+    "(Subject: hand, action: rinsing, Object: blue sponge)",
+    "(Subject: hand, action: washing, Object: blue sponge)"
+   ],
+   "near_event": true
+  },
+  {
+   "t": 50.0,
+   "ms": 4591,
+   "raw": "(Subject: hand, action: squeezing, Object: blue sponge)  \n(Subject: hand, action: pressing, Object: blue sponge)  \n(Subject: hand, action: rubbing, Object: blue sponge)  \n(Subject: hand, action: rinsing, Object: blue sponge)  \n(Subject: hand, action: washing, Object: blue sponge)  \n(Subject: hand",
+   "triplets": [
+    "(Subject: hand, action: squeezing, Object: blue sponge)",
+    "(Subject: hand, action: pressing, Object: blue sponge)",
+    "(Subject: hand, action: rubbing, Object: blue sponge)",
+    "(Subject: hand, action: rinsing, Object: blue sponge)",
+    "(Subject: hand, action: washing, Object: blue sponge)"
+   ],
+   "near_event": false
+  },
+  {
+   "t": 55.0,
+   "ms": 4706,
+   "raw": "(Subject: hand, action: opening, Object: container)  \n(Subject: hand, action: lifting, Object: lid)  \n(Subject: hand, action: closing, Object: container)  \n(Subject: hand, action: placing, Object: container)  \n(Subject: hand, action: removing, Object: lid)  \n(Subject: hand, action: holding, Object",
+   "triplets": [
+    "(Subject: hand, action: opening, Object: container)",
+    "(Subject: hand, action: lifting, Object: lid)",
+    "(Subject: hand, action: closing, Object: container)",
+    "(Subject: hand, action: placing, Object: container)",
+    "(Subject: hand, action: removing, Object: lid)"
+   ],
+   "near_event": false
+  },
+  {
+   "t": 60.0,
+   "ms": 4563,
+   "raw": "- (Subject: hand, action: squeezing, Object: blue substance)  \n- (Subject: hand, action: stretching, Object: blue substance)  \n- (Subject: hand, action: pulling, Object: blue substance)  \n- (Subject: hand, action: manipulating, Object: blue substance)  \n- (Subject: hand, action: holding, Object: red knife)",
+   "triplets": [
+    "(Subject: hand, action: squeezing, Object: blue substance)",
+    "(Subject: hand, action: stretching, Object: blue substance)",
+    "(Subject: hand, action: pulling, Object: blue substance)",
+    "(Subject: hand, action: manipulating, Object: blue substance)",
+    "(Subject: hand, action: holding, Object: red knife)"
+   ],
+   "near_event": false
+  },
+  {
+   "t": 65.0,
+   "ms": 4568,
+   "raw": "- (Subject: hand, action: kneading, Object: blue substance)  \n- (Subject: hand, action: pressing, Object: yellow container)  \n- (Subject: hand, action: applying pressure, Object: black material)  \n- (Subject: hand, action: cutting, Object: yellow container)  \n- (Subject: hand, action: placing, Object: white block",
+   "triplets": [
+    "(Subject: hand, action: kneading, Object: blue substance)",
+    "(Subject: hand, action: pressing, Object: yellow container)",
+    "(Subject: hand, action: applying pressure, Object: black material)",
+    "(Subject: hand, action: cutting, Object: yellow container)"
+   ],
+   "near_event": false
+  }
+ ]
+}

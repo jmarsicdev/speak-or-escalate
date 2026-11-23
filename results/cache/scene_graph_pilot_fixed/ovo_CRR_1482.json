@@ -1,0 +1,92 @@
+{
+ "id": "ovo_CRR_1482",
+ "query": "The man is walking in the garden. Who does he come across?",
+ "oracle": [
+  "A woman with gray suit and golden hair."
+ ],
+ "events": [
+  1469.0
+ ],
+ "ticks": [
+  {
+   "t": 1470.0,
+   "ms": 3577,
+   "raw": "(Man, stands, near flowers)\n(Man, walks, through garden)\n(Man, looks up, towards sky)\n(Man, stops, by grave)\n(Man, turns, to face woman) \n(Woman, stands, with man)\n(Man, moves, away from woman)",
+   "triplets": [
+    "(Man, stands, near flowers)",
+    "(Man, walks, through garden)",
+    "(Man, looks up, towards sky)",
+    "(Man, stops, by grave)",
+    "(Man, turns, to face woman)",
+    "(Woman, stands, with man)",
+    "(Man, moves, away from woman)"
+   ],
+   "near_event": true
+  },
+  {
+   "t": 1475.0,
+   "ms": 3595,
+   "raw": "(Man, walks, along path) (Man, passes, under archway) (Man, pauses, on pathway) (Man, continues walking, down path) (Man, approaches, stone monument) (Man, steps onto, paved surface) (Man, begins moving, toward distant building)",
+   "triplets": [
+    "(Man, walks, along path)",
+    "(Man, passes, under archway)",
+    "(Man, pauses, on pathway)",
+    "(Man, continues walking, down path)",
+    "(Man, approaches, stone monument)",
+    "(Man, steps onto, paved surface)",
+    "(Man, begins moving, toward distant building)"
+   ],
+   "near_event": false
+  },
+  {
+   "t": 1480.0,
+   "ms": 3463,
+   "raw": "(Man, stands, near rock formation) (Woman, walks, through garden) (Woman, looks, into distance) (Woman, turns, to face man) (Man, watches, woman walk away) (Man, stops, by doorway) (Man, observes, woman leaving)",
+   "triplets": [
+    "(Man, stands, near rock formation)",
+    "(Woman, walks, through garden)",
+    "(Woman, looks, into distance)",
+    "(Woman, turns, to face man)",
+    "(Man, watches, woman walk away)",
+    "(Man, stops, by doorway)",
+    "(Man, observes, woman leaving)"
+   ],
+   "near_event": false
+  },
+  {
+   "t": 1485.0,
+   "ms": 3445,
+   "raw": "(Man, turns, toward camera) (Woman, holds flowers, in hand) (Woman, approaches gravestone) (Woman, places flowers on grave) (Man, steps back from stone) (Woman, pauses, before placing flowers) (Woman, lowers head, looking down)",
+   "triplets": [
+    "(Man, turns, toward camera)",
+    "(Woman, holds flowers, in hand)",
+    "(Woman, pauses, before placing flowers)",
+    "(Woman, lowers head, looking down)"
+   ],
+   "near_event": false
+  },
+  {
+   "t": 1490.0,
+   "ms": 3567,
+   "raw": "(Woman, looks up, away from flowers) (Man, stands, near stone wall) (Woman, places flowers on grave marker) (Man, watches woman place flowers) (Woman, walks forward, holding bouquet) (Man, observes woman walking) (Woman, stops, facing man)",
+   "triplets": [
+    "(Woman, looks up, away from flowers)",
+    "(Man, stands, near stone wall)",
+    "(Woman, walks forward, holding bouquet)",
+    "(Woman, stops, facing man)"
+   ],
+   "near_event": false
+  },
+  {
+   "t": 1495.0,
+   "ms": 3098,
+   "raw": "(Woman, turns around, looking back) (Woman, walks forward, carrying bouquet) (Woman, approaches gravestone) (Woman, places bouquet on grave marker) (Woman, steps back, walking away) (Woman, continues to walk down path)",
+   "triplets": [
+    "(Woman, turns around, looking back)",
+    "(Woman, walks forward, carrying bouquet)",
+    "(Woman, steps back, walking away)"
+   ],
+   "near_event": false
+  }
+ ]
+}

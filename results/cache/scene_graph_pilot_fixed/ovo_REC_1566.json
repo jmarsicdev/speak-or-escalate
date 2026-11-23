@@ -1,0 +1,78 @@
+{
+ "id": "ovo_REC_1566",
+ "query": "How many times does the event: hitting something against/with something happen?",
+ "oracle": [
+  "hitting something against/with something"
+ ],
+ "events": [
+  10.0,
+  11.0,
+  11.0,
+  12.0,
+  13.0
+ ],
+ "ticks": [
+  {
+   "t": 5.0,
+   "ms": 3244,
+   "raw": "(arm, moves, bowl)\n(bowl, is moved by, arm)\n(bowl, is placed on, table)\n(bowl, is lifted from, table)\n(bowl, is removed from, table)",
+   "triplets": [
+    "(arm, moves, bowl)",
+    "(bowl, is moved by, arm)",
+    "(bowl, is placed on, table)",
+    "(bowl, is lifted from, table)",
+    "(bowl, is removed from, table)"
+   ],
+   "near_event": true
+  },
+  {
+   "t": 10.0,
+   "ms": 4515,
+   "raw": "(bowl, is placed on, table) (hand, holds, pen) (pen, points to, card) (card, has, drawing) (card, is held by, hand) (hand, touches, card) (card, is touched by, hand) (card, is near, table) (card, is next to, table) (card, is under, table",
+   "triplets": [
+    "(bowl, is placed on, table)",
+    "(hand, holds, pen)",
+    "(pen, points to, card)",
+    "(card, has, drawing)",
+    "(card, is held by, hand)",
+    "(hand, touches, card)",
+    "(card, is touched by, hand)",
+    "(card, is near, table)",
+    "(card, is next to, table)"
+   ],
+   "near_event": true
+  },
+  {
+   "t": 15.0,
+   "ms": 4543,
+   "raw": "(bowl, is lifted from, table) (bowl, is moved to, table) (bowl, is placed on, table) (hand, lifts, bowl) (bowl, is removed from, table) (bowl, is put down on, table) (bowl, is picked up by, hand) (bowl, is set aside on, table) (",
+   "triplets": [
+    "(bowl, is lifted from, table)",
+    "(bowl, is moved to, table)",
+    "(bowl, is placed on, table)",
+    "(hand, lifts, bowl)",
+    "(bowl, is removed from, table)",
+    "(bowl, is put down on, table)",
+    "(bowl, is picked up by, hand)",
+    "(bowl, is set aside on, table)"
+   ],
+   "near_event": true
+  },
+  {
+   "t": 20.0,
+   "ms": 4635,
+   "raw": "(bowl, is lifted from, table) (bowl, is moved to, table) (bowl, is placed on, table) (hand, lifts, bowl) (bowl, is removed from, table) (bowl, is put down on, table) (bowl, is picked up by, hand) (bowl, is set aside on, table) (",
+   "triplets": [
+    "(bowl, is lifted from, table)",
+    "(bowl, is moved to, table)",
+    "(bowl, is placed on, table)",
+    "(hand, lifts, bowl)",
+    "(bowl, is removed from, table)",
+    "(bowl, is put down on, table)",
+    "(bowl, is picked up by, hand)",
+    "(bowl, is set aside on, table)"
+   ],
+   "near_event": false
+  }
+ ]
+}

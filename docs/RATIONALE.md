@@ -1,4 +1,4 @@
-﻿# Rationale: what we are building, why, and how we will know it works
+# Rationale: what we are building, why, and how we will know it works
 
 This is a living document. It is written so that someone who has not followed the project can
 understand what we did, why we did it, what each experiment tests, and where we are going.
@@ -904,6 +904,15 @@ thresholds. So the cue-aware decider removes true events faster than false alarm
 **Reading.** With this prompt and this 2B model the scene graph is not a usable memory: it is slow, loops, and describes the static scene rather than the change a question is about. This does not show that scene graphs cannot help; it shows this extraction does not. Cheap fixes that are not tried yet: a repetition penalty or a stop after 8 lines, a shorter token budget (about 64), an English-only instruction, and asking for what *changed* since the last clip. Whether to try these before step C is a decision for the user. Step C (memory-aligned cues) is not supported by this pilot.
 
 **Caveats.** 4 questions, 31 ticks, one prompt, one sampling setting, hand-read.
+### Step B, second try: generation fixes and a relevance check (same 4 val questions, 31 ticks, 2026-11-22)
+
+**Changes to the extraction** (`scripts/pilot_scene_graph.py --variant fixed --rep-penalty 1.15 --max-new 80`): a rewritten prompt (English only, at most 8 lines, describe what people DO and what changed, every line different, no "relation" placeholder), the previous tick's triplets given as text with "say what is new or different", a repetition penalty of 1.15 and an 80-token budget. The question is still not in the prompt.
+
+**Result.** The loops, the Chinese output and the placeholder words are gone, and generation takes 4.3 s per tick (median 4.5 s) against 7.6 s. The triplets now name actions: tennis "serves ball", "swings racket", "hits ball"; slime "pouring liquid from bottle into cup", then "stirring blue liquid in cup", "removing wooden stirrer"; bowl clip "hand lifts bowl", "bowl is put down on table". Two of 31 ticks parsed to nothing because the model dropped the "Subject:" label on some lines (a parser issue, not empty output). Still weak: some ticks repeat the previous tick almost line for line (bowl clip at 15 s and 20 s), the model sometimes invents a second player, and it cannot say how many times something happened. At 4.3 s per tick, full val would still take about 1 hour.
+
+**Relevance check** (`scripts/pilot_triplet_relevance.py`, text against text with Ops-MM, separate process). For each tick, the highest cosine between any of its triplets and the cue (oracle phrase, or the question). Within-question AUC of near-event ticks against other ticks: 0.53 with the oracle cue, 0.65 with the question, averaged over 4 questions, one of which has a single near-event tick. That is noise at this size and does not support using a similarity threshold to drop triplets. Raw similarities were low (0.25 to 0.52), so any threshold would also have thrown away most ticks.
+
+**Reading.** The extraction problem was mostly prompt and decoding, and is largely fixed. Whether the triplets carry the event signal is not shown: the one proxy we have is the same embedder that is weak on video, and 31 ticks cannot settle it. A better test of the memory is downstream (does retrieval of triplets help the decider, row 5), not a similarity filter.
 ## 10. Glossary
 
 - **Edge model / edge VLM**: the small vision-language model that runs on the device.

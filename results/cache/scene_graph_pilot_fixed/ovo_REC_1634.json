@@ -1,0 +1,107 @@
+{
+ "id": "ovo_REC_1634",
+ "query": "How many times does the event: tennis swing happen?",
+ "oracle": [
+  "tennis swing"
+ ],
+ "events": [
+  2.0,
+  21.0,
+  30.0,
+  39.0
+ ],
+ "ticks": [
+  {
+   "t": 5.0,
+   "ms": 4338,
+   "raw": "(Subject: Player1, action: serves)  \n(Player2, action: watches)  \n(Player1, action: swings racket)  \n(Player1, action: hits ball)  \n(Player2, action: stands still)  \n(Player1, action: moves forward)  \n(Player1, action: prepares for next shot)  \n(Player2, action: holds racket)",
+   "triplets": [],
+   "near_event": true
+  },
+  {
+   "t": 10.0,
+   "ms": 4531,
+   "raw": "(Subject: Player1, action: swings racket)\n(Player1 is swinging their tennis racket to hit the ball.)\n\n(Subject: Player2, action: watches)\n(Player2 stands still, observing the player's swing.)\n\n(Subject: Player1, action: prepares for next shot)\n(Player1 adjusts their stance before preparing for the next play.)\n\n(Subject: Player2, action: holds racket)",
+   "triplets": [],
+   "near_event": false
+  },
+  {
+   "t": 15.0,
+   "ms": 4300,
+   "raw": "(Subject: woman, action: serves ball, object: tennis racket)\n(Subject: man, action: watches, object: woman)\n(Subject: woman, action: prepares to serve, object: tennis racket)\n(Subject: woman, action: stands on court, object: tennis racket)\n(Subject: woman, action: holds racket, object: hand)",
+   "triplets": [
+    "(Subject: woman, action: serves ball, object: tennis racket)",
+    "(Subject: man, action: watches, object: woman)",
+    "(Subject: woman, action: prepares to serve, object: tennis racket)",
+    "(Subject: woman, action: stands on court, object: tennis racket)",
+    "(Subject: woman, action: holds racket, object: hand)"
+   ],
+   "near_event": false
+  },
+  {
+   "t": 20.0,
+   "ms": 4558,
+   "raw": "(Subject: woman, action: swings racket, object: air)  \n(Subject: woman, action: hits ball, object: air)  \n(Subject: woman, action: moves forward, object: court)  \n(Subject: woman, action: lowers racket, object: body)  \n(Subject: woman, action: completes swing, object: ball)  \n(Subject: man,",
+   "triplets": [
+    "(Subject: woman, action: swings racket, object: air)",
+    "(Subject: woman, action: hits ball, object: air)",
+    "(Subject: woman, action: moves forward, object: court)",
+    "(Subject: woman, action: lowers racket, object: body)",
+    "(Subject: woman, action: completes swing, object: ball)"
+   ],
+   "near_event": true
+  },
+  {
+   "t": 25.0,
+   "ms": 4376,
+   "raw": "(Subject: woman, action: serves, object: ball)  \n(Subject: woman, action: extends arm, object: racket)  \n(Subject: woman, action: holds racket, object: hand)  \n(Subject: woman, action: prepares to serve, object: tennis ball)  \n(Subject: woman, action: releases ball, object: air)  \n(Subject: woman",
+   "triplets": [
+    "(Subject: woman, action: serves, object: ball)",
+    "(Subject: woman, action: extends arm, object: racket)",
+    "(Subject: woman, action: holds racket, object: hand)",
+    "(Subject: woman, action: prepares to serve, object: tennis ball)",
+    "(Subject: woman, action: releases ball, object: air)"
+   ],
+   "near_event": true
+  },
+  {
+   "t": 30.0,
+   "ms": 4587,
+   "raw": "(Subject: woman, action: swings racket, object: ball)  \n(Subject: woman, action: hits ball, object: air)  \n(Subject: woman, action: moves back, object: court)  \n(Subject: man, action: watches, object: woman)  \n(Subject: woman, action: adjusts stance, object: body)  \n(Subject: woman, action",
+   "triplets": [
+    "(Subject: woman, action: swings racket, object: ball)",
+    "(Subject: woman, action: hits ball, object: air)",
+    "(Subject: woman, action: moves back, object: court)",
+    "(Subject: man, action: watches, object: woman)",
+    "(Subject: woman, action: adjusts stance, object: body)"
+   ],
+   "near_event": true
+  },
+  {
+   "t": 35.0,
+   "ms": 4336,
+   "raw": "(Subject: woman, action: serves, object: ball)  \n(Subject: woman, action: prepares to serve, object: tennis racket)  \n(Subject: woman, action: holds racket, object: hand)  \n(Subject: man, action: stands still, object: court)  \n(Subject: woman, action: completes serve, object: air)  \n(Subject: woman",
+   "triplets": [
+    "(Subject: woman, action: serves, object: ball)",
+    "(Subject: woman, action: prepares to serve, object: tennis racket)",
+    "(Subject: woman, action: holds racket, object: hand)",
+    "(Subject: man, action: stands still, object: court)",
+    "(Subject: woman, action: completes serve, object: air)"
+   ],
+   "near_event": true
+  },
+  {
+   "t": 40.0,
+   "ms": 4565,
+   "raw": "(Subject: woman, action: swings racket, object: ball)  \n(Subject: woman, action: hits ball, object: air)  \n(Subject: woman, action: moves forward, object: court)  \n(Subject: man, action: watches, object: woman)  \n(Subject: woman, action: releases ball, object: air)  \n(Subject: woman, action",
+   "triplets": [
+    "(Subject: woman, action: swings racket, object: ball)",
+    "(Subject: woman, action: hits ball, object: air)",
+    "(Subject: woman, action: moves forward, object: court)",
+    "(Subject: man, action: watches, object: woman)",
+    "(Subject: woman, action: releases ball, object: air)"
+   ],
+   "near_event": true
+  }
+ ]
+}

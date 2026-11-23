@@ -29,6 +29,12 @@ from egogate.eval.datasets import load_jsonl  # noqa: E402
 from egogate.evidence import TRIPLET_PROMPT, parse_triplets  # noqa: E402
 from egogate.frames import stream_windows  # noqa: E402
 
+FIXED_PROMPT = """You are watching a first-person video clip of the last {secs} seconds.
+Write at most {k} scene-graph triplets, one per line, as (subject, relation, object), in English only.
+Describe what the people DO (the actions and what changed), not what they wear or what the room contains.
+Each line must be different. Do not repeat a line. Do not write the word "relation".
+{prev}"""
+
 STOP = set("the a an of to in on and or is are with at for from by it this that step then".split())
 
 
@@ -44,6 +50,9 @@ def main():
     ap.add_argument("--every", type=float, default=5.0)
     ap.add_argument("--per-clip", type=int, default=8)
     ap.add_argument("--out", default="results/cache/scene_graph_pilot")
+    ap.add_argument("--variant", choices=["orig", "fixed"], default="orig")
+    ap.add_argument("--rep-penalty", type=float, default=1.0)
+    ap.add_argument("--max-new", type=int, default=160)
     ap.add_argument("--set", action="append", default=[])
     args = ap.parse_args()
 
@@ -69,10 +78,19 @@ def main():
         ticks = [round(s.start_s + args.every * k, 3) for k in range(1, int((end - s.start_s) / args.every) + 1)]
         cue_words = words(" ".join(oracle_cues(s)))
         prev: set[str] = set()
+        prev_txt: list[str] = []
         rec = []
         for w in stream_windows(video_root / s.video, ticks, args.every, 1.0, cfg["decider"]["max_side"]):
             t0 = time.perf_counter()
-            text = edge.complete(prompt, images=w.frames, max_new_tokens=160)
+            if args.variant == "fixed":
+                prv = ("Previous clip: " + " ".join(prev_txt) + "\nNow say what is happening that is new or different.") if prev_txt else ""
+                pr = FIXED_PROMPT.format(secs=int(args.every), k=args.per_clip, prev=prv)
+            else:
+                pr = prompt
+            inputs = edge._inputs(pr, w.frames)
+            with edge.torch.no_grad():
+                o = edge.model.generate(**inputs, max_new_tokens=args.max_new, do_sample=False, repetition_penalty=args.rep_penalty)
+            text = edge.processor.decode(o[0, inputs["input_ids"].shape[1]:], skip_special_tokens=True).strip()
             ms = (time.perf_counter() - t0) * 1000
             gen_ms.append(ms)
             trips = parse_triplets(text, w.t_end)
@@ -83,6 +101,7 @@ def main():
             rows.append({"id": s.id, "task": s.task, "near_event": near, "n": len(cur), "novelty": nov, "hit": hit})
             rec.append({"t": w.t_end, "ms": round(ms), "raw": text, "triplets": [str(t) for t in trips], "near_event": near})
             prev = cur
+            prev_txt = [str(t) for t in trips][:args.per_clip]
         json.dump({"id": s.id, "query": s.query, "oracle": oracle_cues(s), "events": [e.t for e in s.events], "ticks": rec},
                   open(out_dir / f"{s.id}.json", "w"), indent=1)
         print(f"{s.id} ({s.task}): {len(rec)} ticks", flush=True)
