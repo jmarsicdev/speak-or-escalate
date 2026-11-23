@@ -1108,11 +1108,30 @@ By group the 1-frame loss is largest on clue reveal (-0.13) and present in every
 - **The decider needs some time, not less.** One frame is clearly worse than two seconds; two frames are about as good as four. A single snapshot cannot show that something is happening, which supports giving the decider more time (the history experiment below), not less.
 
 **Caveats.** Val only; SigLIP2 only for the matcher (Ops-MM not re-run per frame); the scene-level cues were written without seeing the video, so their scene details are partly invented; group intervals unadjusted.
-### In progress (2026-11-23): decider history (val)
+### Decider with history, and asked what changed (val, 43 questions, 2026-11-23)
 
-Started together with the two experiments above; results will be added here when it finishes. The run was interrupted once by a restart of the laptop session and resumed from its stored decisions.
+**Question.** Is the decider weak because 2 s without history cannot show events that are defined against what came before (a step finished, an action repeated)?
+**Setup.** The 8B decider shown two earlier frames (about 10 s and 5 s back) plus the last 4 (`scripts/run_decider_history.py`): variant `change` first asks, without the user's question, "what changed between the earlier frames and now?" and adds that sentence to the Yes/No prompt; variant `frames` is the same without the sentence, which separates "seeing history" from "writing the change down". In the first 10 s of a video the earliest available frame stands in for both earlier frames. Both runs were interrupted once by a restart of the laptop session and resumed from their stored decisions.
 
-**Decider with history.** The 8B decider shown two earlier frames (about 10 s and 5 s back) plus the last 4 (`scripts/run_decider_history.py`): variant `change` first asks, without the user's question, "what changed between the earlier frames and now?" and adds that sentence to the Yes/No prompt; variant `frames` is the same without the sentence, which separates "seeing history" from "writing the change down". In the first 10 s of a video the earliest available frame stands in for both earlier frames.
+**Result** (within-question AUC against the 8B's own last-2-s run, video-level 95% intervals; Yes-rate = share of moments with p(Yes) >= 0.5):
+
+| Group | n | 8B, last 2 s | + history frames | change | 95% interval | + history, "what changed" | change | 95% interval |
+|---|---|---|---|---|---|---|---|---|
+| All | 43 | 0.618 | 0.578 | -0.040 | [-0.089, +0.007] | 0.552 | **-0.067** | [-0.115, -0.018] |
+| Sports counting | 10 | 0.700 | 0.595 | **-0.106** | [-0.164, -0.054] | 0.575 | **-0.125** | [-0.213, -0.047] |
+| Everyday-object counting | 14 | 0.597 | 0.528 | -0.069 | [-0.166, +0.006] | 0.506 | -0.091 | [-0.189, +0.005] |
+| Tutorials | 12 | 0.659 | **0.721** | **+0.062** | [+0.013, +0.112] | 0.688 | +0.029 | [-0.014, +0.074] |
+| Clue reveal | 7 | 0.474 | 0.411 | -0.063 | [-0.203, +0.082] | 0.375 | -0.099 | [-0.191, +0.007] |
+| Yes-rate | | 0.06 | 0.16 | | | 0.38 | | |
+
+"What changed" against history frames alone: -0.027 overall, interval [-0.061, +0.007], lower in every group. The generated sentence almost never says that nothing changed (2.5% of 1,983 decisions start "Nothing changed").
+
+**Reading.**
+- **History is not a general fix; it helps where the event is a change of state and hurts where it is a repetition.** Tutorials gain +0.06 with history frames (0.72, the best decider score on tutorials so far, above the 235B's 0.69 on the same questions), while sports counting loses 0.11. A plausible reason (not checked case by case): for a finished step the earlier frames look different from now, which is the event; for a repeated action the earlier frames show the previous repetition, so "it happened again just now" looks like "it has been happening".
+- **Writing the change down makes it worse, not better.** The sentence lowers the AUC further and raises the Yes-rate from 6% to 38%. The model describes some change almost every time, and the decider treats any described change as a reason to respond. This is the third time extra text in the prompt has made a decider more agreeable and less discriminating (row 2 cues, row 5 scene graphs, now this).
+- **For the architecture:** history belongs in the decider for state-change questions (tutorials) and not for repetition questions, which suggests the decider's input should depend on the kind of question. Text summaries of the scene, at least as produced by these models, should not be fed to the decider.
+
+**Caveats.** One prompt; the history prompt also adds "compare now with the earlier frames" and shows 6 images instead of 4, so "history frames" is not a pure frames-only change; group intervals unadjusted; val only; the explanation for the counting loss is an interpretation.
 ## 10. Glossary
 
 - **Edge model / edge VLM**: the small vision-language model that runs on the device.
@@ -1130,6 +1149,7 @@ Started together with the two experiments above; results will be added here when
 
 - 2026-11-23: Label-radius test, 8B and 235B decider results added to 9a; three experiments (shorter windows, scene-level cues, decider history) started and described.
 - 2026-11-23: Shorter windows (matcher and 8B decider) and scene-level oracle cues added to 9a: neither helps the matcher; one frame hurts the decider.
+- 2026-11-23: Decider history added to 9a: history frames help tutorials and hurt counting; a "what changed" sentence hurts overall.
 - 2026-11-15: Section 5 rewritten: chance-level table trimmed to the rules that ignore the video, and the rules for calling an improvement real (bootstrap intervals, paired comparison, power) added.
 - 2026-11-23: D22 (fix the base before routing; staged plan) added; cue-source tooling built.
 - 2026-11-22: Section 0 (overall status, bottlenecks, what to test and what not to do) added.
