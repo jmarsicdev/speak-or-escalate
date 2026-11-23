@@ -1000,6 +1000,20 @@ Note on the scale: this script pools all questions into one F1, which is not the
 | mean over thresholds | | | +3.6 | [-2.6, +10.1] |
 
 **Reading.** Oracle cues clearly help when the matcher is set loose (thresholds 0.01 and 0.02, where it fires 470 to 700 times): the edge cues are then no better than a timer (gap about 0 to +2) and the oracle cues are about 9 points better, interval above zero. At the better thresholds (0.03 and up) the two are the same: the edge cues reach a gap of +7.0 at 0.03, and no oracle setting beats that by a margin the data can see. The average over thresholds, which avoids picking one, is +3.6 with an interval that includes zero. So perfect wording makes the matcher more robust to the threshold, but does not raise its ceiling. With five thresholds looked at, two intervals excluding zero is not strong evidence; the safe statement is that cue wording matters at loose thresholds and not at the best one. Step A's conclusion stands in the form: cue wording is not what limits the best matcher result; the embedder is.
+### A different embedder: SigLIP2 in place of Ops-MM (val, 38 questions, 2026-11-23)
+
+**What was done.** `scripts/run_embed_alt.py` re-ran the matcher's stored steps with `google/siglip2-so400m-patch14-384`, a standard image-text model: each frame (one per 0.5 s) embedded once, a step's window vector is the normalised mean of its 4 frame vectors (the same 2 s, 4 frames as the Ops-MM windows), cosine to each cue, same edge cues and (second folder) oracle cues. Cost: 5.7 minutes for all of val on the idle GPU (Ops-MM took 114 minutes: the wrapper's 256-token frames dominate, SigLIP2 works at its own 384 px). `scripts/compare_embedders.py` compares them question by question: within-question AUC of the best-cue similarity for steps within 2 s of an event against the other steps (10 s of history required), paired difference with a video-level 95% interval.
+
+| Group | Questions | Ops-MM AUC | SigLIP2 AUC | SigLIP2 - Ops-MM | 95% interval |
+|---|---|---|---|---|---|
+| All, edge cues | 38 | 0.627 | 0.618 | -0.009 | [-0.071, +0.049] |
+| Clue reveal | 4 | 0.498 | 0.649 | +0.152 | [+0.025, +0.278] |
+| Everyday-object counting | 12 | 0.590 | 0.572 | -0.018 | [-0.128, +0.094] |
+| Sports counting | 10 | 0.693 | 0.656 | -0.036 | [-0.145, +0.069] |
+| Tutorials | 12 | 0.652 | 0.621 | -0.031 | [-0.102, +0.028] |
+| All, oracle cues | 38 | 0.613 | 0.628 | +0.015 | [-0.056, +0.084] |
+
+**Reading.** The two embedders rank steps equally well (difference -0.009 with edge cues, +0.015 with oracle cues, both intervals centred on zero). A model a fraction of the size, with none of the wrapper's cost, does no worse. So the weak event signal is not a property of Ops-MM specifically: two quite different embedders both give about 0.62 to 0.63, which points at the approach (similarity of a short window to a text cue) more than at the model. The clue-reveal gain is 4 questions and one of 20 intervals, so I do not read it as a benefit. Not done: the F1-against-timer comparison for SigLIP2 (its similarity scale differs, so the thresholds would need rescaling); the within-question AUC, which does not depend on scale, is the comparison used. Practical consequence: SigLIP2 is about 20 times cheaper to run, so it is a better vehicle for further matcher experiments than Ops-MM.
 ## 10. Glossary
 
 - **Edge model / edge VLM**: the small vision-language model that runs on the device.
