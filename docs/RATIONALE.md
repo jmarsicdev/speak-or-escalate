@@ -941,6 +941,26 @@ The share of moments where the decider says Yes rose from 0.78 to 0.89. So the e
 Scoring what is new does not beat plain relevance (0.60 and 0.54 against 0.66 and 0.58), novelty without any cue is close to chance, and the rise is below 0.5. Small sample, no bootstrap interval; relevance with oracle cues at 0.66 is the only score that looks above chance, and it needs cues no deployed system has.
 
 **Reading.** Neither idea is validated at this size. Putting triplets in the decider's prompt hurt, and the embedder on triplets gives no better event signal than it gave on video. Taken with step A and B, the weak part is not specifically the video embedder, the cue wording or the extraction format: neither the matcher, the decider, nor a text comparison picks event moments out reliably from a 2 s to 5 s view of the stream. We have not yet tried: longer or smarter views (several windows, frame differences), a different embedder, or a larger decider.
+### Several-window test on the stored window vectors (val, 38 questions, CPU, 2026-11-23)
+
+**Question.** Is the 2 s window too little context? Using the stored val window vectors (one per 0.5 s step) and cue similarities, no video and no model (`scripts/pilot_context_windows.py`): score each step from more of the past stream and compare, by within-question AUC (steps within 2 s of an event against the others, 10 s of history required for every score so the same steps are compared), with a paired difference from the matcher's current score and a video-level 95% interval. Scores: base (best cue similarity now); roll_k (that similarity averaged over the last k steps, k=4, 8, 16, i.e. 2, 4, 8 s); contrast_k (similarity minus its average over the k steps before, k=8, 20); change_k (1 - cosine between the window vector now and k steps ago, k=4, 8: visual change, no cue at all).
+
+| Score | AUC, edge cues | Change from base | AUC, oracle cues | Change from base |
+|---|---|---|---|---|
+| base | 0.627 | | 0.613 | |
+| roll_4 (2 s) | 0.594 | -0.033 [-0.057, -0.008] | 0.577 | -0.036 [-0.062, -0.006] |
+| roll_8 (4 s) | 0.547 | -0.079 [-0.123, -0.037] | 0.530 | -0.083 [-0.129, -0.033] |
+| roll_16 (8 s) | 0.518 | -0.109 [-0.173, -0.050] | 0.498 | -0.115 [-0.183, -0.050] |
+| contrast_8 | 0.648 | +0.021 [-0.041, +0.081] | 0.631 | +0.018 [-0.051, +0.084] |
+| contrast_20 | 0.662 | +0.035 [-0.013, +0.080] | 0.621 | +0.008 [-0.035, +0.050] |
+| change_4, no cue | 0.590 | -0.036 [-0.124, +0.047] | 0.590 | -0.023 [-0.113, +0.062] |
+| change_8, no cue | 0.578 | -0.049 [-0.144, +0.045] | 0.578 | -0.035 [-0.125, +0.060] |
+
+**Reading.**
+- **Averaging over a longer span hurts, clearly** (the interval excludes zero for all three): the event is brief and a longer average smears it. So "give it more context" in this simple form is the wrong direction.
+- **Comparing against what was just before helps slightly, but not reliably** (+0.02 to +0.035, intervals include zero). It is the only direction that points up, and it is the "rise" idea with a local baseline instead of one step back.
+- **Visual change alone, with no cue, scores 0.58 to 0.59**, close to the cue-based 0.63. This says a good part of what the matcher picks up is that the picture is changing, not that it matches the cue. That fits step A: better cue wording barely moved the score.
+- Same caveats as before: unadjusted, 38 questions, 8 scores shown, within-question AUC is about ranking steps and not a final score.
 ## 10. Glossary
 
 - **Edge model / edge VLM**: the small vision-language model that runs on the device.
