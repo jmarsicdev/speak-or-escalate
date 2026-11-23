@@ -1,0 +1,2477 @@
+{
+ "samples": "data/processed/ovo_far_val.jsonl",
+ "diagnostic": {
+  "n_steps": 7903,
+  "frac_near": 0.14690623813741618,
+  "max sim": 0.5468575254661089,
+  "mean sim": 0.5468575254661089,
+  "max rise (paper)": 0.5426687475455007
+ },
+ "settings": [
+  {
+   "rule": "paper",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.01,
+   "avg_f1": 0.22345498444070658,
+   "tasks": {
+    "CRR": {
+     "recall": 1.0,
+     "precision": 0.05092497658287132,
+     "f1": 0.09691458042696087,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.8125,
+     "precision": 0.3427936671450212,
+     "f1": 0.48216286901946265,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.9722222222222222,
+     "precision": 0.047892187615750786,
+     "f1": 0.09128750387569633,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 1711
+  },
+  {
+   "rule": "paper",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.02,
+   "avg_f1": 0.2261012022189234,
+   "tasks": {
+    "CRR": {
+     "recall": 0.8571428571428571,
+     "precision": 0.09092970521541952,
+     "f1": 0.16441726176239452,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.39918981481481475,
+     "precision": 0.32357812158003973,
+     "f1": 0.35742894483104315,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.7125,
+     "precision": 0.0878771414934665,
+     "f1": 0.1564574000633325,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 748
+  },
+  {
+   "rule": "paper",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.03,
+   "avg_f1": 0.18681631550329544,
+   "tasks": {
+    "CRR": {
+     "recall": 0.5714285714285714,
+     "precision": 0.11219336219336219,
+     "f1": 0.18756125141349414,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.11362433862433861,
+     "precision": 0.14563792688792687,
+     "f1": 0.12765462099595512,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.48055555555555557,
+     "precision": 0.16462038234478626,
+     "f1": 0.245233074100437,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 366
+  },
+  {
+   "rule": "paper",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.04,
+   "avg_f1": 0.22088582330669868,
+   "tasks": {
+    "CRR": {
+     "recall": 0.5714285714285714,
+     "precision": 0.13968253968253966,
+     "f1": 0.22448979591836732,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.06612103174603175,
+     "precision": 0.08472222222222221,
+     "f1": 0.07427472688077752,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.4388888888888889,
+     "precision": 0.310786701044054,
+     "f1": 0.3638929471209512,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 218
+  },
+  {
+   "rule": "paper",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.05,
+   "avg_f1": 0.20180846644713504,
+   "tasks": {
+    "CRR": {
+     "recall": 0.5714285714285714,
+     "precision": 0.1873015873015873,
+     "f1": 0.28212791392707715,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.023065476190476192,
+     "precision": 0.023504273504273504,
+     "f1": 0.02328280759251673,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.3111111111111111,
+     "precision": 0.2896825396825397,
+     "f1": 0.30001467782181124,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 154
+  },
+  {
+   "rule": "paper",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.06,
+   "avg_f1": 0.16841320605038143,
+   "tasks": {
+    "CRR": {
+     "recall": 0.42857142857142855,
+     "precision": 0.1285714285714286,
+     "f1": 0.1978021978021978,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.023065476190476192,
+     "precision": 0.03044871794871795,
+     "f1": 0.02624777183600713,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.26666666666666666,
+     "precision": 0.2973856209150327,
+     "f1": 0.28118964851293937,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 104
+  },
+  {
+   "rule": "paper",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.08,
+   "avg_f1": 0.030448056005676825,
+   "tasks": {
+    "CRR": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "f1": 0.0,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.005952380952380952,
+     "precision": 0.006944444444444444,
+     "f1": 0.00641025641025641,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.06527777777777778,
+     "precision": 0.12152777777777778,
+     "f1": 0.08493391160677406,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 43
+  },
+  {
+   "rule": "paper",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.01,
+   "avg_f1": 0.33722413573144205,
+   "tasks": {
+    "CRR": {
+     "recall": 1.0,
+     "precision": 0.13265306122448978,
+     "f1": 0.2342342342342342,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.6733300264550265,
+     "precision": 0.49993867897400507,
+     "f1": 0.5738220449958459,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.8666666666666667,
+     "precision": 0.11535943394175847,
+     "f1": 0.20361612796424608,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 620
+  },
+  {
+   "rule": "paper",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.02,
+   "avg_f1": 0.2764819426695938,
+   "tasks": {
+    "CRR": {
+     "recall": 0.7142857142857143,
+     "precision": 0.15136054421768708,
+     "f1": 0.24978950322761717,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.3343915343915344,
+     "precision": 0.4294642857142857,
+     "f1": 0.3760113301132393,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.5638888888888889,
+     "precision": 0.12426044381268263,
+     "f1": 0.20364499466792493,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 378
+  },
+  {
+   "rule": "paper",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.03,
+   "avg_f1": 0.2183963114583325,
+   "tasks": {
+    "CRR": {
+     "recall": 0.5714285714285714,
+     "precision": 0.16071428571428573,
+     "f1": 0.25087108013937287,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.09783399470899472,
+     "precision": 0.18154761904761904,
+     "f1": 0.12714887399002925,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.42500000000000004,
+     "precision": 0.20563973063973062,
+     "f1": 0.27716898024559533,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 238
+  },
+  {
+   "rule": "paper",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.04,
+   "avg_f1": 0.2320926677711849,
+   "tasks": {
+    "CRR": {
+     "recall": 0.5714285714285714,
+     "precision": 0.16802721088435374,
+     "f1": 0.2596924694440794,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.06612103174603175,
+     "precision": 0.09513888888888888,
+     "f1": 0.07801915649885506,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.3833333333333333,
+     "precision": 0.3368055555555555,
+     "f1": 0.3585663773706203,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 164
+  },
+  {
+   "rule": "paper",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.05,
+   "avg_f1": 0.20398280398172397,
+   "tasks": {
+    "CRR": {
+     "recall": 0.5714285714285714,
+     "precision": 0.19183673469387758,
+     "f1": 0.2872421695951108,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.023065476190476192,
+     "precision": 0.032196969696969696,
+     "f1": 0.026876784985720114,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.2833333333333333,
+     "precision": 0.3138888888888889,
+     "f1": 0.2978294573643411,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 123
+  },
+  {
+   "rule": "paper",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.06,
+   "avg_f1": 0.16586988255757976,
+   "tasks": {
+    "CRR": {
+     "recall": 0.42857142857142855,
+     "precision": 0.1357142857142857,
+     "f1": 0.20614828209764915,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.023065476190476192,
+     "precision": 0.032196969696969696,
+     "f1": 0.026876784985720114,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.2388888888888889,
+     "precision": 0.296474358974359,
+     "f1": 0.26458458058937007,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 92
+  },
+  {
+   "rule": "paper",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.08,
+   "avg_f1": 0.030746302150411742,
+   "tasks": {
+    "CRR": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "f1": 0.0,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.005952380952380952,
+     "precision": 0.008333333333333333,
+     "f1": 0.006944444444444444,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.06527777777777778,
+     "precision": 0.12301587301587301,
+     "f1": 0.08529446200679078,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 40
+  },
+  {
+   "rule": "paper",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.01,
+   "avg_f1": 0.25278632503138876,
+   "tasks": {
+    "CRR": {
+     "recall": 0.2857142857142857,
+     "precision": 0.049999999999999996,
+     "f1": 0.0851063829787234,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.42093253968253963,
+     "precision": 0.4754673839232663,
+     "f1": 0.4465410765453066,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.6166666666666666,
+     "precision": 0.13888575841942716,
+     "f1": 0.22671151557013622,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 385
+  },
+  {
+   "rule": "paper",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.02,
+   "avg_f1": 0.2676909065726961,
+   "tasks": {
+    "CRR": {
+     "recall": 0.42857142857142855,
+     "precision": 0.16666666666666666,
+     "f1": 0.24,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.30061177248677245,
+     "precision": 0.43566468253968244,
+     "f1": 0.3557520589828865,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.41805555555555557,
+     "precision": 0.13783853420481326,
+     "f1": 0.20732066073520194,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 262
+  },
+  {
+   "rule": "paper",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.03,
+   "avg_f1": 0.23265925435748222,
+   "tasks": {
+    "CRR": {
+     "recall": 0.42857142857142855,
+     "precision": 0.2346938775510204,
+     "f1": 0.3032967032967033,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.08950066137566137,
+     "precision": 0.1794191919191919,
+     "f1": 0.11942693068962584,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.3763888888888889,
+     "precision": 0.21695804195804194,
+     "f1": 0.27525412908611746,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 177
+  },
+  {
+   "rule": "paper",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.04,
+   "avg_f1": 0.26250781333127354,
+   "tasks": {
+    "CRR": {
+     "recall": 0.5714285714285714,
+     "precision": 0.2738095238095238,
+     "f1": 0.3702213279678068,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.06612103174603175,
+     "precision": 0.10069444444444443,
+     "f1": 0.07982497439455513,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.3347222222222222,
+     "precision": 0.34027777777777773,
+     "f1": 0.3374771376314586,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 129
+  },
+  {
+   "rule": "paper",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.05,
+   "avg_f1": 0.24826495315701744,
+   "tasks": {
+    "CRR": {
+     "recall": 0.5714285714285714,
+     "precision": 0.34523809523809523,
+     "f1": 0.43042671614100186,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.023065476190476192,
+     "precision": 0.036458333333333336,
+     "f1": 0.028255208333333334,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.2625,
+     "precision": 0.3143939393939394,
+     "f1": 0.286112934996717,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 102
+  },
+  {
+   "rule": "paper",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.06,
+   "avg_f1": 0.18806866758919752,
+   "tasks": {
+    "CRR": {
+     "recall": 0.42857142857142855,
+     "precision": 0.21428571428571427,
+     "f1": 0.2857142857142857,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.023065476190476192,
+     "precision": 0.036458333333333336,
+     "f1": 0.028255208333333334,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.21805555555555556,
+     "precision": 0.293560606060606,
+     "f1": 0.2502365087199736,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 81
+  },
+  {
+   "rule": "paper",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.08,
+   "avg_f1": 0.030903622600702896,
+   "tasks": {
+    "CRR": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "f1": 0.0,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.005952380952380952,
+     "precision": 0.008333333333333333,
+     "f1": 0.006944444444444444,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.06527777777777778,
+     "precision": 0.125,
+     "f1": 0.08576642335766424,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 38
+  },
+  {
+   "rule": "paper",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.01,
+   "avg_f1": 0.22345498444070658,
+   "tasks": {
+    "CRR": {
+     "recall": 1.0,
+     "precision": 0.05092497658287132,
+     "f1": 0.09691458042696087,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.8125,
+     "precision": 0.3427936671450212,
+     "f1": 0.48216286901946265,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.9722222222222222,
+     "precision": 0.047892187615750786,
+     "f1": 0.09128750387569633,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 1711
+  },
+  {
+   "rule": "paper",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.02,
+   "avg_f1": 0.2261012022189234,
+   "tasks": {
+    "CRR": {
+     "recall": 0.8571428571428571,
+     "precision": 0.09092970521541952,
+     "f1": 0.16441726176239452,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.39918981481481475,
+     "precision": 0.32357812158003973,
+     "f1": 0.35742894483104315,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.7125,
+     "precision": 0.0878771414934665,
+     "f1": 0.1564574000633325,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 748
+  },
+  {
+   "rule": "paper",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.03,
+   "avg_f1": 0.18681631550329544,
+   "tasks": {
+    "CRR": {
+     "recall": 0.5714285714285714,
+     "precision": 0.11219336219336219,
+     "f1": 0.18756125141349414,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.11362433862433861,
+     "precision": 0.14563792688792687,
+     "f1": 0.12765462099595512,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.48055555555555557,
+     "precision": 0.16462038234478626,
+     "f1": 0.245233074100437,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 366
+  },
+  {
+   "rule": "paper",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.04,
+   "avg_f1": 0.22088582330669868,
+   "tasks": {
+    "CRR": {
+     "recall": 0.5714285714285714,
+     "precision": 0.13968253968253966,
+     "f1": 0.22448979591836732,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.06612103174603175,
+     "precision": 0.08472222222222221,
+     "f1": 0.07427472688077752,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.4388888888888889,
+     "precision": 0.310786701044054,
+     "f1": 0.3638929471209512,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 218
+  },
+  {
+   "rule": "paper",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.05,
+   "avg_f1": 0.20180846644713504,
+   "tasks": {
+    "CRR": {
+     "recall": 0.5714285714285714,
+     "precision": 0.1873015873015873,
+     "f1": 0.28212791392707715,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.023065476190476192,
+     "precision": 0.023504273504273504,
+     "f1": 0.02328280759251673,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.3111111111111111,
+     "precision": 0.2896825396825397,
+     "f1": 0.30001467782181124,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 154
+  },
+  {
+   "rule": "paper",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.06,
+   "avg_f1": 0.16841320605038143,
+   "tasks": {
+    "CRR": {
+     "recall": 0.42857142857142855,
+     "precision": 0.1285714285714286,
+     "f1": 0.1978021978021978,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.023065476190476192,
+     "precision": 0.03044871794871795,
+     "f1": 0.02624777183600713,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.26666666666666666,
+     "precision": 0.2973856209150327,
+     "f1": 0.28118964851293937,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 104
+  },
+  {
+   "rule": "paper",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.08,
+   "avg_f1": 0.030448056005676825,
+   "tasks": {
+    "CRR": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "f1": 0.0,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.005952380952380952,
+     "precision": 0.006944444444444444,
+     "f1": 0.00641025641025641,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.06527777777777778,
+     "precision": 0.12152777777777778,
+     "f1": 0.08493391160677406,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 43
+  },
+  {
+   "rule": "paper",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.01,
+   "avg_f1": 0.33722413573144205,
+   "tasks": {
+    "CRR": {
+     "recall": 1.0,
+     "precision": 0.13265306122448978,
+     "f1": 0.2342342342342342,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.6733300264550265,
+     "precision": 0.49993867897400507,
+     "f1": 0.5738220449958459,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.8666666666666667,
+     "precision": 0.11535943394175847,
+     "f1": 0.20361612796424608,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 620
+  },
+  {
+   "rule": "paper",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.02,
+   "avg_f1": 0.2764819426695938,
+   "tasks": {
+    "CRR": {
+     "recall": 0.7142857142857143,
+     "precision": 0.15136054421768708,
+     "f1": 0.24978950322761717,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.3343915343915344,
+     "precision": 0.4294642857142857,
+     "f1": 0.3760113301132393,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.5638888888888889,
+     "precision": 0.12426044381268263,
+     "f1": 0.20364499466792493,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 378
+  },
+  {
+   "rule": "paper",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.03,
+   "avg_f1": 0.2183963114583325,
+   "tasks": {
+    "CRR": {
+     "recall": 0.5714285714285714,
+     "precision": 0.16071428571428573,
+     "f1": 0.25087108013937287,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.09783399470899472,
+     "precision": 0.18154761904761904,
+     "f1": 0.12714887399002925,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.42500000000000004,
+     "precision": 0.20563973063973062,
+     "f1": 0.27716898024559533,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 238
+  },
+  {
+   "rule": "paper",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.04,
+   "avg_f1": 0.2320926677711849,
+   "tasks": {
+    "CRR": {
+     "recall": 0.5714285714285714,
+     "precision": 0.16802721088435374,
+     "f1": 0.2596924694440794,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.06612103174603175,
+     "precision": 0.09513888888888888,
+     "f1": 0.07801915649885506,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.3833333333333333,
+     "precision": 0.3368055555555555,
+     "f1": 0.3585663773706203,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 164
+  },
+  {
+   "rule": "paper",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.05,
+   "avg_f1": 0.20398280398172397,
+   "tasks": {
+    "CRR": {
+     "recall": 0.5714285714285714,
+     "precision": 0.19183673469387758,
+     "f1": 0.2872421695951108,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.023065476190476192,
+     "precision": 0.032196969696969696,
+     "f1": 0.026876784985720114,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.2833333333333333,
+     "precision": 0.3138888888888889,
+     "f1": 0.2978294573643411,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 123
+  },
+  {
+   "rule": "paper",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.06,
+   "avg_f1": 0.16586988255757976,
+   "tasks": {
+    "CRR": {
+     "recall": 0.42857142857142855,
+     "precision": 0.1357142857142857,
+     "f1": 0.20614828209764915,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.023065476190476192,
+     "precision": 0.032196969696969696,
+     "f1": 0.026876784985720114,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.2388888888888889,
+     "precision": 0.296474358974359,
+     "f1": 0.26458458058937007,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 92
+  },
+  {
+   "rule": "paper",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.08,
+   "avg_f1": 0.030746302150411742,
+   "tasks": {
+    "CRR": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "f1": 0.0,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.005952380952380952,
+     "precision": 0.008333333333333333,
+     "f1": 0.006944444444444444,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.06527777777777778,
+     "precision": 0.12301587301587301,
+     "f1": 0.08529446200679078,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 40
+  },
+  {
+   "rule": "paper",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.01,
+   "avg_f1": 0.25278632503138876,
+   "tasks": {
+    "CRR": {
+     "recall": 0.2857142857142857,
+     "precision": 0.049999999999999996,
+     "f1": 0.0851063829787234,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.42093253968253963,
+     "precision": 0.4754673839232663,
+     "f1": 0.4465410765453066,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.6166666666666666,
+     "precision": 0.13888575841942716,
+     "f1": 0.22671151557013622,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 385
+  },
+  {
+   "rule": "paper",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.02,
+   "avg_f1": 0.2676909065726961,
+   "tasks": {
+    "CRR": {
+     "recall": 0.42857142857142855,
+     "precision": 0.16666666666666666,
+     "f1": 0.24,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.30061177248677245,
+     "precision": 0.43566468253968244,
+     "f1": 0.3557520589828865,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.41805555555555557,
+     "precision": 0.13783853420481326,
+     "f1": 0.20732066073520194,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 262
+  },
+  {
+   "rule": "paper",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.03,
+   "avg_f1": 0.23265925435748222,
+   "tasks": {
+    "CRR": {
+     "recall": 0.42857142857142855,
+     "precision": 0.2346938775510204,
+     "f1": 0.3032967032967033,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.08950066137566137,
+     "precision": 0.1794191919191919,
+     "f1": 0.11942693068962584,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.3763888888888889,
+     "precision": 0.21695804195804194,
+     "f1": 0.27525412908611746,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 177
+  },
+  {
+   "rule": "paper",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.04,
+   "avg_f1": 0.26250781333127354,
+   "tasks": {
+    "CRR": {
+     "recall": 0.5714285714285714,
+     "precision": 0.2738095238095238,
+     "f1": 0.3702213279678068,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.06612103174603175,
+     "precision": 0.10069444444444443,
+     "f1": 0.07982497439455513,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.3347222222222222,
+     "precision": 0.34027777777777773,
+     "f1": 0.3374771376314586,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 129
+  },
+  {
+   "rule": "paper",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.05,
+   "avg_f1": 0.24826495315701744,
+   "tasks": {
+    "CRR": {
+     "recall": 0.5714285714285714,
+     "precision": 0.34523809523809523,
+     "f1": 0.43042671614100186,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.023065476190476192,
+     "precision": 0.036458333333333336,
+     "f1": 0.028255208333333334,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.2625,
+     "precision": 0.3143939393939394,
+     "f1": 0.286112934996717,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 102
+  },
+  {
+   "rule": "paper",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.06,
+   "avg_f1": 0.18806866758919752,
+   "tasks": {
+    "CRR": {
+     "recall": 0.42857142857142855,
+     "precision": 0.21428571428571427,
+     "f1": 0.2857142857142857,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.023065476190476192,
+     "precision": 0.036458333333333336,
+     "f1": 0.028255208333333334,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.21805555555555556,
+     "precision": 0.293560606060606,
+     "f1": 0.2502365087199736,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 81
+  },
+  {
+   "rule": "paper",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.08,
+   "avg_f1": 0.030903622600702896,
+   "tasks": {
+    "CRR": {
+     "recall": 0.0,
+     "precision": 0.0,
+     "f1": 0.0,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.005952380952380952,
+     "precision": 0.008333333333333333,
+     "f1": 0.006944444444444444,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.06527777777777778,
+     "precision": 0.125,
+     "f1": 0.08576642335766424,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 38
+  },
+  {
+   "rule": "code",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.01,
+   "avg_f1": 0.17344147519167288,
+   "tasks": {
+    "CRR": {
+     "recall": 0.8571428571428571,
+     "precision": 0.041985932303956065,
+     "f1": 0.08005069439932176,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.7762896825396824,
+     "precision": 0.22814609944861855,
+     "f1": 0.3526506448486873,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.8749999999999999,
+     "precision": 0.0461208284989546,
+     "f1": 0.08762308632700964,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 1632
+  },
+  {
+   "rule": "code",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.02,
+   "avg_f1": 0.23858509765976965,
+   "tasks": {
+    "CRR": {
+     "recall": 0.8571428571428571,
+     "precision": 0.06478276957903444,
+     "f1": 0.1204611014188709,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.5678406084656085,
+     "precision": 0.3945399507899508,
+     "f1": 0.4655867236010207,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.8194444444444443,
+     "precision": 0.07042762556461889,
+     "f1": 0.12970746795941732,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 1014
+  },
+  {
+   "rule": "code",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.03,
+   "avg_f1": 0.21559473927874662,
+   "tasks": {
+    "CRR": {
+     "recall": 0.8571428571428571,
+     "precision": 0.08524127701146335,
+     "f1": 0.15506193085408382,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.31762566137566134,
+     "precision": 0.3032762372653919,
+     "f1": 0.31028513731967183,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.6875,
+     "precision": 0.1045089836347407,
+     "f1": 0.1814371496624842,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 619
+  },
+  {
+   "rule": "code",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.04,
+   "avg_f1": 0.1979424550334663,
+   "tasks": {
+    "CRR": {
+     "recall": 0.7142857142857143,
+     "precision": 0.09334415584415583,
+     "f1": 0.16511127063890882,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.15646494708994707,
+     "precision": 0.17817460317460318,
+     "f1": 0.16661557091173176,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.5597222222222222,
+     "precision": 0.17111392979119203,
+     "f1": 0.2621005235497583,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 398
+  },
+  {
+   "rule": "code",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.05,
+   "avg_f1": 0.1627133428393294,
+   "tasks": {
+    "CRR": {
+     "recall": 0.5714285714285714,
+     "precision": 0.08866213151927438,
+     "f1": 0.15350640427933454,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.09257605820105819,
+     "precision": 0.1360479797979798,
+     "f1": 0.11017901534892113,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.45555555555555555,
+     "precision": 0.14891221989302747,
+     "f1": 0.22445460888973254,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 266
+  },
+  {
+   "rule": "code",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.06,
+   "avg_f1": 0.1359652955790555,
+   "tasks": {
+    "CRR": {
+     "recall": 0.42857142857142855,
+     "precision": 0.0719954648526077,
+     "f1": 0.12328102248827048,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.05090939153439153,
+     "precision": 0.09513888888888888,
+     "f1": 0.06632687397008692,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.3625,
+     "precision": 0.15616246498599437,
+     "f1": 0.21828799027880913,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 211
+  },
+  {
+   "rule": "code",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.08,
+   "avg_f1": 0.08921742463667796,
+   "tasks": {
+    "CRR": {
+     "recall": 0.2857142857142857,
+     "precision": 0.05952380952380952,
+     "f1": 0.09852216748768472,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.015790343915343914,
+     "precision": 0.061507936507936505,
+     "f1": 0.02512944571768101,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.19027777777777777,
+     "precision": 0.11582988267770876,
+     "f1": 0.14400066070466813,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 124
+  },
+  {
+   "rule": "code",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.01,
+   "avg_f1": 0.341032870811067,
+   "tasks": {
+    "CRR": {
+     "recall": 0.8571428571428571,
+     "precision": 0.12766955266955266,
+     "f1": 0.2222373399339588,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.6787202380952381,
+     "precision": 0.4981676003734827,
+     "f1": 0.5745941478616274,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.786111111111111,
+     "precision": 0.13215232891200548,
+     "f1": 0.22626712463761461,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 512
+  },
+  {
+   "rule": "code",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.02,
+   "avg_f1": 0.31752655010287273,
+   "tasks": {
+    "CRR": {
+     "recall": 0.7142857142857143,
+     "precision": 0.12993197278911564,
+     "f1": 0.21986876942557845,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.45221560846560843,
+     "precision": 0.5443242521367522,
+     "f1": 0.49401320030253804,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.6541666666666667,
+     "precision": 0.14598248071158285,
+     "f1": 0.23869768058050175,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 389
+  },
+  {
+   "rule": "code",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.03,
+   "avg_f1": 0.27203653063185795,
+   "tasks": {
+    "CRR": {
+     "recall": 0.7142857142857143,
+     "precision": 0.1369047619047619,
+     "f1": 0.22977022977022976,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.2589451058201058,
+     "precision": 0.40069444444444446,
+     "f1": 0.31458958237595913,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.5291666666666667,
+     "precision": 0.18281710119945413,
+     "f1": 0.271749779749385,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 278
+  },
+  {
+   "rule": "code",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.04,
+   "avg_f1": 0.28758435276208966,
+   "tasks": {
+    "CRR": {
+     "recall": 0.7142857142857143,
+     "precision": 0.1989795918367347,
+     "f1": 0.3112529928172386,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.1377149470899471,
+     "precision": 0.22453703703703706,
+     "f1": 0.17072152827436046,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.5152777777777778,
+     "precision": 0.30196007696007693,
+     "f1": 0.3807785371946699,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 200
+  },
+  {
+   "rule": "code",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.05,
+   "avg_f1": 0.2277196940692563,
+   "tasks": {
+    "CRR": {
+     "recall": 0.5714285714285714,
+     "precision": 0.16666666666666666,
+     "f1": 0.25806451612903225,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.09257605820105819,
+     "precision": 0.18055555555555555,
+     "f1": 0.12239609607791699,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.41111111111111104,
+     "precision": 0.23953227124183007,
+     "f1": 0.3026984700008196,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 153
+  },
+  {
+   "rule": "code",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.06,
+   "avg_f1": 0.18337214447649453,
+   "tasks": {
+    "CRR": {
+     "recall": 0.42857142857142855,
+     "precision": 0.13095238095238096,
+     "f1": 0.2006079027355623,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.05090939153439153,
+     "precision": 0.13888888888888887,
+     "f1": 0.07450803883419964,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.31805555555555554,
+     "precision": 0.2422123015873016,
+     "f1": 0.27500049185972164,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 124
+  },
+  {
+   "rule": "code",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.08,
+   "avg_f1": 0.11983060670934254,
+   "tasks": {
+    "CRR": {
+     "recall": 0.2857142857142857,
+     "precision": 0.10714285714285714,
+     "f1": 0.1558441558441558,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.015790343915343914,
+     "precision": 0.07083333333333333,
+     "f1": 0.02582394859069797,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.1625,
+     "precision": 0.19633838383838378,
+     "f1": 0.1778237156931738,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 77
+  },
+  {
+   "rule": "code",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.01,
+   "avg_f1": 0.2722797996925379,
+   "tasks": {
+    "CRR": {
+     "recall": 0.2857142857142857,
+     "precision": 0.05612244897959184,
+     "f1": 0.09381663113006397,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.48311838624338627,
+     "precision": 0.4878690753690753,
+     "f1": 0.4854821091076707,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.5458333333333333,
+     "precision": 0.15180150051473584,
+     "f1": 0.23754065883987913,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 337
+  },
+  {
+   "rule": "code",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.02,
+   "avg_f1": 0.3087647039903801,
+   "tasks": {
+    "CRR": {
+     "recall": 0.42857142857142855,
+     "precision": 0.10714285714285714,
+     "f1": 0.17142857142857143,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.41228505291005285,
+     "precision": 0.5609265734265734,
+     "f1": 0.47525458131721476,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.5458333333333334,
+     "precision": 0.1879439803352847,
+     "f1": 0.27961095922535406,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 276
+  },
+  {
+   "rule": "code",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.03,
+   "avg_f1": 0.2568307531617457,
+   "tasks": {
+    "CRR": {
+     "recall": 0.42857142857142855,
+     "precision": 0.11190476190476191,
+     "f1": 0.17747010698552548,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.2401951058201058,
+     "precision": 0.4138888888888888,
+     "f1": 0.3039795691948173,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.48055555555555557,
+     "precision": 0.20667686917686914,
+     "f1": 0.2890425833048944,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 209
+  },
+  {
+   "rule": "code",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.04,
+   "avg_f1": 0.33462351452883216,
+   "tasks": {
+    "CRR": {
+     "recall": 0.7142857142857143,
+     "precision": 0.32142857142857145,
+     "f1": 0.4433497536945813,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.1377149470899471,
+     "precision": 0.23842592592592593,
+     "f1": 0.17458785327153167,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.46666666666666673,
+     "precision": 0.32901334776334773,
+     "f1": 0.38593293662038347,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 152
+  },
+  {
+   "rule": "code",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.05,
+   "avg_f1": 0.262670475088854,
+   "tasks": {
+    "CRR": {
+     "recall": 0.5714285714285714,
+     "precision": 0.26666666666666666,
+     "f1": 0.36363636363636365,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.09257605820105819,
+     "precision": 0.18055555555555555,
+     "f1": 0.12239609607791699,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.3625,
+     "precision": 0.2587752525252525,
+     "f1": 0.30197896555228126,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 120
+  },
+  {
+   "rule": "code",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.06,
+   "avg_f1": 0.20771339564870814,
+   "tasks": {
+    "CRR": {
+     "recall": 0.42857142857142855,
+     "precision": 0.21904761904761902,
+     "f1": 0.28991596638655465,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.05090939153439153,
+     "precision": 0.13888888888888887,
+     "f1": 0.07450803883419964,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.26944444444444443,
+     "precision": 0.2488095238095238,
+     "f1": 0.2587161817253701,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 102
+  },
+  {
+   "rule": "code",
+   "agg": "any",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.08,
+   "avg_f1": 0.1410153902709734,
+   "tasks": {
+    "CRR": {
+     "recall": 0.2857142857142857,
+     "precision": 0.19047619047619047,
+     "f1": 0.22857142857142854,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.015790343915343914,
+     "precision": 0.07083333333333333,
+     "f1": 0.02582394859069797,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.14166666666666666,
+     "precision": 0.20833333333333334,
+     "f1": 0.16865079365079366,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 68
+  },
+  {
+   "rule": "code",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.01,
+   "avg_f1": 0.17344147519167288,
+   "tasks": {
+    "CRR": {
+     "recall": 0.8571428571428571,
+     "precision": 0.041985932303956065,
+     "f1": 0.08005069439932176,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.7762896825396824,
+     "precision": 0.22814609944861855,
+     "f1": 0.3526506448486873,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.8749999999999999,
+     "precision": 0.0461208284989546,
+     "f1": 0.08762308632700964,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 1632
+  },
+  {
+   "rule": "code",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.02,
+   "avg_f1": 0.23858509765976965,
+   "tasks": {
+    "CRR": {
+     "recall": 0.8571428571428571,
+     "precision": 0.06478276957903444,
+     "f1": 0.1204611014188709,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.5678406084656085,
+     "precision": 0.3945399507899508,
+     "f1": 0.4655867236010207,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.8194444444444443,
+     "precision": 0.07042762556461889,
+     "f1": 0.12970746795941732,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 1014
+  },
+  {
+   "rule": "code",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.03,
+   "avg_f1": 0.21559473927874662,
+   "tasks": {
+    "CRR": {
+     "recall": 0.8571428571428571,
+     "precision": 0.08524127701146335,
+     "f1": 0.15506193085408382,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.31762566137566134,
+     "precision": 0.3032762372653919,
+     "f1": 0.31028513731967183,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.6875,
+     "precision": 0.1045089836347407,
+     "f1": 0.1814371496624842,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 619
+  },
+  {
+   "rule": "code",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.04,
+   "avg_f1": 0.1979424550334663,
+   "tasks": {
+    "CRR": {
+     "recall": 0.7142857142857143,
+     "precision": 0.09334415584415583,
+     "f1": 0.16511127063890882,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.15646494708994707,
+     "precision": 0.17817460317460318,
+     "f1": 0.16661557091173176,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.5597222222222222,
+     "precision": 0.17111392979119203,
+     "f1": 0.2621005235497583,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 398
+  },
+  {
+   "rule": "code",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.05,
+   "avg_f1": 0.1627133428393294,
+   "tasks": {
+    "CRR": {
+     "recall": 0.5714285714285714,
+     "precision": 0.08866213151927438,
+     "f1": 0.15350640427933454,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.09257605820105819,
+     "precision": 0.1360479797979798,
+     "f1": 0.11017901534892113,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.45555555555555555,
+     "precision": 0.14891221989302747,
+     "f1": 0.22445460888973254,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 266
+  },
+  {
+   "rule": "code",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.06,
+   "avg_f1": 0.1359652955790555,
+   "tasks": {
+    "CRR": {
+     "recall": 0.42857142857142855,
+     "precision": 0.0719954648526077,
+     "f1": 0.12328102248827048,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.05090939153439153,
+     "precision": 0.09513888888888888,
+     "f1": 0.06632687397008692,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.3625,
+     "precision": 0.15616246498599437,
+     "f1": 0.21828799027880913,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 211
+  },
+  {
+   "rule": "code",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 0.0,
+   "theta": 0.08,
+   "avg_f1": 0.08921742463667796,
+   "tasks": {
+    "CRR": {
+     "recall": 0.2857142857142857,
+     "precision": 0.05952380952380952,
+     "f1": 0.09852216748768472,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.015790343915343914,
+     "precision": 0.061507936507936505,
+     "f1": 0.02512944571768101,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.19027777777777777,
+     "precision": 0.11582988267770876,
+     "f1": 0.14400066070466813,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 124
+  },
+  {
+   "rule": "code",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.01,
+   "avg_f1": 0.341032870811067,
+   "tasks": {
+    "CRR": {
+     "recall": 0.8571428571428571,
+     "precision": 0.12766955266955266,
+     "f1": 0.2222373399339588,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.6787202380952381,
+     "precision": 0.4981676003734827,
+     "f1": 0.5745941478616274,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.786111111111111,
+     "precision": 0.13215232891200548,
+     "f1": 0.22626712463761461,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 512
+  },
+  {
+   "rule": "code",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.02,
+   "avg_f1": 0.31752655010287273,
+   "tasks": {
+    "CRR": {
+     "recall": 0.7142857142857143,
+     "precision": 0.12993197278911564,
+     "f1": 0.21986876942557845,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.45221560846560843,
+     "precision": 0.5443242521367522,
+     "f1": 0.49401320030253804,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.6541666666666667,
+     "precision": 0.14598248071158285,
+     "f1": 0.23869768058050175,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 389
+  },
+  {
+   "rule": "code",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.03,
+   "avg_f1": 0.27203653063185795,
+   "tasks": {
+    "CRR": {
+     "recall": 0.7142857142857143,
+     "precision": 0.1369047619047619,
+     "f1": 0.22977022977022976,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.2589451058201058,
+     "precision": 0.40069444444444446,
+     "f1": 0.31458958237595913,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.5291666666666667,
+     "precision": 0.18281710119945413,
+     "f1": 0.271749779749385,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 278
+  },
+  {
+   "rule": "code",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.04,
+   "avg_f1": 0.28758435276208966,
+   "tasks": {
+    "CRR": {
+     "recall": 0.7142857142857143,
+     "precision": 0.1989795918367347,
+     "f1": 0.3112529928172386,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.1377149470899471,
+     "precision": 0.22453703703703706,
+     "f1": 0.17072152827436046,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.5152777777777778,
+     "precision": 0.30196007696007693,
+     "f1": 0.3807785371946699,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 200
+  },
+  {
+   "rule": "code",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.05,
+   "avg_f1": 0.2277196940692563,
+   "tasks": {
+    "CRR": {
+     "recall": 0.5714285714285714,
+     "precision": 0.16666666666666666,
+     "f1": 0.25806451612903225,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.09257605820105819,
+     "precision": 0.18055555555555555,
+     "f1": 0.12239609607791699,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.41111111111111104,
+     "precision": 0.23953227124183007,
+     "f1": 0.3026984700008196,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 153
+  },
+  {
+   "rule": "code",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.06,
+   "avg_f1": 0.18337214447649453,
+   "tasks": {
+    "CRR": {
+     "recall": 0.42857142857142855,
+     "precision": 0.13095238095238096,
+     "f1": 0.2006079027355623,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.05090939153439153,
+     "precision": 0.13888888888888887,
+     "f1": 0.07450803883419964,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.31805555555555554,
+     "precision": 0.2422123015873016,
+     "f1": 0.27500049185972164,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 124
+  },
+  {
+   "rule": "code",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 4.0,
+   "theta": 0.08,
+   "avg_f1": 0.11983060670934254,
+   "tasks": {
+    "CRR": {
+     "recall": 0.2857142857142857,
+     "precision": 0.10714285714285714,
+     "f1": 0.1558441558441558,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.015790343915343914,
+     "precision": 0.07083333333333333,
+     "f1": 0.02582394859069797,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.1625,
+     "precision": 0.19633838383838378,
+     "f1": 0.1778237156931738,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 77
+  },
+  {
+   "rule": "code",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.01,
+   "avg_f1": 0.2722797996925379,
+   "tasks": {
+    "CRR": {
+     "recall": 0.2857142857142857,
+     "precision": 0.05612244897959184,
+     "f1": 0.09381663113006397,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.48311838624338627,
+     "precision": 0.4878690753690753,
+     "f1": 0.4854821091076707,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.5458333333333333,
+     "precision": 0.15180150051473584,
+     "f1": 0.23754065883987913,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 337
+  },
+  {
+   "rule": "code",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.02,
+   "avg_f1": 0.3087647039903801,
+   "tasks": {
+    "CRR": {
+     "recall": 0.42857142857142855,
+     "precision": 0.10714285714285714,
+     "f1": 0.17142857142857143,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.41228505291005285,
+     "precision": 0.5609265734265734,
+     "f1": 0.47525458131721476,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.5458333333333334,
+     "precision": 0.1879439803352847,
+     "f1": 0.27961095922535406,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 276
+  },
+  {
+   "rule": "code",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.03,
+   "avg_f1": 0.2568307531617457,
+   "tasks": {
+    "CRR": {
+     "recall": 0.42857142857142855,
+     "precision": 0.11190476190476191,
+     "f1": 0.17747010698552548,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.2401951058201058,
+     "precision": 0.4138888888888888,
+     "f1": 0.3039795691948173,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.48055555555555557,
+     "precision": 0.20667686917686914,
+     "f1": 0.2890425833048944,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 209
+  },
+  {
+   "rule": "code",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.04,
+   "avg_f1": 0.33462351452883216,
+   "tasks": {
+    "CRR": {
+     "recall": 0.7142857142857143,
+     "precision": 0.32142857142857145,
+     "f1": 0.4433497536945813,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.1377149470899471,
+     "precision": 0.23842592592592593,
+     "f1": 0.17458785327153167,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.46666666666666673,
+     "precision": 0.32901334776334773,
+     "f1": 0.38593293662038347,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 152
+  },
+  {
+   "rule": "code",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.05,
+   "avg_f1": 0.262670475088854,
+   "tasks": {
+    "CRR": {
+     "recall": 0.5714285714285714,
+     "precision": 0.26666666666666666,
+     "f1": 0.36363636363636365,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.09257605820105819,
+     "precision": 0.18055555555555555,
+     "f1": 0.12239609607791699,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.3625,
+     "precision": 0.2587752525252525,
+     "f1": 0.30197896555228126,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 120
+  },
+  {
+   "rule": "code",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.06,
+   "avg_f1": 0.20771339564870814,
+   "tasks": {
+    "CRR": {
+     "recall": 0.42857142857142855,
+     "precision": 0.21904761904761902,
+     "f1": 0.28991596638655465,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.05090939153439153,
+     "precision": 0.13888888888888887,
+     "f1": 0.07450803883419964,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.26944444444444443,
+     "precision": 0.2488095238095238,
+     "f1": 0.2587161817253701,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 102
+  },
+  {
+   "rule": "code",
+   "agg": "mean",
+   "dedup": "cooldown",
+   "cooldown_s": 8.0,
+   "theta": 0.08,
+   "avg_f1": 0.1410153902709734,
+   "tasks": {
+    "CRR": {
+     "recall": 0.2857142857142857,
+     "precision": 0.19047619047619047,
+     "f1": 0.22857142857142854,
+     "n_questions": 7
+    },
+    "REC": {
+     "recall": 0.015790343915343914,
+     "precision": 0.07083333333333333,
+     "f1": 0.02582394859069797,
+     "n_questions": 24
+    },
+    "SSR": {
+     "recall": 0.14166666666666666,
+     "precision": 0.20833333333333334,
+     "f1": 0.16865079365079366,
+     "n_questions": 12
+    }
+   },
+   "total_detections": 68
+  }
+ ],
+ "best": {
+  "rule": "code",
+  "agg": "any",
+  "dedup": "cooldown",
+  "cooldown_s": 4.0,
+  "theta": 0.01,
+  "avg_f1": 0.341032870811067,
+  "tasks": {
+   "CRR": {
+    "recall": 0.8571428571428571,
+    "precision": 0.12766955266955266,
+    "f1": 0.2222373399339588,
+    "n_questions": 7
+   },
+   "REC": {
+    "recall": 0.6787202380952381,
+    "precision": 0.4981676003734827,
+    "f1": 0.5745941478616274,
+    "n_questions": 24
+   },
+   "SSR": {
+    "recall": 0.786111111111111,
+    "precision": 0.13215232891200548,
+    "f1": 0.22626712463761461,
+    "n_questions": 12
+   }
+  },
+  "total_detections": 512
+ }
+}

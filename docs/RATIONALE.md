@@ -1,4 +1,4 @@
-# Rationale: what we are building, why, and how we will know it works
+﻿# Rationale: what we are building, why, and how we will know it works
 
 This is a living document. It is written so that someone who has not followed the project can
 understand what we did, why we did it, what each experiment tests, and where we are going.
@@ -157,7 +157,7 @@ Rows 0 to 5 call no GPT, so they cost nothing but GPU time. GPT enters at row 6.
 
 172 questions on 134 videos (82 REC, 42 SSR, 48 CRR), about 4.4 hours of video to judge.
 
-**Metric:** a response is correct if it lands within **±2 seconds** of a ground-truth time.
+**Metric:** a response is correct if it lands within **Â±2 seconds** of a ground-truth time.
 Each ground-truth time can be matched once; extra responses near the same event count as false
 positives. Per question: recall = correct / events, precision = correct / responses (0 if the
 system never responded). Per task: average recall and precision across questions, then take the
@@ -175,16 +175,16 @@ later and costs money from our budget of about $100.
 To know what counts as an improvement, we first measured what simple rules score on this metric, with no
 model and no video. At each 2 s decision point, a rule decides "respond" or "stay quiet" without looking at
 the video, and the scoring code grades the result against the true response times. Scores below are F1 over
-all 172 forward-task questions, at a 2 s decision cadence and a ±2 s tolerance (`scripts/eval_floors.py`).
+all 172 forward-task questions, at a 2 s decision cadence and a Â±2 s tolerance (`scripts/eval_floors.py`).
 
 | Rule that ignores the video | Avg F1 |
 |---|---|
 | Respond at every decision point | 15.6 |
-| Random, 10% chance per decision point | 16.4 ± 1.8 |
-| Random, 25% chance | 21.4 ± 1.1 |
-| Random, 50% chance | 21.7 ± 0.6 |
+| Random, 10% chance per decision point | 16.4 Â± 1.8 |
+| Random, 25% chance | 21.4 Â± 1.1 |
+| Random, 50% chance | 21.7 Â± 0.6 |
 
-The ± is the spread across 10 random seeds. The always-silent and oracle checks only confirm that the
+The Â± is the spread across 10 random seeds. The always-silent and oracle checks only confirm that the
 scoring code works (silent must score 0, a system that responds exactly at the true times must score 100),
 so they live in the tests (`tests/test_eval.py`) and not here.
 
@@ -206,12 +206,12 @@ The simplest such floor is a **timer**: respond every k seconds, with no model a
 
 | Rule that ignores the video | Avg F1 | Responses |
 |---|---|---|
-| Respond every 4 s | 27.0 ± 0.3 | about 990 |
-| Respond every 8 s | 27.6 ± 2.2 | about 495 |
-| Respond every 12 s | 23.1 ± 3.5 | about 330 |
-| Respond every 16 s | 20.2 ± 3.6 | about 250 |
-| Random 50% + 4 s cooldown | 26.7 ± 1.8 | about 670 |
-| Random 25% + 8 s cooldown | 21.3 ± 2.7 | about 290 |
+| Respond every 4 s | 27.0 Â± 0.3 | about 990 |
+| Respond every 8 s | 27.6 Â± 2.2 | about 495 |
+| Respond every 12 s | 23.1 Â± 3.5 | about 330 |
+| Respond every 16 s | 20.2 Â± 3.6 | about 250 |
+| Random 50% + 4 s cooldown | 26.7 Â± 1.8 | about 670 |
+| Random 25% + 8 s cooldown | 21.3 Â± 2.7 | about 290 |
 
 Reading a model row therefore means comparing it with the timer that makes a similar number of responses.
 (`scripts/eval_floors.py` now includes the timer rows; `egogate/eval/floors.py` accepts a cooldown.)
@@ -276,7 +276,7 @@ repeatable, and is the benchmark Em-Garde reports numbers on. ProactiveVideoQA's
 GPT-4.1 judge (verified in `judge_llm_scores_openai.py`), which spends budget and adds noise.
 *Evidence:* Em-Garde appendix; ProactiveVideoQA scorer. *Status:* verified.
 
-**D3. Use Em-Garde's ground truth and scoring logic exactly, with a tolerance of ±2 s.**
+**D3. Use Em-Garde's ground truth and scoring logic exactly, with a tolerance of Â±2 s.**
 *Why:* a comparison to a published number is only meaningful if the ground truth and matching
 rules are identical. Ground truth: CRR uses `clue_time`; REC and SSR use each event's start time
 plus 2 s; REC and SSR are judged from 0, CRR from `ask_time`; all stop at the last test point.
@@ -293,7 +293,7 @@ behaves differently from averaging per-question F1s (a unit test pins this). *St
 
 **D5. Baseline decision cadence is every 2 s.**
 *Why:* it cuts decider calls about 4x (7,863 vs 31,620 over the full set), which matters on a
-laptop GPU; a response within ±2 s of the event is still credited, so a 2 s grid can still land
+laptop GPU; a response within Â±2 s of the event is still credited, so a 2 s grid can still land
 inside the window. *Cost:* coarser timing, and floors at this cadence are higher (see section 5),
 so every comparison uses same-cadence floors. We will test a finer cadence once the pipeline
 runs. *Status:* decided with the team lead.
@@ -615,7 +615,7 @@ BF16 (about 15 GB). Needs a larger GPU or a quantized load, which conflicts with
 
 **Setup.** Qwen3-VL-2B-Instruct in BF16 (D16). Every 2 s the model is shown the question and the last 4 frames
 (448 px) and asked "respond now?" (D15). The 43 validation questions (1,983 decisions) are scored with the Em-Garde
-metric, tolerance ±2 s. Median 300 ms per decision on the RTX 4060 laptop GPU. The model puts essentially all its
+metric, tolerance Â±2 s. Median 300 ms per decision on the RTX 4060 laptop GPU. The model puts essentially all its
 probability on "Yes" or "No" (at least 99.95% on every decision), so the prompt works as intended.
 Source: `results/cache/decider/Qwen3-VL-2B-Instruct__query_only__1a7df950/` (`replay_ovo_far_val.json` has every setting).
 
@@ -649,14 +649,14 @@ This is why a model row has to be compared with a floor that has the same cooldo
 
 | Model setting | Responses | Model F1 | Timer with a similar number of responses | Timer F1 |
 |---|---|---|---|---|
-| threshold 0.05, 4 s cooldown | 1002 | 26.7 | respond every 4 s (about 990) | 27.0 ± 0.3 |
-| threshold 0.50, 8 s cooldown | 422 | 25.7 | respond every 8 s (about 495) | 27.6 ± 2.2 |
-| threshold 0.80, 4 s cooldown | 345 | 29.7 | respond every 12 s (about 330) | 23.1 ± 3.5 |
-| threshold 0.80, 8 s cooldown | 212 | 32.0 | respond every 16 s (about 250) | 20.2 ± 3.6 |
+| threshold 0.05, 4 s cooldown | 1002 | 26.7 | respond every 4 s (about 990) | 27.0 Â± 0.3 |
+| threshold 0.50, 8 s cooldown | 422 | 25.7 | respond every 8 s (about 495) | 27.6 Â± 2.2 |
+| threshold 0.80, 4 s cooldown | 345 | 29.7 | respond every 12 s (about 330) | 23.1 Â± 3.5 |
+| threshold 0.80, 8 s cooldown | 212 | 32.0 | respond every 16 s (about 250) | 20.2 Â± 3.6 |
 
 At low and middle thresholds the model is no better than speaking on a timer. At threshold 0.80, where it responds only
 when quite sure, it scores 7 to 12 points above a timer making a similar number of responses. (Timer rows are the 30-phase
-figures from section 5; the ± is the spread across phases, not a confidence interval.)
+figures from section 5; the Â± is the spread across phases, not a confidence interval.)
 
 **Reading 4: the ranking signal is real but weak.** (*Correction added after row 3:* the figures below pool every decision from every question, which mixes in differences between questions, such as REC questions having higher p(Yes) everywhere. Averaging the AUC within each question instead gives 0.614, not 0.71. That is the number to compare with the matcher; see the row 3 section.) Taking every decision, and labelling it "positive" when it falls within
 2 s of a true event (313 of 1,983, or 15.8%), we asked how well p(Yes) ranks positives above the rest. AUC is the chance
@@ -734,7 +734,7 @@ a similar number of responses (interpolating between them where needed, so appro
 | threshold 0.01 | 698 | 28.6 | about 27 | about 1 (nothing) |
 | threshold 0.02 | 539 | 29.4 | about 27.6 | about 2 (nothing) |
 | threshold 0.03 | 426 | 31.8 | about 25.7 | about 6 |
-| threshold 0.04 | 329 | 29.9 | 23.1 ± 3.5 | about 7 |
+| threshold 0.04 | 329 | 29.9 | 23.1 Â± 3.5 | about 7 |
 | threshold 0.05 | 270 | 26.2 | about 21 | about 5 |
 
 With many responses it is no better than speaking on a timer; with 270 to 430 responses it is roughly 5 to 7 points above one. The 31.8 best cell
@@ -755,10 +755,10 @@ The timer is the "respond every k seconds" system whose number of responses is c
 
 | Group | Questions | Matcher F1 | Recall / precision | Responses | Closest timer | AUC within question (matcher highest similarity / decider) |
 |---|---|---|---|---|---|---|
-| Counting, sports clips | 10 | **57.0** | 68% / 49% | 99 | 32.7 ± 5.2 (103 responses) | 0.67 / 0.70 |
-| Counting, everyday objects | 14 | 40.2 | 38% / 43% | 37 | 38.4 ± 6.3 (40) | 0.60 / 0.62 |
-| Tutorial steps | 12 | 26.2 | 68% / 16% | 249 | 18.2 ± 2.4 (271) | 0.67 / 0.60 |
-| Clue reveal | 7 | 21.5 | 71% / 13% | 41 | 20.3 ± 8.5 (38) | 0.46 / 0.50 |
+| Counting, sports clips | 10 | **57.0** | 68% / 49% | 99 | 32.7 Â± 5.2 (103 responses) | 0.67 / 0.70 |
+| Counting, everyday objects | 14 | 40.2 | 38% / 43% | 37 | 38.4 Â± 6.3 (40) | 0.60 / 0.62 |
+| Tutorial steps | 12 | 26.2 | 68% / 16% | 249 | 18.2 Â± 2.4 (271) | 0.67 / 0.60 |
+| Clue reveal | 7 | 21.5 | 71% / 13% | 41 | 20.3 Â± 8.5 (38) | 0.46 / 0.50 |
 
 This matches what the cues looked like (D18): sports clips, where the cues were concrete and on topic, gain about 24 points over a timer; tutorials gain about 8 but with many
 false alarms (precision 16%); everyday-object counting and clue reveal gain nothing, and for those the cues were the weakest (invented scenes, or guesses at an answer that a text-only writer cannot know).
@@ -861,6 +861,32 @@ thresholds. So the cue-aware decider removes true events faster than false alarm
 
 **Caveats.** One split of 43 questions; the group intervals are unadjusted and not pre-planned; the F1 comparisons use settings chosen on val; no test split has been used.
 
+### Step A (D22): cue-quality ceiling, matcher re-scored with other cues on the stored window vectors (val, 43 questions, 2026-11-22)
+
+**What was done.** The 2 s window vectors already stored for val were re-scored against different cue texts (no video decoded, no GPU decision): the edge model's own cues (baseline), the benchmark's annotations as cues ("oracle": tutorial step list, activity phrase, clue answer; no deployed system has these, so this is an upper bound on cue wording), and the raw question text as the single cue. All other settings are unchanged (Em-Garde's released rule, any cue, 4 s cooldown, threshold 0.03 for the by-group table).
+
+**Gate 2 diagnostic (7,903 steps, 14.7% within 2 s of an event; 0.5 = no separation).**
+
+| Cues | max-similarity AUC | mean-similarity AUC | max-rise AUC |
+|---|---|---|---|
+| Edge model's cues (baseline) | 0.598 | 0.617 | 0.540 |
+| Oracle (benchmark annotations) | 0.612 | 0.638 | 0.525 |
+| Raw question text | 0.547 | 0.547 | 0.543 |
+
+(These AUCs are pooled over all steps, so they mix questions; read them only as a rough ordering. No bootstrap interval was computed.)
+
+**By group at threshold 0.03, F1 against the closest timer (timer ± is its spread over start offsets).**
+
+| Group | Baseline cues | Oracle cues | Question text |
+|---|---|---|---|
+| Sports counting (10) | 57.0 vs 32.7 (99 resp) | 35.4 vs 23.4 (57 resp) | 27.7 vs 23.4 (45 resp) |
+| Everyday-object counting (14) | 40.2 vs 38.4 (37 resp) | 30.1 vs 25.8 (21 resp) | 32.9 vs 17.0 (15 resp) |
+| Tutorials (12) | 26.2 vs 18.2 (249 resp) | 27.0 vs 18.5 (233 resp) | 27.2 vs 17.5 (185 resp) |
+| Clue reveal (7) | 21.5 vs 20.3 (41 resp) | 28.0 vs 15.1 (27 resp) | 23.0 vs 17.7 (33 resp) |
+
+**Reading.** Oracle cues do not clearly lift the matcher. The mean-similarity AUC moves from 0.617 to 0.638, within what 43 questions can move by chance. Tutorials, where the oracle gives the exact step list, gain 0.8 F1 over the baseline (26.2 to 27.0), and the gain over the timer is the same (+8.0 to +8.5). Sports counting, the group where the baseline cues were good, gets *worse* with oracle cues (57.0 to 35.4), mostly because fewer responses are made at the same threshold (99 to 57; the similarity scale changes with the cue text), so a fixed threshold is not a fair comparison there. Clue reveal looks better (+12.9 over the timer against +1.2) but it is 7 questions with a timer spread of ±9, so it is not evidence. The best cell of the oracle table (40.0 F1, mean rule, threshold 0.02) is the best of many cells and was not compared at equal response count, so it is not quoted as a result. The question-text-only cue is the weakest on the diagnostic, as expected.
+
+**Decision rule outcome.** Per D22, if oracle cues do not clearly lift the matcher, the embedder (not the cue wording) is the main limit, and building a memory-aligned cue writer is not justified on this evidence. Cue wording is a minor factor on this embedder with these 2 s windows. Caveats: one split, 43 questions, no bootstrap interval on the oracle comparison, fixed-threshold comparison with differing response counts, for tutorials the oracle cues are the benchmark's step descriptions, one cue per step (the matcher fires on any of them), which are short phrases and may still be far from what the embedder separates visually.
 ## 10. Glossary
 
 - **Edge model / edge VLM**: the small vision-language model that runs on the device.
@@ -892,4 +918,4 @@ thresholds. So the cue-aware decider removes true events faster than false alarm
 - 2026-11-15: Added `scripts/ovo_tar_remote.py` and the committed video index; the video download
   drops from about 44 GB to 5 GB (D11).
 - 2026-11-15: First version. Ingestion, seeded splits, Em-Garde-faithful metric, floors, and a
-  scoring CLI added. Tolerance moved from 4 s one-sided to ±2 s. Default dtype set to BF16.
+  scoring CLI added. Tolerance moved from 4 s one-sided to Â±2 s. Default dtype set to BF16.
