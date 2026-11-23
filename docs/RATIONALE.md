@@ -1070,12 +1070,49 @@ Yes-rates on these 36: 2B 0.81, 8B 0.07, 235B 0.26.
 - **The three models read the same instruction very differently** (Yes on 81%, 7% and 26% of moments) with similar ranking quality. The "respond now?" framing is evidently ambiguous to them; any F1 or routing use needs a per-model threshold.
 
 **Caveats.** One prompt; 235B on 36 questions with 7 of 10 sports clips missing; group intervals unadjusted; val only.
-### In progress (2026-11-23): what the matcher sees, scene-level cues, and decider history (val)
+### Shorter windows and scene-level cues (val, 2026-11-23)
 
-Three experiments started together; results will be added here as they finish.
-1. **Shorter windows.** Matcher on SigLIP2 frame vectors with 1, 2 and 4 frames per window (`scripts/run_embed_alt.py` now stores the frame vectors; `scripts/pilot_window_cues.py` scores them), and the 8B decider shown 1 frame (0.5 s) or 2 frames (1 s) instead of 4 (`run_decider_cache.py --set decider.window_s=...`). Tests whether averaging 2 s into one summary costs the moment.
-2. **Scene-level oracle cues.** Each oracle cue rewritten by the 8B model (text only) into one line describing the scene around the moment rather than the instant (`scripts/write_general_cues.py`, 72 rewrites in `results/cache/cues/general_oracle__qwen3-vl-8b-instruct.jsonl`), scored on the same frame vectors at each window length, with the mean similarity reported alongside the AUC. The writer never sees the video, so the scenes are partly invented (for example "a vase shatters ... startled cat" for "breaking something").
-3. **Decider with history.** The 8B decider shown two earlier frames (about 10 s and 5 s back) plus the last 4 (`scripts/run_decider_history.py`): variant `change` first asks, without the user's question, "what changed between the earlier frames and now?" and adds that sentence to the Yes/No prompt; variant `frames` is the same without the sentence, which separates "seeing history" from "writing the change down". In the first 10 s of a video the earliest available frame stands in for both earlier frames.
+**Questions.** (1) Does averaging 2 s of video into one vector wash out the moment, so that a shorter window (1 or 2 frames) separates event steps better, for the matcher and for the decider? (2) The oracle cues describe one instant while a window is compared as a whole scene: do cues reworded to describe the scene around the moment match the windows better?
+**Setup.** (1) `scripts/run_embed_alt.py` now also stores each SigLIP2 frame vector (one per 0.5 s); `scripts/pilot_window_cues.py` builds windows of 1, 2 and 4 frames from them. The 8B decider was re-run with 1 frame (0.5 s) and 2 frames (1 s) instead of 4 (`run_decider_cache.py --set decider.window_s=...`). (2) Each oracle cue was rewritten by the 8B model, text only, into one line describing the scene around the moment rather than the instant (`scripts/write_general_cues.py`, 72 rewrites in `results/cache/cues/general_oracle__qwen3-vl-8b-instruct.jsonl`), and scored on the same frame vectors at each window length. The writer never sees the video, so scene details are partly invented (for example "a vase shatters ... startled cat" for "breaking something").
+
+**Matcher** (`scripts/pilot_window_cues.py`, SigLIP2 frame vectors, a window is the normalised mean of its last k frame vectors; within-question AUC, steps within 2 s of an event against the rest, 10 s of history required; 40 questions; paired video-level 95% intervals; "sim" is the mean best-cue cosine near and away from events):
+
+| Cues | Window | AUC | sim near | sim far | vs edge cues, 2 s | vs oracle cues, 2 s |
+|---|---|---|---|---|---|---|
+| edge | 0.5 s (1 frame) | 0.588 | 0.100 | 0.092 | -0.005 [-0.026, +0.013] | -0.043 [-0.115, +0.028] |
+| edge | 1 s (2 frames) | 0.594 | 0.101 | 0.093 | +0.001 [-0.014, +0.016] | -0.036 [-0.111, +0.035] |
+| edge | 2 s (4 frames) | 0.593 | 0.102 | 0.094 | reference | -0.037 [-0.112, +0.034] |
+| oracle | 0.5 s | 0.601 | 0.103 | 0.094 | +0.008 [-0.045, +0.066] | -0.029 [-0.071, +0.005] |
+| oracle | 1 s | 0.625 | 0.106 | 0.095 | +0.032 [-0.031, +0.098] | -0.006 [-0.025, +0.012] |
+| oracle | 2 s | 0.630 | 0.107 | 0.096 | +0.037 [-0.034, +0.112] | reference |
+| scene-level | 0.5 s | 0.620 | 0.105 | 0.096 | +0.027 [-0.026, +0.078] | -0.010 [-0.066, +0.043] |
+| scene-level | 1 s | 0.618 | 0.108 | 0.097 | +0.025 [-0.031, +0.078] | -0.013 [-0.068, +0.040] |
+| scene-level | 2 s | 0.617 | 0.109 | 0.098 | +0.024 [-0.031, +0.080] | -0.013 [-0.066, +0.037] |
+
+(The edge-cue 2 s AUC, 0.593, differs from the 0.618 of the SigLIP2 comparison above because the question and step sets differ slightly: 40 questions with 10 s of frame history here, 38 with 20 steps of window history there. Only comparisons within this table are paired.)
+
+**Decider** (Qwen3-VL-8B through the API, row 1 setup with fewer frames, all 43 questions, compared with the 8B's own 4-frame run):
+
+| Frames shown | AUC | Change from 4 frames | 95% interval |
+|---|---|---|---|
+| 1 (0.5 s) | 0.563 | -0.056 | [-0.105, -0.007] |
+| 2 (1 s) | 0.606 | -0.012 | [-0.051, +0.023] |
+| 4 (2 s) | 0.618 | reference | |
+
+By group the 1-frame loss is largest on clue reveal (-0.13) and present in every group.
+
+**Reading.**
+- **Averaging 2 s into one vector is not what loses the moment.** The matcher ranks steps the same with 1, 2 or 4 frames (edge cues: 0.588, 0.594, 0.593; all differences within +/- 0.02). Combined with the earlier finding that longer averaging hurts, the window length is not the lever in either direction below 2 s.
+- **Scene-level cues raise the similarity everywhere, not at the event.** Rewriting the oracle cues to describe the scene lifts the mean similarity slightly (0.109 against 0.107 near events) but lifts it equally away from events (0.098 against 0.096), so the near-far gap and the AUC do not improve (0.617 against 0.630, difference within noise). A cue that describes the whole scene matches before, during and after the event alike; the separation the matcher needs is the opposite of that.
+- **The size of the signal, in one number:** with any cues and any window, the best-cue similarity is about 0.10 near an event against 0.09 elsewhere. The embedding barely moves when the event happens.
+- **The decider needs some time, not less.** One frame is clearly worse than two seconds; two frames are about as good as four. A single snapshot cannot show that something is happening, which supports giving the decider more time (the history experiment below), not less.
+
+**Caveats.** Val only; SigLIP2 only for the matcher (Ops-MM not re-run per frame); the scene-level cues were written without seeing the video, so their scene details are partly invented; group intervals unadjusted.
+### In progress (2026-11-23): decider history (val)
+
+Started together with the two experiments above; results will be added here when it finishes. The run was interrupted once by a restart of the laptop session and resumed from its stored decisions.
+
+**Decider with history.** The 8B decider shown two earlier frames (about 10 s and 5 s back) plus the last 4 (`scripts/run_decider_history.py`): variant `change` first asks, without the user's question, "what changed between the earlier frames and now?" and adds that sentence to the Yes/No prompt; variant `frames` is the same without the sentence, which separates "seeing history" from "writing the change down". In the first 10 s of a video the earliest available frame stands in for both earlier frames.
 ## 10. Glossary
 
 - **Edge model / edge VLM**: the small vision-language model that runs on the device.
@@ -1092,6 +1129,7 @@ Three experiments started together; results will be added here as they finish.
 ## 11. Changelog
 
 - 2026-11-23: Label-radius test, 8B and 235B decider results added to 9a; three experiments (shorter windows, scene-level cues, decider history) started and described.
+- 2026-11-23: Shorter windows (matcher and 8B decider) and scene-level oracle cues added to 9a: neither helps the matcher; one frame hurts the decider.
 - 2026-11-15: Section 5 rewritten: chance-level table trimmed to the rules that ignore the video, and the rules for calling an improvement real (bootstrap intervals, paired comparison, power) added.
 - 2026-11-23: D22 (fix the base before routing; staged plan) added; cue-source tooling built.
 - 2026-11-22: Section 0 (overall status, bottlenecks, what to test and what not to do) added.
