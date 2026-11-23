@@ -177,6 +177,25 @@ class HFEdgeVLM(EdgeVLM):
         return out
 
 
+def load_env_file(path=None):
+    """Read KEY=VALUE lines from the repository's .env (gitignored) into the environment, without overriding variables already set.
+    No dependency on python-dotenv; values are never printed."""
+    import os  # noqa: PLC0415
+    from pathlib import Path  # noqa: PLC0415
+
+    p = Path(path) if path else Path(__file__).resolve().parent.parent / ".env"
+    if not p.exists():
+        return
+    for line in p.read_text(encoding="utf-8-sig").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        k, v = line.split("=", 1)
+        k, v = k.strip().removeprefix("export ").strip(), v.strip().strip('"').strip("'")
+        if k and k not in os.environ:
+            os.environ[k] = v
+
+
 class APIEdgeVLM(EdgeVLM):
     """The edge model behind any OpenAI-compatible chat endpoint (OpenRouter, OpenAI, a vLLM server): no weights are downloaded.
 
@@ -194,10 +213,14 @@ class APIEdgeVLM(EdgeVLM):
         if client is None:
             from openai import OpenAI  # noqa: PLC0415
 
+            load_env_file()
             if api_key_env not in os.environ:
                 raise SystemExit(f"set the environment variable {api_key_env} (an API key) before running with edge.backend=api")
             client = OpenAI(base_url=base_url, api_key=os.environ[api_key_env])
         self.client, self.model, self.q, self.top = client, model_id, jpeg_quality, top_logprobs
+        # OpenRouter may route a request to any provider of the model, including ones that silently drop `logprobs`;
+        # require_parameters restricts it to providers that support every parameter we send. Other endpoints reject the field.
+        self.extra = {"extra_body": {"provider": {"require_parameters": True}}} if "openrouter.ai" in base_url else {}
         self.n_calls = 0
         self.n_images = 0
 
@@ -218,7 +241,7 @@ class APIEdgeVLM(EdgeVLM):
         self.n_calls += 1
         self.n_images += len(images or [])
         return self.client.chat.completions.create(model=self.model, messages=[{"role": "user", "content": self._content(prompt, images)}],
-                                                   temperature=0, **kw)
+                                                   temperature=0, **self.extra, **kw)
 
     def _generate(self, prompt, images, max_new_tokens):
         return (self._call(prompt, images, max_tokens=max_new_tokens).choices[0].message.content or "").strip()
