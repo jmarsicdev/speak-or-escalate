@@ -986,6 +986,20 @@ Note on the scale: this script pools all questions into one F1, which is not the
 - **The contrast rule does not beat the released rule.** With edge cues its gaps (+1 to +6) are at or below the released rule's (+1 to +9); with oracle cues it is at or below the timer. The small AUC hint did not turn into a better trigger.
 - **The cue-free visual change rule loses to a timer at every threshold** (gap -2 to -10). So although visual change alone had an AUC of 0.59, as a trigger it is worse than doing nothing clever; the cue is what makes the trigger better than a timer.
 - **Oracle cues look better here than in step A.** With the released rule, oracle gaps are +9.4, +14.6, +4.9, +3.5, +6.2 against +3.7, +6.4, +9.1, +4.8, +0.7 for edge cues: larger at four of five thresholds, mean gap 7.7 against 4.9, best 14.6 against 9.1. Step A, at one threshold and by group, saw no clear lift. This pooled view hints that perfect cue wording may be worth a few F1 points; with a timer spread of 2 to 3 points, 43 questions, a different aggregation and no bootstrap interval, I do not treat it as established. It softens the step A conclusion: cue wording is probably a smaller limit than the embedder, not necessarily none.
+### Paired bootstrap of the cue-wording gap (val, 43 questions, CPU, 2026-11-23)
+
+**Question.** The contrast-rule table hinted that oracle cues beat the edge model's cues; step A had seen no clear lift. `scripts/bootstrap_cue_gap.py` settles it the way the project rules ask: for each threshold of the released rule (4 s cooldown), the matcher's averaged F1 (mean over the three tasks, as in the earlier tables) minus the F1 of the timer with the closest number of responses (10 random phases), for each cue source; then oracle's gap minus the edge cues' gap with a 95% interval from resampling whole videos.
+
+| Threshold | Edge: responses, gap | Oracle: responses, gap | Oracle minus edge | 95% interval |
+|---|---|---|---|---|
+| 0.01 | 698, -0.1 | 612, +9.4 | **+9.5** | [+1.8, +14.3] |
+| 0.02 | 539, +2.0 | 474, +11.3 | **+9.3** | [+2.1, +15.4] |
+| 0.03 | 426, +7.0 | 338, +6.3 | -0.7 | [-8.4, +7.0] |
+| 0.04 | 329, +6.6 | 246, +4.4 | -2.2 | [-12.5, +8.8] |
+| 0.05 | 270, +3.5 | 195, +5.3 | +1.9 | [-7.2, +11.2] |
+| mean over thresholds | | | +3.6 | [-2.6, +10.1] |
+
+**Reading.** Oracle cues clearly help when the matcher is set loose (thresholds 0.01 and 0.02, where it fires 470 to 700 times): the edge cues are then no better than a timer (gap about 0 to +2) and the oracle cues are about 9 points better, interval above zero. At the better thresholds (0.03 and up) the two are the same: the edge cues reach a gap of +7.0 at 0.03, and no oracle setting beats that by a margin the data can see. The average over thresholds, which avoids picking one, is +3.6 with an interval that includes zero. So perfect wording makes the matcher more robust to the threshold, but does not raise its ceiling. With five thresholds looked at, two intervals excluding zero is not strong evidence; the safe statement is that cue wording matters at loose thresholds and not at the best one. Step A's conclusion stands in the form: cue wording is not what limits the best matcher result; the embedder is.
 ## 10. Glossary
 
 - **Edge model / edge VLM**: the small vision-language model that runs on the device.
