@@ -961,6 +961,31 @@ Scoring what is new does not beat plain relevance (0.60 and 0.54 against 0.66 an
 - **Comparing against what was just before helps slightly, but not reliably** (+0.02 to +0.035, intervals include zero). It is the only direction that points up, and it is the "rise" idea with a local baseline instead of one step back.
 - **Visual change alone, with no cue, scores 0.58 to 0.59**, close to the cue-based 0.63. This says a good part of what the matcher picks up is that the picture is changing, not that it matches the cue. That fits step A: better cue wording barely moved the score.
 - Same caveats as before: unadjusted, 38 questions, 8 scores shown, within-question AUC is about ranking steps and not a final score.
+### Contrast rule as a trigger, scored against a matched timer (val, 43 questions, CPU, 2026-11-23)
+
+**Question.** The several-window test left one direction slightly up: compare the cue similarity with its own recent past. As a trigger rule, does it beat Em-Garde's released rule ("code") at the same number of responses? `scripts/pilot_contrast_rule.py` sweeps a threshold grid for three rules, all with a 4 s cooldown: "code" (the matcher now), "contrast" (a cue's similarity more than theta above its average over the previous 10 s) and "change" (the same on the cue-free visual change signal). The whole grid is shown; the "gap" is F1 minus the F1 of the timer with the closest number of responses (timer spread over start offsets is 1.7 to 3.6).
+
+Note on the scale: this script pools all questions into one F1, which is not the average over task groups used in the earlier tables, so these F1 values (for example code at 0.03: 41.3 here, 31.8 there, same 426 responses) are not comparable with section 9a above. Only the gaps within this table are.
+
+| Rule | theta | Edge cues: F1 (responses), gap | Oracle cues: F1 (responses), gap |
+|---|---|---|---|
+| code | 0.01 | 40.1 (698), +3.7 | 45.8 (612), +9.4 |
+| code | 0.02 | 40.7 (539), +6.4 | 48.9 (474), +14.6 |
+| code | 0.03 | 41.3 (426), +9.1 | 35.0 (338), +4.9 |
+| code | 0.04 | 35.0 (329), +4.8 | 28.7 (246), +3.5 |
+| code | 0.05 | 25.8 (270), +0.7 | 27.3 (195), +6.2 |
+| contrast | 0.01 | 33.8 (667), -2.6 | 38.6 (597), +2.2 |
+| contrast | 0.02 | 36.9 (561), +2.6 | 32.5 (487), -1.8 |
+| contrast | 0.03 | 40.7 (476), +6.4 | 30.6 (380), -1.7 |
+| contrast | 0.04 | 35.5 (383), +3.3 | 21.9 (297), -8.3 |
+| contrast | 0.05 | 33.5 (311), +3.4 | 20.1 (231), -5.0 |
+| contrast | 0.06 | 26.2 (246), +1.1 | 18.4 (176), -2.8 |
+| change (no cue) | 0.02 to 0.15 | 11.6 to 32.4, gap -1.9 to -10.0 | not applicable |
+
+**Reading.**
+- **The contrast rule does not beat the released rule.** With edge cues its gaps (+1 to +6) are at or below the released rule's (+1 to +9); with oracle cues it is at or below the timer. The small AUC hint did not turn into a better trigger.
+- **The cue-free visual change rule loses to a timer at every threshold** (gap -2 to -10). So although visual change alone had an AUC of 0.59, as a trigger it is worse than doing nothing clever; the cue is what makes the trigger better than a timer.
+- **Oracle cues look better here than in step A.** With the released rule, oracle gaps are +9.4, +14.6, +4.9, +3.5, +6.2 against +3.7, +6.4, +9.1, +4.8, +0.7 for edge cues: larger at four of five thresholds, mean gap 7.7 against 4.9, best 14.6 against 9.1. Step A, at one threshold and by group, saw no clear lift. This pooled view hints that perfect cue wording may be worth a few F1 points; with a timer spread of 2 to 3 points, 43 questions, a different aggregation and no bootstrap interval, I do not treat it as established. It softens the step A conclusion: cue wording is probably a smaller limit than the embedder, not necessarily none.
 ## 10. Glossary
 
 - **Edge model / edge VLM**: the small vision-language model that runs on the device.
