@@ -1132,6 +1132,35 @@ By group the 1-frame loss is largest on clue reveal (-0.13) and present in every
 - **For the architecture:** history belongs in the decider for state-change questions (tutorials) and not for repetition questions, which suggests the decider's input should depend on the kind of question. Text summaries of the scene, at least as produced by these models, should not be fed to the decider.
 
 **Caveats.** One prompt; the history prompt also adds "compare now with the earlier frames" and shows 6 images instead of 4, so "history frames" is not a pure frames-only change; group intervals unadjusted; val only; the explanation for the counting loss is an interpretation.
+### Rescoring stored decider runs with model-specific thresholds (val, CPU only, 2026-11-23)
+
+**Question.** The within-question AUC compares every moment near an event with every other moment; it penalizes a model whose p(Yes) also rises at other moments where the evidence is visible, and it never asks whether the model responds at the right time once confident. Does scoring the stored runs as responses, with a threshold chosen per model, change the picture?
+**Setup** (`scripts/rescore_thresholds.py`, output `results/cache/rescore/rescore_thresholds_val.json`; no model calls). *Threshold:* model-specific, tau set so that p(Yes) >= tau on 3, 5, 10, 15, 20 or 30% of that model's own moments, since base Yes-rates range from 6% to 80%. *Rules:* counting and tutorial questions respond when p(Yes) crosses tau upward ("crossing") or at every tick above tau with a 4 s cooldown; clue-reveal questions respond the first time p(Yes) >= tau and then stop (one answer per question). *Scores:* benchmark F1 per task; baselines are a timer with the same number of responses in each question (20 phases; a timer matched only on the total is stored too and was about 3 to 10 points easier to beat, because a model can place more responses in questions with more events), one random response for clue reveal, and for the event hit rate (an event counts as hit if p(Yes) >= tau at any tick within 2 s) its exact expectation with the same number of ticks above tau placed at random.
+
+**Counting and tutorials, crossing rule, F1 minus the per-question timer, the 36 questions all models share:**
+
+| Model | 3% | 5% | 10% | 15% | 20% | 30% |
+|---|---|---|---|---|---|---|
+| 2B | +7.7 | +11.2 | +17.0 | +13.1 | +13.1 | +11.8 |
+| 2B + cues | +2.0 | +2.4 | +2.5 | +4.4 | +9.5 | +5.4 |
+| 8B | +4.8 | +4.7 | +6.0 | +7.7 | +19.0 | +14.5 |
+| 8B, 1 frame | +3.5 | +3.2 | +5.9 | +7.2 | +8.9 | +10.1 |
+| 8B, 2 frames | +4.0 | +3.3 | +8.7 | +12.3 | +12.8 | +9.9 |
+| 8B + history | +2.8 | +6.3 | +7.2 | +12.1 | +11.8 | +13.5 |
+| 8B + what changed | +7.2 | +6.4 | +10.9 | +7.1 | +7.3 | +4.1 |
+| 235B | +3.1 | +7.0 | +13.2 | +23.3 | +21.6 | +17.6 |
+
+**Event hit rate, model / chance (%), same set:** 2B 45/36 at 10% and 47/41 at 15%; 8B 38/42 and 47/52; 8B + what changed 33/26 and 40/34; 235B 40/32 and 54/44. The full tables (cooldown rule, all questions, per task) are in the JSON and the viewer.
+
+**Clue reveal, first time:** 7 questions, so each question moves the F1 by about 14 points; the gaps over one random response range from -12 to +31 with no consistent order between models. No conclusion.
+
+**Reading.**
+- **Scored as responses with a model-specific threshold, every decider beats a timer that makes the same number of responses in each question**, on counting and tutorials, at almost every threshold: by +3 to +23 F1. The weak AUCs (about 0.6) understated how usable the strongest moments are, since F1 here depends mainly on where each model's highest-p(Yes) excursions start.
+- **The order of the models mostly holds:** 235B is best at 15 to 20% (+22 to +23), cues in the 2B's prompt are worst, and one frame is among the weakest. The 2B does surprisingly well (+11 to +17 from 5% up), better than the 8B at the same share, unlike in the AUC; whether that is real or a property of its coarse p(Yes) values (50 distinct values, many ties at the top) is not settled.
+- **The hit rate says something different:** for the 8B, the share of events where p(Yes) reaches tau at all is at or below chance, while the 2B, 235B and "what changed" are 6 to 10 points above. Responding at upward crossings gains through timing of the rise, not through being above tau near more events. The two views need intervals before either is trusted.
+- **Responding on crossings beats every-tick-with-cooldown** for most models and thresholds (the cooldown table is in the JSON), which supports the user's point that a model should commit when it first becomes confident.
+
+**Caveats.** 36 to 43 questions; six thresholds times two rules per model, chosen and scored on val; no bootstrap intervals yet (the next step before quoting any cell); the per-question timer is a stronger baseline than the totals-matched timer used in earlier sections, so the gaps here are not comparable with those.
 ## 10. Glossary
 
 - **Edge model / edge VLM**: the small vision-language model that runs on the device.
@@ -1150,6 +1179,7 @@ By group the 1-frame loss is largest on clue reveal (-0.13) and present in every
 - 2026-11-23: Label-radius test, 8B and 235B decider results added to 9a; three experiments (shorter windows, scene-level cues, decider history) started and described.
 - 2026-11-23: Shorter windows (matcher and 8B decider) and scene-level oracle cues added to 9a: neither helps the matcher; one frame hurts the decider.
 - 2026-11-23: Decider history added to 9a: history frames help tutorials and hurt counting; a "what changed" sentence hurts overall.
+- 2026-11-23: Threshold rescoring of stored decider runs added to 9a (model-specific thresholds, crossing and first-time rules, per-question timer).
 - 2026-11-15: Section 5 rewritten: chance-level table trimmed to the rules that ignore the video, and the rules for calling an improvement real (bootstrap intervals, paired comparison, power) added.
 - 2026-11-23: D22 (fix the base before routing; staged plan) added; cue-source tooling built.
 - 2026-11-22: Section 0 (overall status, bottlenecks, what to test and what not to do) added.
