@@ -52,5 +52,13 @@ Decision D22: fix the base before routing. In order:
 3. **C.** If the graphs are usable: question-as-triplet retrieval, the decider with evidence (row 5), and a memory-aware cue writer that writes short subject-relation-object cues about what should appear next.
 Not now: the GPT ceiling check, the router (Gate 3), Gemma, quantization, more decider prompts, dev/test embedding runs.
 
+## Context that is not written anywhere else
+- **People and roles.** The user (branch `abhi`) owns the experiments in this repo. A teammate (jmarsicdev) wrote the first scaffold; quantization and Jetson deployment of the edge model are separate work by other teammates, out of scope here. This is a course project (ITCS 6169/8169).
+- **Budget.** About $100 of GPT calls including the benchmark's judge (only needed for ProactiveVideoQA PAUC later). No compute budget was stated; the user asked about UNC Charlotte's research cluster as a possible free source of GPUs (unknown access, GPU type, or whether compute nodes have internet).
+- **Open items.** O2 (put the question in the memory prompt or not; Response-G1 does, our notes say it causes early triggers), O5 (a 7B reference run needs a bigger GPU). Everything else in the open list was settled in D18 to D22.
+- **References** are in `docs/papers/` (Em-Garde, Response-G1, VideoJev, ProactiveVideoQA, OVO-Bench, VideoLLM-online, Guo et al. calibration, Qwen3-VL). Em-Garde's code is public (github.com/air-embodied-brain/Em-Garde, MIT; a wrapper and its trigger rule are vendored in `third_party/em_garde/`); ProactiveVideoQA's scorer is fetched by `scripts/fetch_proactivevideoqa.sh`, not committed (no license).
+- **Things said to the user that were later corrected** (so do not repeat them): the decider's AUC is 0.614 within questions, not 0.71 (pooled); the streaming shortcut is not a small numerical difference but a different prompt ending (fixed by the newline); frame sizes below 448 px do not save compute for the decider and the matcher's frames are upscaled to 256 tokens by the wrapper.
+- **What the user cares about:** understanding why each choice was made (every decision has a reason and evidence in the rationale), honest reads over optimistic ones, getting to the question "does the approach work" without drowning in ablations, and keeping the GPU laptop usable.
+
 ## To start a fresh session with this context
 Paste: "Read docs/HANDOFF.md, then docs/RATIONALE.md section 0 and section 8. We are on branch abhi. Do step A in docs/HANDOFF.md, then tell me what it shows and what you would do next."
