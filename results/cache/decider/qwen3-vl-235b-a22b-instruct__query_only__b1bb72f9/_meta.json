@@ -1,0 +1,15 @@
+{
+ "model_id": "qwen/qwen3-vl-235b-a22b-instruct",
+ "dtype": "bfloat16",
+ "quant": null,
+ "max_pixels": 200704,
+ "variant": "query_only",
+ "prompt_version": "speak-v1",
+ "prompt_hash": "8243f5eb5d",
+ "stride_s": 2.0,
+ "window_s": 2.0,
+ "fps": 2.0,
+ "max_side": 448,
+ "cues_key": null,
+ "code_commit": "fbbd37b"
+}

@@ -216,7 +216,9 @@ class APIEdgeVLM(EdgeVLM):
             load_env_file()
             if api_key_env not in os.environ:
                 raise SystemExit(f"set the environment variable {api_key_env} (an API key) before running with edge.backend=api")
-            client = OpenAI(base_url=base_url, api_key=os.environ[api_key_env])
+            # max_retries: the SDK retries 429s and connection errors with exponential backoff; the default of 2 was not enough
+            # for a 2,000-call run against a busy provider (rate-limit stop after 1,578 calls on the 235B model).
+            client = OpenAI(base_url=base_url, api_key=os.environ[api_key_env], max_retries=10)
         self.client, self.model, self.q, self.top = client, model_id, jpeg_quality, top_logprobs
         # OpenRouter may route a request to any provider of the model, including ones that silently drop `logprobs`;
         # require_parameters restricts it to providers that support every parameter we send. Other endpoints reject the field.

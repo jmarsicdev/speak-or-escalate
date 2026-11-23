@@ -51,6 +51,8 @@ By kind of video (matcher alone, against the closest timer): sports clips 57.0 v
 | Evaluation | 43 questions, clue reveal only 7; settings chosen and scored on the same split; F1 intervals not yet built (AUC intervals are) | Throughout | Intervals on F1; confirm chosen settings on dev, then test once |
 | Compute | 8.6 GB laptop GPU: no model above about 2B, a 6-hour matcher run for all splits | D16, D17 | A cluster or rented GPU for dev, test, a 7B decider and Gemma |
 
+**Update 2026-11-23 (later):** the model-size question has a first answer (9a, "Larger deciders"): Qwen3-VL-8B ranks moments no better than the 2B (+0.004, interval [-0.037, +0.045]); Qwen3-VL-235B-A22B is better by +0.07 (interval above zero) but still only 0.67. Capacity helps a little and only at cloud scale; the 2 s view without history limits even a large model.
+
 **Update 2026-11-23:** by decision (D22), the GPT ceiling check and the router are deferred until the edge parts are informative. The order is now: the cue-quality ceiling, a scene-graph pilot, then cues aligned to the memory.
 
 ### Still to test, in the order I would do it
@@ -1021,6 +1023,59 @@ Note on the scale: this script pools all questions into one F1, which is not the
 | All, oracle cues | 38 | 0.613 | 0.628 | +0.015 | [-0.056, +0.084] |
 
 **Reading.** The two embedders rank steps equally well (difference -0.009 with edge cues, +0.015 with oracle cues, both intervals centred on zero). A model a fraction of the size, with none of the wrapper's cost, does no worse. So the weak event signal is not a property of Ops-MM specifically: two quite different embedders both give about 0.62 to 0.63, which points at the approach (similarity of a short window to a text cue) more than at the model. The clue-reveal gain is 4 questions and one of 20 intervals, so I do not read it as a benefit. Not done: the F1-against-timer comparison for SigLIP2 (its similarity scale differs, so the thresholds would need rescaling); the within-question AUC, which does not depend on scale, is the comparison used. Practical consequence: SigLIP2 is about 20 times cheaper to run, so it is a better vehicle for further matcher experiments than Ops-MM.
+### "Around now" against "exactly now": label radius (val, 31 to 38 questions, CPU, 2026-11-23)
+
+**Question.** Is the matcher a better detector of "an event is near" than of "an event is at this step", so that scoring at +/- 2 s hides a signal? `scripts/pilot_label_radius.py`: the within-question AUC of the best-cue similarity for steps within R seconds of an event against steps further away, for R = 2 to 15 s, on the stored caches (10 s of history required).
+
+| Cache | R = 2 | 4 | 6 | 10 | 15 |
+|---|---|---|---|---|---|
+| Ops-MM, edge cues | 0.627 | 0.595 | 0.605 | 0.584 | 0.540 |
+| Ops-MM, oracle cues | 0.613 | 0.619 | 0.645 | 0.601 | 0.582 |
+| SigLIP2, edge cues | 0.618 | 0.579 | 0.604 | 0.591 | 0.496 |
+| SigLIP2, oracle cues | 0.628 | 0.603 | 0.636 | 0.624 | 0.550 |
+
+**Reading.** The AUC does not rise with the radius; it is flat to falling. The matcher is not a build-up detector being scored too strictly, so widening the target is not a way to recover signal. The small peak at R = 6 with oracle cues is the only hint of a lead-up phase. No intervals (38 questions at R = 2, 31 at R = 15); a hint at most.
+### Larger deciders through the API: Qwen3-VL-8B and Qwen3-VL-235B-A22B (val, 2026-11-23)
+
+**Question.** Is the decider weak because the model is small, or because of what it is shown (the last 2 s, no history)? Same row 1 setup (question only, last 4 frames at 448 px, `speak-v1` prompt, every 2 s) with larger models of the same family through OpenRouter (D23, `scripts/run_reference_model.py`), so that only model size changes. The API backend now restricts OpenRouter to providers that return log-probabilities (`provider.require_parameters`) and reads the key from the gitignored `.env`.
+
+**Validity checks.** Both models return Yes and No among the top-20 tokens on every decision (no floor values), and no event/non-event pair is tied (0.0% of pairs, against 1.4% for the 2B), so the AUCs are not distorted by coarse API log-probabilities.
+
+**8B, all 43 questions** (1,983 decisions, 23 minutes, 2B = A, 8B = B, within-question AUC, video-level 95% interval):
+
+| Group | n | 2B | 8B | 8B - 2B | 95% interval | Yes-rate 2B / 8B |
+|---|---|---|---|---|---|---|
+| All | 43 | 0.614 | 0.618 | +0.004 | [-0.037, +0.045] | 0.80 / 0.06 |
+| Sports counting | 10 | 0.699 | 0.700 | +0.001 | [-0.059, +0.045] | 0.80 / 0.01 |
+| Everyday-object counting | 14 | 0.618 | 0.597 | -0.021 | [-0.073, +0.035] | 0.96 / 0.17 |
+| Tutorials | 12 | 0.604 | 0.659 | +0.055 | [-0.016, +0.134] | 0.73 / 0.00 |
+| Clue reveal | 7 | 0.504 | 0.474 | -0.030 | [-0.165, +0.081] | 0.61 / 0.03 |
+
+**235B-A22B, 36 of 43 questions** (stopped by a provider rate limit after 1,578 decisions and not resumed by choice; the missing 7 are sports clips, the strongest group for every model, so the "all" row leans to the harder questions; all three models are compared on the same 36):
+
+| Group | n | 2B | 8B | 235B | 235B - 2B | 95% interval | 235B - 8B | 95% interval |
+|---|---|---|---|---|---|---|---|---|
+| All | 36 | 0.597 | 0.603 | 0.666 | **+0.069** | [+0.021, +0.119] | **+0.063** | [+0.027, +0.098] |
+| Sports counting | 3 | 0.689 | 0.708 | 0.714 | +0.025 | [-0.023, +0.060] | +0.007 | [-0.043, +0.033] |
+| Everyday-object counting | 14 | 0.618 | 0.597 | 0.687 | +0.070 | [-0.012, +0.163] | +0.090 | [+0.015, +0.169] |
+| Tutorials | 12 | 0.604 | 0.659 | 0.693 | +0.088 | [+0.010, +0.173] | +0.034 | [-0.008, +0.070] |
+| Clue reveal | 7 | 0.504 | 0.474 | 0.556 | +0.052 | [-0.037, +0.173] | +0.083 | [+0.004, +0.129] |
+
+Yes-rates on these 36: 2B 0.81, 8B 0.07, 235B 0.26.
+
+**Reading.**
+- **Four times the parameters buys nothing.** The 8B ranks moments exactly as well as the 2B; the interval rules out a gain above about 0.045. A quantized 8B on the laptop would cost memory for no gain in judging timing.
+- **About a hundred times the parameters buys a small, real gain:** +0.07 AUC, interval above zero against both smaller models, highest in every group. This is the first intervention in the project whose overall interval excludes zero in the positive direction.
+- **Even the 235B model is weak** (0.67; 0.5 is no skill), and it gains least on clue reveal. So both explanations hold in part: model capacity matters, but only at a scale that cannot run on the edge, and the 2 s view without history caps even a large model. The routing idea is not dead (the cloud model is measurably better on the same moments), but the headroom it could capture is modest.
+- **The three models read the same instruction very differently** (Yes on 81%, 7% and 26% of moments) with similar ranking quality. The "respond now?" framing is evidently ambiguous to them; any F1 or routing use needs a per-model threshold.
+
+**Caveats.** One prompt; 235B on 36 questions with 7 of 10 sports clips missing; group intervals unadjusted; val only.
+### In progress (2026-11-23): what the matcher sees, scene-level cues, and decider history (val)
+
+Three experiments started together; results will be added here as they finish.
+1. **Shorter windows.** Matcher on SigLIP2 frame vectors with 1, 2 and 4 frames per window (`scripts/run_embed_alt.py` now stores the frame vectors; `scripts/pilot_window_cues.py` scores them), and the 8B decider shown 1 frame (0.5 s) or 2 frames (1 s) instead of 4 (`run_decider_cache.py --set decider.window_s=...`). Tests whether averaging 2 s into one summary costs the moment.
+2. **Scene-level oracle cues.** Each oracle cue rewritten by the 8B model (text only) into one line describing the scene around the moment rather than the instant (`scripts/write_general_cues.py`, 72 rewrites in `results/cache/cues/general_oracle__qwen3-vl-8b-instruct.jsonl`), scored on the same frame vectors at each window length, with the mean similarity reported alongside the AUC. The writer never sees the video, so the scenes are partly invented (for example "a vase shatters ... startled cat" for "breaking something").
+3. **Decider with history.** The 8B decider shown two earlier frames (about 10 s and 5 s back) plus the last 4 (`scripts/run_decider_history.py`): variant `change` first asks, without the user's question, "what changed between the earlier frames and now?" and adds that sentence to the Yes/No prompt; variant `frames` is the same without the sentence, which separates "seeing history" from "writing the change down". In the first 10 s of a video the earliest available frame stands in for both earlier frames.
 ## 10. Glossary
 
 - **Edge model / edge VLM**: the small vision-language model that runs on the device.
@@ -1036,6 +1091,7 @@ Note on the scale: this script pools all questions into one F1, which is not the
 
 ## 11. Changelog
 
+- 2026-11-23: Label-radius test, 8B and 235B decider results added to 9a; three experiments (shorter windows, scene-level cues, decider history) started and described.
 - 2026-11-15: Section 5 rewritten: chance-level table trimmed to the rules that ignore the video, and the rules for calling an improvement real (bootstrap intervals, paired comparison, power) added.
 - 2026-11-23: D22 (fix the base before routing; staged plan) added; cue-source tooling built.
 - 2026-11-22: Section 0 (overall status, bottlenecks, what to test and what not to do) added.

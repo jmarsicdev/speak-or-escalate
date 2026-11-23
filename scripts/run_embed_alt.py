@@ -68,6 +68,7 @@ def main():
     ap.add_argument("--like", required=True, help="the Ops-MM matcher cache dir whose steps and edge cues are reused")
     ap.add_argument("--model-id", default="google/siglip2-so400m-patch14-384")
     ap.add_argument("--per-source", type=int, default=None)
+    ap.add_argument("--force", action="store_true", help="redo questions that already have a result (to add the per-frame file)")
     a = ap.parse_args()
     cfg = load_config(None, {})
     samples = [s for s in load_jsonl(a.samples) if (Path(a.like) / f"{s.id}.json").exists()]
@@ -85,7 +86,7 @@ def main():
     root = Path(cfg["data"]["video_root"])
     t_all = time.time()
     for i, s in enumerate(samples, 1):
-        if (out / f"{s.id}.json").exists():
+        if (out / f"{s.id}.json").exists() and not a.force:
             continue
         ref = json.load(open(Path(a.like) / f"{s.id}.json"))
         t = np.array(ref["t"])
@@ -108,6 +109,11 @@ def main():
             S = V @ emb.text(cues).T
             json.dump({"t": [float(x) for x in t], "sims": S.tolist(), "cues": cues}, open(d / f"{s.id}.json", "w"))
         np.save(out / f"{s.id}.npy", V.astype(np.float16))
+        # per-frame similarities (one row per 0.5 s frame), so shorter or longer windows can be built later without re-embedding
+        ft = np.array(sorted(cache)); F = np.stack([cache[x] for x in ft])
+        # the frame vectors themselves too, so any new cue set can be scored at any window length with only a text embedding
+        np.savez(out / f"{s.id}.frames.npz", times=ft, vecs=F.astype(np.float16),
+                 sims_edge=F @ emb.text(ref["cues"]).T, sims_oracle=F @ emb.text(oracle_cues(s)).T)
         print(f"[{i}/{len(samples)}] {s.id}: {len(V)} steps in {time.time() - t0:.0f} s, total {time.time() - t_all:.0f} s", flush=True)
 
 
