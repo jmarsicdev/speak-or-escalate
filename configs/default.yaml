@@ -37,7 +37,9 @@ evidence:
   top_k: 5
 
 edge:
-  backend: mock     # mock | hf
+  backend: mock     # mock | hf | api (an OpenAI-compatible endpoint, e.g. OpenRouter: set base_url and api_key_env)
+  base_url: https://openrouter.ai/api/v1   # only for backend api
+  api_key_env: OPENROUTER_API_KEY          # name of the environment variable that holds the key; the key itself is never stored
   model_id: Qwen/Qwen3-VL-2B-Instruct   # 2B fits an 8 GB GPU in BF16; see docs/RATIONALE.md D16
   device: cuda
   dtype: bfloat16

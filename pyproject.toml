@@ -22,6 +22,7 @@ models = [
     "opencv-python-headless>=4.9",
 ]
 cloud = ["openai>=1.40"]
+api = ["openai>=1.40", "pillow>=10", "opencv-python-headless>=4.9", "numpy"]   # run the edge model through an API, no GPU needed
 dev = ["pytest>=8", "ruff>=0.5"]
 
 [build-system]

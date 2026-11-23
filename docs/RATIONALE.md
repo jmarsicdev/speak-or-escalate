@@ -602,6 +602,13 @@ triggers. Direct disagreement, tested as a sub-row of row 5.
 **O5. The 7B reference run.** Em-Garde's proposer is a 7B model that does not fit on the 4060 in
 BF16 (about 15 GB). Needs a larger GPU or a quantized load, which conflicts with D7.
 
+### D23: larger-model reference through an API, and the drag-and-drop runner (2026-11-23)
+
+**Decision.** Keep the 2B model as the local edge baseline and make a larger model a configuration change, not a code change. We never use model weights in these experiments (no fine-tuning, no activations), only the next-token probability of Yes against No, so any endpoint that returns log-probabilities can stand in. Added: an `api` edge backend (`egogate/edge.py`, `APIEdgeVLM`, any OpenAI-compatible endpoint, OpenRouter by default; the key comes from an environment variable and is never stored), `scripts/run_reference_model.py` (one command: check log-probabilities, run the decider on a small question subset, compare with the 2B model by within-question AUC and bootstrap), `docs/RUN_WITH_LARGER_MODEL.md` (instructions for someone outside the project) and five offline tests (43 pass).
+
+**Why.** The laptop cannot hold a model above about 2B in BF16 (D16), and quantizing is a later step. An API or a bigger GPU gives a reference ceiling: if a much larger model ranks moments no better than the 2B one (about 0.6 AUC), the limit is the task and the 2 s view, not model size. **Not yet run**: no API key has been used; the code is tested only against a fake client. What would break it: models or providers that do not return log-probabilities, and "thinking" models.
+
+**What stays local.** The embedder, the cue matcher, and anything that needs the model's internals (the scene-graph extraction script uses the Hugging Face model directly and has no API route yet).
 ## 9. Not yet verified
 
 - Em-Garde's 52.3 PAUC reproduction on ProactiveVideoQA EGO (their code and weights are public;

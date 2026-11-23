@@ -177,10 +177,87 @@ class HFEdgeVLM(EdgeVLM):
         return out
 
 
+class APIEdgeVLM(EdgeVLM):
+    """The edge model behind any OpenAI-compatible chat endpoint (OpenRouter, OpenAI, a vLLM server): no weights are downloaded.
+
+    The decider needs the model's probability of "Yes" against "No" as the next token, so the endpoint must return log-probabilities
+    (`logprobs` with `top_logprobs`). Not every model or provider on OpenRouter does; `check_logprobs()` tells you before a long run.
+    Frames are sent as JPEG data URLs, so the video frames leave the machine; the key is read from an environment variable and is never stored.
+    """
+
+    name = "api"
+
+    def __init__(self, model_id: str, base_url: str = "https://openrouter.ai/api/v1", api_key_env: str = "OPENROUTER_API_KEY",
+                 jpeg_quality: int = 85, top_logprobs: int = 20, client=None):
+        import os  # noqa: PLC0415
+
+        if client is None:
+            from openai import OpenAI  # noqa: PLC0415
+
+            if api_key_env not in os.environ:
+                raise SystemExit(f"set the environment variable {api_key_env} (an API key) before running with edge.backend=api")
+            client = OpenAI(base_url=base_url, api_key=os.environ[api_key_env])
+        self.client, self.model, self.q, self.top = client, model_id, jpeg_quality, top_logprobs
+        self.n_calls = 0
+        self.n_images = 0
+
+    def _content(self, prompt, images):
+        import base64  # noqa: PLC0415
+        import io  # noqa: PLC0415
+
+        from PIL import Image  # noqa: PLC0415
+
+        parts = []
+        for f in images or []:
+            buf = io.BytesIO()
+            Image.fromarray(f).save(buf, format="JPEG", quality=self.q)
+            parts.append({"type": "image_url", "image_url": {"url": "data:image/jpeg;base64," + base64.b64encode(buf.getvalue()).decode()}})
+        return parts + [{"type": "text", "text": prompt}]
+
+    def _call(self, prompt, images, **kw):
+        self.n_calls += 1
+        self.n_images += len(images or [])
+        return self.client.chat.completions.create(model=self.model, messages=[{"role": "user", "content": self._content(prompt, images)}],
+                                                   temperature=0, **kw)
+
+    def _generate(self, prompt, images, max_new_tokens):
+        return (self._call(prompt, images, max_tokens=max_new_tokens).choices[0].message.content or "").strip()
+
+    def _yes_no_logprobs(self, prompt, images):
+        r = self._call(prompt, images, max_tokens=1, logprobs=True, top_logprobs=self.top)
+        lp = getattr(r.choices[0], "logprobs", None)
+        content = getattr(lp, "content", None) if lp else None
+        if not content:
+            raise RuntimeError(f"{self.model} returned no log-probabilities: choose a model/provider that supports them (see docs/RUN_WITH_LARGER_MODEL.md)")
+        return yes_no_from_top(content[0].top_logprobs)
+
+    def check_logprobs(self):
+        """Raise a clear error now, not 2,000 calls into a run, if this model does not return usable Yes/No probabilities."""
+        import numpy as np  # noqa: PLC0415
+
+        lp_yes, lp_no = self._yes_no_logprobs('Answer with a single word: Yes or No. Is the sky blue?', None)
+        if max(lp_yes, lp_no) < -10:
+            raise RuntimeError(f"{self.model}: neither Yes nor No is among its top tokens (best log-prob {max(lp_yes, lp_no):.1f}); the decider cannot use it")
+        return lp_yes, lp_no
+
+
+def yes_no_from_top(top) -> tuple[float, float]:
+    """Log-probability mass on "Yes" and on "No" among the top candidates (case and spaces ignored). A side with no candidate gets -30."""
+    import numpy as np  # noqa: PLC0415
+
+    def mass(word):
+        v = [math.exp(t.logprob) for t in top if t.token.strip().lower() == word]
+        return float(np.log(sum(v))) if v else -30.0
+
+    return mass("yes"), mass("no")
+
+
 def build_edge_model(cfg: dict) -> EdgeVLM:
     backend = cfg.get("backend", "mock")
     if backend == "mock":
         return MockEdgeVLM()
+    if backend == "api":
+        return APIEdgeVLM(cfg["model_id"], cfg.get("base_url", "https://openrouter.ai/api/v1"), cfg.get("api_key_env", "OPENROUTER_API_KEY"))
     if backend == "hf":
         return HFEdgeVLM(cfg["model_id"], cfg.get("device", "cuda"), cfg.get("dtype", "bfloat16"), cfg.get("quant"),
                          cfg.get("max_pixels"))
