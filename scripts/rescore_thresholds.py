@@ -8,6 +8,7 @@ the right time once it was confident enough?". This script does, from the stored
   rules       counting and tutorial questions (several events): respond when p(Yes) crosses tau upward ("edge"), or at every tick at or above
               tau with a 4 s cooldown ("cooldown", the earlier replay rule); clue reveal (one answer): respond the first time p(Yes) >= tau,
               then stop ("first time")
+  lenient     also a version where repeat hits are not punished (see lenient()), with the same per-question timer scored the same way
   scores      the benchmark F1 (Em-Garde metric, +/- 2 s) per task, against a timer making the same number of responses in each question
               (counting and tutorials; 20 random phases; a timer matched only on the total is also stored, "base_total") and a single random response (clue reveal; exact expectation); and the event hit rate: the share of
               events with p(Yes) >= tau at some tick within 2 s, against its exact expectation if the same number of ticks were above tau at random
@@ -94,6 +95,17 @@ def timer_rows(samples, data, n_target, seeds=20):
     return {task: float(np.mean([a["tasks"][task]["f1"] for a in agg])) for task in agg[0]["tasks"]}, best
 
 
+def lenient(det, gt):
+    """Repeat hits are not punished: precision = share of responses within 2 s of ANY event (several responses may share one event);
+    recall = share of events with at least one response within 2 s. The benchmark metric instead matches each event to one response."""
+    det, gt = np.array(det, dtype=float), np.array(gt, dtype=float)
+    if not len(gt):
+        return 0.0, 0.0
+    rec = float(np.mean([(np.abs(det - g) <= TOL).any() for g in gt])) if len(det) else 0.0
+    pre = float(np.mean([(np.abs(gt - d) <= TOL).any() for d in det])) if len(det) else 0.0
+    return rec, pre
+
+
 def timer_per_question(samples, data, dets, seeds=20):
     """Counting/tutorial questions: in each question, the same number of responses as the model made there, evenly spaced over its ticks
     with a random phase. Unlike a timer matched on the total, this cannot be beaten by putting more responses into questions with more events."""
@@ -112,9 +124,11 @@ def timer_per_question(samples, data, dets, seeds=20):
             else:
                 det = []
             q = score_question(det, [e.t for e in s.events], TOL)
-            rows.append({"task": s.task, "recall": q.recall, "precision": q.precision})
-        agg.append(aggregate(rows))
-    return {task: float(np.mean([a["tasks"][task]["f1"] for a in agg])) for task in agg[0]["tasks"]}
+            lr, lp = lenient(det, [e.t for e in s.events])
+            rows.append({"task": s.task, "recall": q.recall, "precision": q.precision, "lrec": lr, "lpre": lp})
+        agg.append((aggregate(rows), aggregate([{"task": r["task"], "recall": r["lrec"], "precision": r["lpre"]} for r in rows])))
+    return ({task: float(np.mean([a[0]["tasks"][task]["f1"] for a in agg])) for task in agg[0][0]["tasks"]},
+            {task: float(np.mean([a[1]["tasks"][task]["f1"] for a in agg])) for task in agg[0][1]["tasks"]})
 
 
 def crr_random(samples, data):
@@ -168,7 +182,7 @@ def main():
                 tau = float(np.quantile(allp, 1 - r))
                 hr, hr0 = hit_rate(ss, dd, tau)
                 for rule in ("edge", "cooldown"):
-                    rows, dets, n_multi = [], {}, 0
+                    rows, lrows, dets, n_multi = [], [], {}, 0
                     for s in ss:
                         t, p = dd[s.id]
                         det = detect(t, p, tau, s.task, rule)
@@ -176,18 +190,25 @@ def main():
                         n_multi += len(det) if s.task != "CRR" else 0
                         q = score_question(det, [e.t for e in s.events], TOL)
                         rows.append({"task": s.task, "recall": q.recall, "precision": q.precision})
+                        lr, lp = lenient(det, [e.t for e in s.events])
+                        lrows.append({"task": s.task, "recall": lr, "precision": lp})
                     agg = aggregate(rows)
+                    lagg = aggregate(lrows)
                     tm, k = timer_rows(ss, dd, n_multi)
-                    tq = timer_per_question(ss, dd, dets)
+                    tq, tql = timer_per_question(ss, dd, dets)
                     f = {task: v["f1"] * 100 for task, v in agg["tasks"].items()}
                     base = {**{task: v * 100 for task, v in tq.items()}, "CRR": (crr_base or 0) * 100}
                     base_total = {**{task: v * 100 for task, v in tm.items()}, "CRR": (crr_base or 0) * 100}
                     perc = [x for x in ("REC", "SSR") if x in f]
+                    fl = {task: v["f1"] * 100 for task, v in lagg["tasks"].items()}
+                    basel = {**{task: v * 100 for task, v in tql.items()}, "CRR": (crr_base or 0) * 100}
                     row = {"rate": r, "tau": tau, "rule": rule, "responses": sum(len(v) for v in dets.values()), "timer_every_s": 2 * k,
                            "f1": f, "base": base, "base_total": base_total,
                            "perceptual": float(np.mean([f[x] for x in perc])), "perceptual_base": float(np.mean([base[x] for x in perc])),
                            "perceptual_base_total": float(np.mean([base_total[x] for x in perc])),
-                           "hit": hr * 100, "hit_base": hr0 * 100}
+                           "hit": hr * 100, "hit_base": hr0 * 100,
+                           "f1_len": fl, "base_len": basel,
+                           "perceptual_len": float(np.mean([fl[x] for x in perc])), "perceptual_len_base": float(np.mean([basel[x] for x in perc]))}
                     res[name]["rows"].append(row)
                     if set_name == "all":
                         result["detections"].setdefault(name, {}).setdefault(rule, {})[str(r)] = {"tau": tau, "det": dets}
