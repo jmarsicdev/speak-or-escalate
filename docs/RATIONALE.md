@@ -51,6 +51,8 @@ By kind of video (matcher alone, against the closest timer): sports clips 57.0 v
 | Evaluation | 43 questions, clue reveal only 7; settings chosen and scored on the same split; F1 intervals not yet built (AUC intervals are) | Throughout | Intervals on F1; confirm chosen settings on dev, then test once |
 | Compute | 8.6 GB laptop GPU: no model above about 2B, a 6-hour matcher run for all splits | D16, D17 | A cluster or rented GPU for dev, test, a 7B decider and Gemma |
 
+**Update 2026-11-23:** by decision (D22), the GPT ceiling check and the router are deferred until the edge parts are informative. The order is now: the cue-quality ceiling, a scene-graph pilot, then cues aligned to the memory.
+
 ### Still to test, in the order I would do it
 
 1. **GPT ceiling check.** The same frames and prompt on the same moments (about 2,000 calls on val, a few dollars). It also gives the "GPT everywhere" end of the Gate 3 plot. High GPT AUC means there is headroom for routing to capture; AUC near 0.6 means the task or labels are the limit.
@@ -572,6 +574,21 @@ tooling (`egogate/eval/bootstrap.py`, `scripts/compare_deciders.py`); it is chec
 notebook); if they do not, the next thing to try is scene-graph evidence (row 5), not more prompt variants.
 *Status:* built; the runner was checked on CPU with the real model on one video (the cues change p(Yes) from the question-only values, and 100% of the probability stays on Yes/No); not yet run on the GPU.
 
+**D22. Fix the base before routing: cue quality first, then scene-graph memory, then cues aligned to the memory (decided 2026-11-23).**
+*Decision:* the GPT ceiling check and the router (rows 6, Gate 3) are deferred. *Why:* the router can only be as good as the edge confidence it routes on, and the edge decider is overconfident and the two things meant to ground it (the cue writer and the matcher) are
+both weak. Testing routing now would measure the weakness of the base, not the idea. *What makes the matcher weak (evidence from the stored similarities, 43 val questions):* the cue similarity takes values from 0.17 to 0.51 (median 0.37); within one question its highest value spreads over about 0.18; moments near an
+event average 0.399 against 0.365 elsewhere; and the largest one-step rise near an event has a median of 0.0071 against 0.0053 elsewhere (90th percentile 0.030 against 0.028), while the trigger thresholds are 0.02 to 0.04. In other words, what the matcher sees at an event is about the same size as its ordinary
+wiggle. *Likely reasons, not yet separated:* the embedder measures how much a clip resembles a sentence, not that something has just happened; our cues were not trained for this embedder (Em-Garde's ablation: an untrained 7B writer cost 7 points); the cues are text only; and the benchmark is hard in itself (Em-Garde's own full
+system scores 31.0). *Plan, in order, each stage deciding whether the next is worth building:*
+- **A. Cue-quality ceiling (built, not run).** Re-score the matcher with other cues on the stored window vectors, no video: the question text alone, and "oracle" cues taken from the benchmark's own annotations (tutorial steps, the activity phrase, the clue answer), which no deployed system has (`scripts/recompute_matcher_sims.py`,
+  `egogate/cue_sources.py`). *Rule:* if oracle cues clearly lift the matcher (judged with intervals), cue wording is a main limit and a better-grounded cue writer is worth building; if they do not, the embedder is the limit and rewriting cues will not fix it.
+- **B. Scene-graph pilot.** Have the 2B model write (subject, relation, object) triplets every 5 s for a few val questions; read them, time the generation, and measure a quality proxy: how well the text of the triplets near an event resembles the oracle cue compared with elsewhere. Without the question in the prompt, as our earlier notes
+  recommend (O2).
+- **C. If the graphs are usable:** (i) retrieve with the question rewritten as a triplet, as Response-G1 does; (ii) the decider with the retrieved triplets as evidence (row 5); (iii) a cue writer that sees the memory and writes short cues in the same subject-relation-object form, describing what should appear *next* given what is already
+  there, so they are grounded in the scene and not over-detailed. Test (iii) against the baseline cues with intervals, and also match the cues against the graph text directly (Gate 4).
+*Risks:* one small model writing both the graphs and the cues can compound its own errors; we have no ground-truth scene graphs; clue-reveal answers stay unknowable from text and memory, so cues there remain guesses about what is not yet in the scene.
+*Status:* A built, not run; B and C not built.
+
 ### Open on purpose
 
 **O1.** Settled: see D18 (edge model, text only).
@@ -860,6 +877,7 @@ thresholds. So the cue-aware decider removes true events faster than false alarm
 ## 11. Changelog
 
 - 2026-11-15: Section 5 rewritten: chance-level table trimmed to the rules that ignore the video, and the rules for calling an improvement real (bootstrap intervals, paired comparison, power) added.
+- 2026-11-23: D22 (fix the base before routing; staged plan) added; cue-source tooling built.
 - 2026-11-22: Section 0 (overall status, bottlenecks, what to test and what not to do) added.
 - 2026-11-22: Row 2 val results added to 9a: cues do not help the decider overall and hurt it on tutorials; row 4 redone with cues is worse.
 - 2026-11-21: D21 (row 2 design) added; row 2 notebook, cue-aware decider cache, interval tooling built.

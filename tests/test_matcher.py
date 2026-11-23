@@ -114,3 +114,30 @@ def test_window_prompt_gets_a_trailing_newline_but_cue_text_does_not():
     w = _AppendNewline(P())
     assert w(text=["abc<|endoftext|>"], images=None) == "ok" and seen["text"] == ["abc<|endoftext|>\n"]
     assert w.extra == 7          # other attributes still reach the real processor
+
+
+def test_oracle_and_question_cues_by_task():
+    from egogate.cue_sources import oracle_cues, question_cues
+
+    ssr = Sample(id="a", video="v", query="Describe the steps of x", events=[], task="SSR", meta={"all_steps": ["pull up hair", "put on extension"]})
+    rec = Sample(id="b", video="v", query="How many times does the event: breaking something happen?", events=[], task="REC", meta={"activity": "breaking something"})
+    crr = Sample(id="c", video="v", query="What does he see?", events=[], task="CRR", meta={"answer": "A painting on the wall."})
+    assert oracle_cues(ssr) == ["pull up hair", "put on extension"] and oracle_cues(rec) == ["breaking something"] and oracle_cues(crr) == ["A painting on the wall."]
+    assert question_cues(rec) == [rec.query]
+
+
+def test_recompute_sims_from_stored_vectors(tmp_path):
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("rms", ROOT / "scripts" / "recompute_matcher_sims.py")
+    rms = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(rms)
+    s = Sample(id="r1", video="v", query="q", events=[Event(5.0)], task="SSR", meta={"all_steps": ["a", "b"]})
+    cache = tmp_path / "m"
+    cache.mkdir()
+    t = [2.0, 2.5, 3.0]
+    json.dump({"t": t, "sims": [[0.1], [0.1], [0.1]], "cues": ["old"]}, open(cache / "r1.json", "w"))
+    np.save(cache / "r1.npy", RandomEmbedder(dim=8).embed_text(["x", "y", "z"]).astype(np.float16))
+    n = rms.recompute(cache, [s], lambda x: ["a", "b"], RandomEmbedder(dim=8), tmp_path / "out")
+    r = json.load(open(tmp_path / "out" / "r1.json"))
+    assert n == 1 and r["t"] == t and np.array(r["sims"]).shape == (3, 2) and r["cues"] == ["a", "b"]

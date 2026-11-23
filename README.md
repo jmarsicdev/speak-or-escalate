@@ -65,6 +65,7 @@ scripts/
   replay_matcher.py         row 3 stage 2: trigger rules / thresholds / dedup on stored similarities (CPU)
   run_gated_decider.py      row 4: run the decider on demand at the matcher's trigger moments (memoised)
   compare_deciders.py       row 2: paired comparison of two stored deciders, AUC per question with a 95% interval
+  recompute_matcher_sims.py try other cues (question, oracle, a file) on stored window vectors, no video
   analyze_matcher.py        row 3: results by task and video source with matched timers
   replay_gated.py           row 4: score 'matcher fires AND decider says Yes' (CPU)
   run_decider_cache.py      row 1 stage 1: edge model alone -> stored Yes/No scores (resumable)
