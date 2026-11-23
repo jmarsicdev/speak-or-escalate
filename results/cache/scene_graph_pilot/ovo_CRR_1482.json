@@ -1,0 +1,119 @@
+{
+ "id": "ovo_CRR_1482",
+ "query": "The man is walking in the garden. Who does he come across?",
+ "oracle": [
+  "A woman with gray suit and golden hair."
+ ],
+ "events": [
+  1469.0
+ ],
+ "ticks": [
+  {
+   "t": 1470.0,
+   "ms": 9328,
+   "raw": "(Man, stands, in front of a wall of flowers)\n(Man, stands, in front of a wall of flowers)\n(Man, stands, in front of a wall of flowers)\n(Man, stands, in front of a wall of flowers)\n(Man, stands, in front of a wall of flowers)\n(Man, stands, in front of a wall of flowers)\n(Man, stands, in front of a wall of flowers)\n(Man, stands, in front of a wall of flowers)\n(Man, stands, in front of a wall of flowers)\n(Man, stands, in front of a wall of flowers)\n(Man, stands, in front of a wall of flowers)\n(Man, stands, in front of a wall of flowers)\n(Man, stands",
+   "triplets": [
+    "(Man, stands, in front of a wall of flowers)",
+    "(Man, stands, in front of a wall of flowers)",
+    "(Man, stands, in front of a wall of flowers)",
+    "(Man, stands, in front of a wall of flowers)",
+    "(Man, stands, in front of a wall of flowers)",
+    "(Man, stands, in front of a wall of flowers)",
+    "(Man, stands, in front of a wall of flowers)",
+    "(Man, stands, in front of a wall of flowers)",
+    "(Man, stands, in front of a wall of flowers)",
+    "(Man, stands, in front of a wall of flowers)",
+    "(Man, stands, in front of a wall of flowers)",
+    "(Man, stands, in front of a wall of flowers)"
+   ],
+   "near_event": true
+  },
+  {
+   "t": 1475.0,
+   "ms": 3780,
+   "raw": "(Man, is walking, Path)\n(Man, is walking, Tree)\n(Man, is walking, Flower)\n(Man, is walking, Building)\n(Man, is walking, Fence)\n(Man, is walking, Sun)\n(Man, is walking, Sky)\n(Man, is walking, Tree)",
+   "triplets": [
+    "(Man, is walking, Path)",
+    "(Man, is walking, Tree)",
+    "(Man, is walking, Flower)",
+    "(Man, is walking, Building)",
+    "(Man, is walking, Fence)",
+    "(Man, is walking, Sun)",
+    "(Man, is walking, Sky)",
+    "(Man, is walking, Tree)"
+   ],
+   "near_event": false
+  },
+  {
+   "t": 1480.0,
+   "ms": 8757,
+   "raw": "(Man in suit, relation, looking at)\n(Man in suit, relation, standing in)\n(Man in suit, relation, walking through)\n(Man in suit, relation, standing in)\n(Man in suit, relation, standing in)\n(Man in suit, relation, standing in)\n(Man in suit, relation, standing in)\n(Man in suit, relation, standing in)\n(Man in suit, relation, standing in)\n(Man in suit, relation, standing in)\n(Man in suit, relation, standing in)\n(Man in suit, relation, standing in)\n(Man in suit, relation, standing in)\n(Man in suit, relation, standing in)\n(Man in suit, relation, standing in)\n(Man in suit, relation, standing in)",
+   "triplets": [
+    "(Man in suit, relation, looking at)",
+    "(Man in suit, relation, standing in)",
+    "(Man in suit, relation, walking through)",
+    "(Man in suit, relation, standing in)",
+    "(Man in suit, relation, standing in)",
+    "(Man in suit, relation, standing in)",
+    "(Man in suit, relation, standing in)",
+    "(Man in suit, relation, standing in)",
+    "(Man in suit, relation, standing in)",
+    "(Man in suit, relation, standing in)",
+    "(Man in suit, relation, standing in)",
+    "(Man in suit, relation, standing in)",
+    "(Man in suit, relation, standing in)",
+    "(Man in suit, relation, standing in)",
+    "(Man in suit, relation, standing in)",
+    "(Man in suit, relation, standing in)"
+   ],
+   "near_event": false
+  },
+  {
+   "t": 1485.0,
+   "ms": 9104,
+   "raw": "(Man, is standing, in front of, a stone statue)\n(Man, is standing, in front of, a stone statue)\n(Man, is standing, in front of, a stone statue)\n(Man, is standing, in front of, a stone statue)\n(Man, is standing, in front of, a stone statue)\n(Man, is standing, in front of, a stone statue)\n(Man, is standing, in front of, a stone statue)\n(Man, is standing, in front of, a stone statue)\n(Man, is standing, in front of, a stone statue)\n(Man, is standing, in front of, a stone statue)\n(Man, is standing, in front of, a stone statue)\n(Man, is standing,",
+   "triplets": [],
+   "near_event": false
+  },
+  {
+   "t": 1490.0,
+   "ms": 8626,
+   "raw": "(older woman, is holding, flowers)\n(older woman, is looking at, flowers)\n(older woman, is looking at, grave)\n(older woman, is looking at, grave)\n(older woman, is looking at, grave)\n(older woman, is looking at, grave)\n(older woman, is looking at, grave)\n(older woman, is looking at, grave)\n(older woman, is looking at, grave)\n(older woman, is looking at, grave)\n(older woman, is looking at, grave)\n(older woman, is looking at, grave)\n(older woman, is looking at, grave)\n(older woman, is looking at, grave)\n(older woman, is looking at, grave)\n(older woman, is looking at, grave)\n(",
+   "triplets": [
+    "(older woman, is holding, flowers)",
+    "(older woman, is looking at, flowers)",
+    "(older woman, is looking at, grave)",
+    "(older woman, is looking at, grave)",
+    "(older woman, is looking at, grave)",
+    "(older woman, is looking at, grave)",
+    "(older woman, is looking at, grave)",
+    "(older woman, is looking at, grave)",
+    "(older woman, is looking at, grave)",
+    "(older woman, is looking at, grave)",
+    "(older woman, is looking at, grave)",
+    "(older woman, is looking at, grave)",
+    "(older woman, is looking at, grave)",
+    "(older woman, is looking at, grave)",
+    "(older woman, is looking at, grave)",
+    "(older woman, is looking at, grave)"
+   ],
+   "near_event": false
+  },
+  {
+   "t": 1495.0,
+   "ms": 5868,
+   "raw": "(Subject: woman, relation: holding, object: bouquet of flowers)\n(Subject: woman, relation: walking, object: path)\n(Subject: woman, relation: carrying, object: bag)\n(Subject: woman, relation: walking, object: grave)\n(Subject: woman, relation: walking, object: cemetery)\n(Subject: woman, relation: carrying, object: flowers)\n(Subject: woman, relation: walking, object: tombstone)\n(Subject: woman, relation: walking, object: grave)",
+   "triplets": [
+    "(Subject: woman, relation: holding, object: bouquet of flowers)",
+    "(Subject: woman, relation: walking, object: path)",
+    "(Subject: woman, relation: carrying, object: bag)",
+    "(Subject: woman, relation: walking, object: grave)",
+    "(Subject: woman, relation: walking, object: cemetery)",
+    "(Subject: woman, relation: carrying, object: flowers)",
+    "(Subject: woman, relation: walking, object: tombstone)",
+    "(Subject: woman, relation: walking, object: grave)"
+   ],
+   "near_event": false
+  }
+ ]
+}

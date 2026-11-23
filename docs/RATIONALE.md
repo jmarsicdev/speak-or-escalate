@@ -887,6 +887,23 @@ thresholds. So the cue-aware decider removes true events faster than false alarm
 **Reading.** Oracle cues do not clearly lift the matcher. The mean-similarity AUC moves from 0.617 to 0.638, within what 43 questions can move by chance. Tutorials, where the oracle gives the exact step list, gain 0.8 F1 over the baseline (26.2 to 27.0), and the gain over the timer is the same (+8.0 to +8.5). Sports counting, the group where the baseline cues were good, gets *worse* with oracle cues (57.0 to 35.4), mostly because fewer responses are made at the same threshold (99 to 57; the similarity scale changes with the cue text), so a fixed threshold is not a fair comparison there. Clue reveal looks better (+12.9 over the timer against +1.2) but it is 7 questions with a timer spread of ±9, so it is not evidence. The best cell of the oracle table (40.0 F1, mean rule, threshold 0.02) is the best of many cells and was not compared at equal response count, so it is not quoted as a result. The question-text-only cue is the weakest on the diagnostic, as expected.
 
 **Decision rule outcome.** Per D22, if oracle cues do not clearly lift the matcher, the embedder (not the cue wording) is the main limit, and building a memory-aligned cue writer is not justified on this evidence. Cue wording is a minor factor on this embedder with these 2 s windows. Caveats: one split, 43 questions, no bootstrap interval on the oracle comparison, fixed-threshold comparison with differing response counts, for tutorials the oracle cues are the benchmark's step descriptions, one cue per step (the matcher fires on any of them), which are short phrases and may still be far from what the embedder separates visually.
+### Step B (D22): scene-graph pilot, 4 val questions (2026-11-22)
+
+**What was done.** `scripts/pilot_scene_graph.py`: the 2B edge model (Qwen3-VL-2B, BF16) was shown 5 frames (1 per second, the last 5 s) every 5 s and asked, with the existing `TRIPLET_PROMPT` and without the question, for up to 8 (subject, relation, object) triplets. One question from each source (tennis counting, bowl-hitting counting, slime tutorial, a movie clip), the first 90 s of each: 31 ticks. Triplets are stored in `results/cache/scene_graph_pilot/`.
+
+**Cost.** 4 to 9 s per tick (median 8.8 s), because the model fills the whole 160-token budget. At that rate the 43 val questions (about 790 ticks) would take roughly 1.5 to 2 hours, against about 10 minutes for the decider.
+
+**Quality (read by hand; the proxies are not meaningful, see below).** The triplets are mostly unusable as written.
+- **Repetition loops.** The same triplet repeats until the token limit, for example `(liquid, pour, cup)` 20 times, `(player, is holding, racket)` 8 times. After removing duplicates a tick often holds 1 to 4 distinct facts.
+- **Template leakage and wrong language.** `(wooden table, relation, has)`, `(3, relation, 3)`, and a whole tick in Chinese (`(杯子, 位于, 桌子)`).
+- **Static content.** What is described is mostly objects and clothing ("player wearing white shirt"), not what changed. Only the tennis clip names the action ("serving", "preparing to serve"). The slime clip's triplets (ink bottle, beaker, glass of liquid) do not match the steps (add ingredients, mix, rub and drag).
+- **Parse rate** 0.97 and 4.0 triplets per tick, but these count the repeats, so they overstate the content.
+
+**Proxies.** Novelty (share of triplets new compared with the previous tick) was 0.97 near events and 0.91 elsewhere. Cue-word hit (any content word of the oracle cue in the triplets) was 0.12 near events and 0.21 elsewhere, i.e. *lower* near events. With 31 ticks this is noise, and novelty is inflated because wording changes from tick to tick without the scene changing. The point is only that there is no sign of an event signal.
+
+**Reading.** With this prompt and this 2B model the scene graph is not a usable memory: it is slow, loops, and describes the static scene rather than the change a question is about. This does not show that scene graphs cannot help; it shows this extraction does not. Cheap fixes that are not tried yet: a repetition penalty or a stop after 8 lines, a shorter token budget (about 64), an English-only instruction, and asking for what *changed* since the last clip. Whether to try these before step C is a decision for the user. Step C (memory-aligned cues) is not supported by this pilot.
+
+**Caveats.** 4 questions, 31 ticks, one prompt, one sampling setting, hand-read.
 ## 10. Glossary
 
 - **Edge model / edge VLM**: the small vision-language model that runs on the device.

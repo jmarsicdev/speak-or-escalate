@@ -1,0 +1,163 @@
+{
+ "id": "ovo_REC_1634",
+ "query": "How many times does the event: tennis swing happen?",
+ "oracle": [
+  "tennis swing"
+ ],
+ "events": [
+  2.0,
+  21.0,
+  30.0,
+  39.0
+ ],
+ "ticks": [
+  {
+   "t": 5.0,
+   "ms": 4186,
+   "raw": "- (player, is playing, player)\n- (player, is serving, player)\n- (player, is serving, player)\n- (player, is serving, player)\n- (player, is serving, player)\n- (player, is serving, player)\n- (player, is serving, player)\n- (player, is serving, player)",
+   "triplets": [
+    "(player, is playing, player)",
+    "(player, is serving, player)",
+    "(player, is serving, player)",
+    "(player, is serving, player)",
+    "(player, is serving, player)",
+    "(player, is serving, player)",
+    "(player, is serving, player)",
+    "(player, is serving, player)"
+   ],
+   "near_event": true
+  },
+  {
+   "t": 10.0,
+   "ms": 4370,
+   "raw": "- (player, is playing, player)\n- (player, is serving, player)\n- (player, is serving, player)\n- (player, is serving, player)\n- (player, is serving, player)\n- (player, is serving, player)\n- (player, is serving, player)\n- (player, is serving, player)",
+   "triplets": [
+    "(player, is playing, player)",
+    "(player, is serving, player)",
+    "(player, is serving, player)",
+    "(player, is serving, player)",
+    "(player, is serving, player)",
+    "(player, is serving, player)",
+    "(player, is serving, player)",
+    "(player, is serving, player)"
+   ],
+   "near_event": false
+  },
+  {
+   "t": 15.0,
+   "ms": 8932,
+   "raw": "- (player, is playing, player)\n- (player, is holding, racket)\n- (player, is holding, ball)\n- (player, is standing, on, court)\n- (player, is wearing, shirt)\n- (player, is wearing, shorts)\n- (player, is wearing, shoes)\n- (player, is wearing, cap)\n- (player, is standing, on, court)\n- (player, is wearing, shirt)\n- (player, is wearing, shorts)\n- (player, is wearing, shoes)\n- (player, is wearing, cap)\n- (player, is standing, on, court)\n- (player, is wearing, shirt)\n- (player, is wearing, shorts)\n- (player, is wearing, shoes)\n-",
+   "triplets": [
+    "(player, is playing, player)",
+    "(player, is holding, racket)",
+    "(player, is holding, ball)",
+    "(player, is wearing, shirt)",
+    "(player, is wearing, shorts)",
+    "(player, is wearing, shoes)",
+    "(player, is wearing, cap)",
+    "(player, is wearing, shirt)",
+    "(player, is wearing, shorts)",
+    "(player, is wearing, shoes)",
+    "(player, is wearing, cap)",
+    "(player, is wearing, shirt)",
+    "(player, is wearing, shorts)",
+    "(player, is wearing, shoes)"
+   ],
+   "near_event": false
+  },
+  {
+   "t": 20.0,
+   "ms": 8829,
+   "raw": "- (player, is playing, tennis)\n- (player, is holding, tennis racket)\n- (player, is wearing, white shirt)\n- (player, is wearing, black shorts)\n- (player, is wearing, white shoes)\n- (player, is standing, on, tennis court)\n- (player, is preparing, to serve)\n- (player, is looking, at, opponent)\n- (opponent, is holding, tennis racket)\n- (opponent, is wearing, white shirt)\n- (opponent, is wearing, white shorts)\n- (opponent, is wearing, white cap)\n- (opponent, is standing, on, tennis court)\n- (opponent, is looking, at, player)\n- (opponent, is holding, tennis",
+   "triplets": [
+    "(player, is playing, tennis)",
+    "(player, is holding, tennis racket)",
+    "(player, is wearing, white shirt)",
+    "(player, is wearing, black shorts)",
+    "(player, is wearing, white shoes)",
+    "(player, is preparing, to serve)",
+    "(opponent, is holding, tennis racket)",
+    "(opponent, is wearing, white shirt)",
+    "(opponent, is wearing, white shorts)",
+    "(opponent, is wearing, white cap)"
+   ],
+   "near_event": true
+  },
+  {
+   "t": 25.0,
+   "ms": 8809,
+   "raw": "- (player, is playing, player)\n- (player, is serving, player)\n- (player, is holding, racket)\n- (player, is wearing, shirt)\n- (player, is wearing, shorts)\n- (player, is wearing, shoes)\n- (player, is standing, on, court)\n- (player, is holding, ball)\n- (player, is holding, racket)\n- (player, is holding, racket)\n- (player, is holding, racket)\n- (player, is holding, racket)\n- (player, is holding, racket)\n- (player, is holding, racket)\n- (player, is holding, racket)\n- (player, is holding, racket)\n- (player, is holding, racket)\n- (player, is",
+   "triplets": [
+    "(player, is playing, player)",
+    "(player, is serving, player)",
+    "(player, is holding, racket)",
+    "(player, is wearing, shirt)",
+    "(player, is wearing, shorts)",
+    "(player, is wearing, shoes)",
+    "(player, is holding, ball)",
+    "(player, is holding, racket)",
+    "(player, is holding, racket)",
+    "(player, is holding, racket)",
+    "(player, is holding, racket)",
+    "(player, is holding, racket)",
+    "(player, is holding, racket)",
+    "(player, is holding, racket)",
+    "(player, is holding, racket)",
+    "(player, is holding, racket)"
+   ],
+   "near_event": true
+  },
+  {
+   "t": 30.0,
+   "ms": 9076,
+   "raw": "- (player, is playing, tennis)\n- (player, is holding, tennis racket)\n- (player, is wearing, white shirt)\n- (player, is wearing, black shorts)\n- (player, is wearing, white shoes)\n- (player, is standing, on, tennis court)\n- (player, is preparing, to hit, tennis ball)\n- (player, is moving, towards, tennis ball)\n- (player, is moving, away, from, tennis ball)\n- (player, is moving, towards, tennis ball)\n- (player, is moving, away, from, tennis ball)\n- (player, is moving, towards, tennis ball)\n- (player, is moving, away, from, tennis ball)\n- (player, is moving, towards",
+   "triplets": [
+    "(player, is playing, tennis)",
+    "(player, is holding, tennis racket)",
+    "(player, is wearing, white shirt)",
+    "(player, is wearing, black shorts)",
+    "(player, is wearing, white shoes)"
+   ],
+   "near_event": true
+  },
+  {
+   "t": 35.0,
+   "ms": 8728,
+   "raw": "- (player, is playing, player)\n- (player, is hitting, ball)\n- (player, is holding, racket)\n- (player, is wearing, shirt)\n- (player, is wearing, shorts)\n- (player, is wearing, shoes)\n- (player, is standing, on, court)\n- (player, is facing, opponent)\n- (opponent, is holding, racket)\n- (opponent, is wearing, shirt)\n- (opponent, is wearing, shorts)\n- (opponent, is wearing, shoes)\n- (opponent, is standing, on, court)\n- (opponent, is facing, player)\n- (court, has, green)\n- (court, has, purple)\n- (court, has, white)",
+   "triplets": [
+    "(player, is playing, player)",
+    "(player, is hitting, ball)",
+    "(player, is holding, racket)",
+    "(player, is wearing, shirt)",
+    "(player, is wearing, shorts)",
+    "(player, is wearing, shoes)",
+    "(player, is facing, opponent)",
+    "(opponent, is holding, racket)",
+    "(opponent, is wearing, shirt)",
+    "(opponent, is wearing, shorts)",
+    "(opponent, is wearing, shoes)",
+    "(opponent, is facing, player)",
+    "(court, has, green)",
+    "(court, has, purple)",
+    "(court, has, white)"
+   ],
+   "near_event": true
+  },
+  {
+   "t": 40.0,
+   "ms": 4126,
+   "raw": "- (player, is playing, player)\n- (player, is serving, player)\n- (player, is serving, player)\n- (player, is serving, player)\n- (player, is serving, player)\n- (player, is serving, player)\n- (player, is serving, player)\n- (player, is serving, player)",
+   "triplets": [
+    "(player, is playing, player)",
+    "(player, is serving, player)",
+    "(player, is serving, player)",
+    "(player, is serving, player)",
+    "(player, is serving, player)",
+    "(player, is serving, player)",
+    "(player, is serving, player)",
+    "(player, is serving, player)"
+   ],
+   "near_event": true
+  }
+ ]
+}
