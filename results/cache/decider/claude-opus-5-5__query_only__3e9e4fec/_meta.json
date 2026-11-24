@@ -1,0 +1,18 @@
+{
+ "model_id": "claude-opus-5-5",
+ "dtype": "bfloat16",
+ "quant": null,
+ "max_pixels": 200704,
+ "variant": "query_only",
+ "prompt_version": "speak-v1",
+ "prompt_hash": "8243f5eb5d",
+ "stride_s": 2.0,
+ "window_s": 2.0,
+ "fps": 2.0,
+ "max_side": 448,
+ "cues_key": null,
+ "code_commit": "8a7c102",
+ "score_mode": "verbal-0-100-v1",
+ "transport": "cli",
+ "effort": "low"
+}

@@ -67,6 +67,8 @@ def main():
         print(f"[{i}/{len(samples)}] {s.id} {s.task}: {st['status']}, {st['n']} ticks"
               + (f", {st['skipped_ticks']} skipped (video too short)" if st.get("skipped_ticks") else ""), flush=True)
     print(f"done: {n_calls} model calls in {time.time() - t0:.0f} s")
+    if hasattr(edge, "usage_summary"):
+        print(edge.usage_summary())
 
 
 if __name__ == "__main__":

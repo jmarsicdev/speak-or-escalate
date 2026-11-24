@@ -44,7 +44,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--samples", default="data/processed/ovo_far_val.jsonl")
     ap.add_argument("--model", default="qwen/qwen3-vl-8b-instruct", help="API model name, or a Hugging Face id with --backend hf")
-    ap.add_argument("--backend", choices=["api", "hf"], default="api")
+    ap.add_argument("--backend", choices=["api", "hf", "claude"], default="api")
+    ap.add_argument("--transport", choices=["cli", "api"], default="cli", help="backend claude: cli = the logged-in subscription, api = an Anthropic key")
+    ap.add_argument("--effort", default="low", help="backend claude: thinking effort (low, medium, high)")
+    ap.add_argument("--video-root", default=None, help="where the videos are, if not data/raw/ovo/src_videos under this checkout")
     ap.add_argument("--base-url", default="https://openrouter.ai/api/v1")
     ap.add_argument("--api-key-env", default="OPENROUTER_API_KEY")
     ap.add_argument("--limit-questions", type=int, default=6, help="how many questions (spread over the four groups); 0 = all of the split")
@@ -71,6 +74,17 @@ def main():
                 g.write(line)
 
     sets = ["--set", f"edge.backend={a.backend}", "--set", f"edge.model_id={a.model}"]
+    if a.video_root:
+        sets += ["--set", f"data.video_root={a.video_root}"]
+    if a.backend == "claude":
+        sets += ["--set", f"edge.transport={a.transport}", "--set", f"edge.effort={a.effort}"]
+        from egogate.edge import ClaudeEdgeVLM, parse_score  # noqa: PLC0415
+
+        print(f"checking that {a.model} answers with a 0 to 100 score ({a.transport}) ...")
+        reply = ClaudeEdgeVLM(a.model, a.transport, a.effort).complete("Answer with a single integer from 0 to 100 and nothing else: how likely is it, in percent, that the sky is blue on a clear day?")
+        if parse_score(reply) is None:
+            raise SystemExit(f"  no score in the reply: {reply!r}")
+        print(f"  ok (replied {reply!r})")
     if a.backend == "api":
         sets += ["--set", f"edge.base_url={a.base_url}", "--set", f"edge.api_key_env={a.api_key_env}"]
         from egogate.edge import APIEdgeVLM  # noqa: PLC0415
@@ -84,7 +98,7 @@ def main():
         raise SystemExit("the decider run failed (see above); re-run the same command to resume")
 
     tag = a.model.split("/")[-1]
-    new = sorted((ROOT / "results" / "cache" / "decider").glob(f"{tag}__query_only__*"), key=lambda p: p.stat().st_mtime)[-1]
+    new = sorted((ROOT / "results" / "cache" / "decider").glob(f"{tag}__query_only__*"), key=lambda p: (p / "_meta.json").stat().st_mtime)[-1]
     base = sorted((ROOT / "results" / "cache" / "decider").glob("Qwen3-VL-2B-Instruct__query_only__*"), key=lambda p: p.stat().st_mtime)
     if not base:
         print(f"no 2B row 1 cache found to compare with; the new results are in {new}")

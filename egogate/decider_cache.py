@@ -32,13 +32,18 @@ def make_meta(cfg: dict, model_id: str, cues_key: str | None = None) -> dict:
         commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, timeout=5).stdout.strip()
     except Exception:  # noqa: BLE001
         commit = ""
-    return {
+    meta = {
         "model_id": model_id, "dtype": e.get("dtype"), "quant": e.get("quant"), "max_pixels": e.get("max_pixels"),
         "variant": d["variant"], "prompt_version": SPEAK_PROMPT_VERSION, "prompt_hash": prompt_fingerprint(),
         "stride_s": d["stride_s"], "window_s": d["window_s"], "fps": d["fps"], "max_side": d["max_side"],
         "cues_key": cues_key,    # which cues were in the prompt (None for query_only); part of the key
         "code_commit": commit,   # recorded for provenance; deliberately NOT part of the key
     }
+    if e.get("backend") == "claude":   # a stated 0 to 100 score, not log-probabilities: its own caches per transport and effort
+        from .edge import CLAUDE_SCORE_VERSION  # noqa: PLC0415
+
+        meta.update(score_mode=CLAUDE_SCORE_VERSION, transport=e.get("transport", "cli"), effort=e.get("effort", "low"))
+    return meta
 
 
 def cues_key_for(cues_path) -> str:

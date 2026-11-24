@@ -266,6 +266,143 @@ class APIEdgeVLM(EdgeVLM):
         return lp_yes, lp_no
 
 
+CLAUDE_SCORE_VERSION = "verbal-0-100-v1"
+_YES_NO_LINE = "Answer with a single word: Yes or No."
+_SCORE_LINE = ("Answer with a single integer from 0 to 100 and nothing else: how likely is it, in percent, "
+               "that RIGHT NOW is such a moment?")
+CLAUDE_SYSTEM = "You answer questions about frames from a video stream."
+
+
+def parse_score(text: str) -> float | None:
+    """The first integer from 0 to 100 in the reply, as a probability; None if there is none."""
+    import re  # noqa: PLC0415
+
+    m = re.search(r"(?<![\d.])(100|\d{1,2})(?![\d.])", text or "")
+    return int(m.group(1)) / 100.0 if m else None
+
+
+class ClaudeEdgeVLM(EdgeVLM):
+    """A Claude model as the decider. Claude does not return token log-probabilities, so the Yes/No line of the prompt is replaced by a request
+    for a 0 to 100 score, and that stated probability is stored in the same two fields (log p, log(1 - p)) the other backends write. Every
+    replay and comparison script then works unchanged, but the score is coarser than a log-probability (many ties) and is a different
+    measurement: compare rankings (AUC) with care, and never mix thresholds across backends.
+
+    transport "cli": one `claude -p` call per decision on the logged-in subscription (no API key; slow, counts against the plan's usage limits).
+    transport "api": the Anthropic SDK with the key in `api_key_env` (read from the environment, the repo's .env, or ~/.config/speak-or-escalate/env).
+    Frames are sent as JPEG, so they leave the machine either way.
+    """
+
+    name = "claude"
+
+    def __init__(self, model_id: str, transport: str = "cli", effort: str | None = "low", api_key_env: str = "ANTHROPIC_API_KEY",
+                 jpeg_quality: int = 85, ask=None, max_tries: int = 6):
+        if transport not in ("cli", "api"):
+            raise ValueError(f"unknown claude transport {transport}")
+        self.model, self.transport, self.effort, self.q, self.max_tries = model_id, transport, effort, jpeg_quality, max_tries
+        self.n_calls = self.n_images = self.in_tokens = self.out_tokens = 0
+        self.cost_usd = 0.0          # cli only: what the same calls would have cost at API prices, as the CLI reports it
+        self.client = None
+        if ask is not None:          # tests inject a function (prompt, jpegs) -> reply text
+            self._ask = ask
+        elif transport == "api":
+            import os  # noqa: PLC0415
+            from pathlib import Path  # noqa: PLC0415
+
+            import anthropic  # noqa: PLC0415
+
+            load_env_file()
+            load_env_file(Path.home() / ".config" / "speak-or-escalate" / "env")
+            if api_key_env not in os.environ:
+                raise SystemExit(f"set the environment variable {api_key_env} (an Anthropic API key) before running with edge.transport=api")
+            self.client = anthropic.Anthropic(api_key=os.environ[api_key_env], max_retries=10)
+            self._ask = self._ask_api
+        else:
+            self._ask = self._ask_cli
+
+    def _jpegs(self, images) -> list[str]:
+        import base64  # noqa: PLC0415
+        import io  # noqa: PLC0415
+
+        from PIL import Image  # noqa: PLC0415
+
+        out = []
+        for f in images or []:
+            buf = io.BytesIO()
+            Image.fromarray(f).save(buf, format="JPEG", quality=self.q)
+            out.append(base64.b64encode(buf.getvalue()).decode())
+        return out
+
+    @staticmethod
+    def _content(prompt, jpegs):
+        return [{"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": b}} for b in jpegs] + [{"type": "text", "text": prompt}]
+
+    def _ask_api(self, prompt, jpegs) -> str:
+        kw = {"output_config": {"effort": self.effort}} if self.effort else {}
+        r = self.client.messages.create(model=self.model, max_tokens=2048, system=CLAUDE_SYSTEM,
+                                        messages=[{"role": "user", "content": self._content(prompt, jpegs)}], **kw)
+        self.in_tokens += r.usage.input_tokens
+        self.out_tokens += r.usage.output_tokens
+        if r.stop_reason == "refusal":
+            raise RuntimeError(f"{self.model} declined the request (stop_reason refusal)")
+        return "".join(b.text for b in r.content if b.type == "text").strip()
+
+    def _ask_cli(self, prompt, jpegs) -> str:
+        import json  # noqa: PLC0415
+        import os  # noqa: PLC0415
+        import subprocess  # noqa: PLC0415
+        import time  # noqa: PLC0415
+
+        cmd = ["claude", "-p", "--model", self.model, "--input-format", "stream-json", "--output-format", "stream-json", "--verbose",
+               "--tools", "", "--system-prompt", CLAUDE_SYSTEM, "--no-session-persistence", "--disable-slash-commands", "--setting-sources", ""]
+        if self.effort:
+            cmd += ["--effort", self.effort]
+        env = {k: v for k, v in os.environ.items() if k not in ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN")}   # the subscription, never a key
+        msg = json.dumps({"type": "user", "message": {"role": "user", "content": self._content(prompt, jpegs)}}) + "\n"
+        last = ""
+        for attempt in range(self.max_tries):
+            p = subprocess.run(cmd, input=msg, capture_output=True, text=True, env=env, timeout=300)
+            res = None
+            for line in p.stdout.splitlines():
+                try:
+                    d = json.loads(line)
+                except ValueError:
+                    continue
+                if d.get("type") == "result":
+                    res = d
+            if res and res.get("subtype") == "success" and not res.get("is_error"):
+                u = res.get("usage") or {}
+                self.in_tokens += (u.get("input_tokens") or 0) + (u.get("cache_creation_input_tokens") or 0) + (u.get("cache_read_input_tokens") or 0)
+                self.out_tokens += u.get("output_tokens") or 0
+                self.cost_usd += res.get("total_cost_usd") or 0.0
+                return (res.get("result") or "").strip()
+            last = ((res or {}).get("result") or p.stderr or p.stdout)[-300:]
+            time.sleep(min(20 * 2 ** attempt, 600))    # usage limits and overloads: wait and try again
+        raise SystemExit(f"claude -p kept failing ({last!r}); the run is resumable, start the same command again later")
+
+    def _generate(self, prompt, images, max_new_tokens):
+        self.n_calls += 1
+        self.n_images += len(images or [])
+        return self._ask(prompt, self._jpegs(images))
+
+    def _yes_no_logprobs(self, prompt, images):
+        if not prompt.endswith(_YES_NO_LINE):
+            raise RuntimeError("the speak prompt no longer ends with the Yes/No line; update ClaudeEdgeVLM")
+        prompt = prompt[: -len(_YES_NO_LINE)] + _SCORE_LINE
+        jpegs = self._jpegs(images)
+        for _ in range(3):                      # a reply without a number is asked again
+            self.n_calls += 1
+            self.n_images += len(jpegs)
+            p = parse_score(self._ask(prompt, jpegs))
+            if p is not None:
+                p = min(max(p, 0.005), 0.995)   # 0 and 100 would be infinite log-odds
+                return math.log(p), math.log(1.0 - p)
+        raise RuntimeError(f"{self.model} gave no 0 to 100 score in three tries")
+
+    def usage_summary(self) -> str:
+        s = f"{self.n_calls} calls, {self.n_images} images, {self.in_tokens} input and {self.out_tokens} output tokens"
+        return s + (f"; the CLI reports these calls as ${self.cost_usd:.2f} at API prices" if self.transport == "cli" and self.cost_usd else "")
+
+
 def yes_no_from_top(top) -> tuple[float, float]:
     """Log-probability mass on "Yes" and on "No" among the top candidates (case and spaces ignored). A side with no candidate gets -30."""
     import numpy as np  # noqa: PLC0415
@@ -283,6 +420,8 @@ def build_edge_model(cfg: dict) -> EdgeVLM:
         return MockEdgeVLM()
     if backend == "api":
         return APIEdgeVLM(cfg["model_id"], cfg.get("base_url", "https://openrouter.ai/api/v1"), cfg.get("api_key_env", "OPENROUTER_API_KEY"))
+    if backend == "claude":
+        return ClaudeEdgeVLM(cfg["model_id"], cfg.get("transport", "cli"), cfg.get("effort", "low"), cfg.get("anthropic_key_env", "ANTHROPIC_API_KEY"))
     if backend == "hf":
         return HFEdgeVLM(cfg["model_id"], cfg.get("device", "cuda"), cfg.get("dtype", "bfloat16"), cfg.get("quant"),
                          cfg.get("max_pixels"))
