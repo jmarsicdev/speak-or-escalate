@@ -134,10 +134,10 @@ def main():
 
     table = []
 
-    def show(name, calls, rows, f1_value=None):
+    def show(name, calls, rows, f1_value=None, n_resp=None):
         v = f1(rows) if f1_value is None else f1_value
         c = chance(rows)
-        n_resp = sum(r["n_det"] for r in rows)
+        n_resp = sum(r["n_det"] for r in rows) if n_resp is None else n_resp
         print(f"{name:<34}{calls:>12}{n_resp:>11}{v:>7.1f}{c:>8.1f}{v - c:>+11.1f}")
         table.append({"system": name, "cloud_calls": int(calls), "responses": int(n_resp), "f1": v, "chance_f1": c})
 
@@ -156,7 +156,8 @@ def main():
             pick[np.random.default_rng(k).choice(n_all, size=n_band, replace=False)] = True
             rand_rows.append(scored(np.where(pick, cloud_yes, hi)))
         rand_f1 = float(np.mean([f1(r) for r in rand_rows]))
-        show(f"  random routing (mean of {a.seeds})", n_band, rand_rows[0], f1_value=rand_f1)
+        show(f"  random routing (mean of {a.seeds})", n_band, rand_rows[0], f1_value=rand_f1,
+             n_resp=round(float(np.mean([sum(q["n_det"] for q in r) for r in rand_rows]))))
         per_q_rand = [[rand_rows[k][j] for k in range(a.seeds)] for j in range(len(samples))]
         per_q_conf = [[conf_rows[j]] for j in range(len(samples))]
         d = paired_diff(per_q_conf, per_q_rand, f1_over_seeds, ids, video_of, n=500)

@@ -611,6 +611,13 @@ BF16 (about 15 GB). Needs a larger GPU or a quantized load, which conflicts with
 **Why.** The laptop cannot hold a model above about 2B in BF16 (D16), and quantizing is a later step. An API or a bigger GPU gives a reference ceiling: if a much larger model ranks moments no better than the 2B one (about 0.6 AUC), the limit is the task and the 2 s view, not model size. **Not yet run**: no API key has been used; the code is tested only against a fake client. What would break it: models or providers that do not return log-probabilities, and "thinking" models.
 
 **What stays local.** The embedder, the cue matcher, and anything that needs the model's internals (the scene-graph extraction script uses the Hugging Face model directly and has no API route yet).
+### D24: Claude as the cloud model, a stated score in place of log-probabilities, and routing tested by replay (2026-11-24, branch `jmarsic`)
+
+*Decision.* The edge decider stays the unquantized Qwen3-VL-2B at every moment. The cloud model is Claude, consulted only where a routing rule sends a moment; the comparison that matters is routing the edge model's unsure moments against sending the same number of random moments (the project doc's "does confidence matter when calling the cloud"). A frontier model in the decider's seat for a whole run is not a system we are proposing.
+*How.* Claude returns no token log-probabilities, so `edge.backend=claude` replaces the Yes/No line of the `speak-v1` prompt with a request for a 0 to 100 score and stores it in the same fields (`ClaudeEdgeVLM` in `egogate/edge.py`; `transport=cli` uses the logged-in subscription through `claude -p`, `transport=api` an Anthropic key). The stated score is coarser than a log-probability and is a different measurement, so thresholds are never shared between backends. To test routing without re-calling the cloud for every band size and random draw, the cloud model was scored once at every val moment and used as a lookup table; `scripts/replay_routing.py` then counts a cloud call only where a rule consults it.
+*Why Opus.* A 6-question pilot (111 moments) on the subscription: Haiku 5.5 and Sonnet 5.5 ranked moments no better than the 2B (AUC 0.525 and 0.567 against 0.546), Opus 5.5 reached 0.687 (difference +0.141, interval [-0.065, +0.327]). Calls cost about $0.0004, $0.007 and $0.013 each at API prices as the CLI reports them.
+*Status:* done on val; see 9a.
+
 ## 9. Not yet verified
 
 - Em-Garde's 52.3 PAUC reproduction on ProactiveVideoQA EGO (their code and weights are public;
@@ -1161,6 +1168,53 @@ By group the 1-frame loss is largest on clue reveal (-0.13) and present in every
 - **Responding on crossings beats every-tick-with-cooldown** for most models and thresholds (the cooldown table is in the JSON), which supports the user's point that a model should commit when it first becomes confident.
 
 **Caveats.** 36 to 43 questions; six thresholds times two rules per model, chosen and scored on val; no bootstrap intervals yet (the next step before quoting any cell); the per-question timer is a stronger baseline than the totals-matched timer used in earlier sections, so the gaps here are not comparable with those.
+### Same model on a second machine, the dev split, and how accurate the edge confidence is (2026-11-24, branch `jmarsic`)
+
+**Machine effect.** Row 1 (Qwen3-VL-2B, question only, bf16) was re-run on a desktop RTX 5080 (16 GB; 1,983 decisions in 130 s) into `results/cache/decider/Qwen3-VL-2B-Instruct__query_only__4bbbd288` (the key differs from the laptop run only because `cues_key` was added to the cache metadata later). Same model, prompt and frames, different GPU and library versions: within-question AUC 0.627 against the laptop's 0.614, difference +0.013, video-level 95% interval [+0.002, +0.025]; stored log-probabilities differ by up to about 0.13. **A difference of 0.01 to 0.02 AUC with an interval that excludes zero can come from the machine alone**, because the paired bootstrap is very tight when two runs are nearly identical. Comparisons below use the desktop run as the edge reference.
+
+**Dev split, first run.** The same decider on dev (73 questions, 3,272 decisions, 218 s): within-question AUC 0.698 over 72 questions, against 0.627 on val. No settings were chosen on dev.
+
+**Is the confidence accurate (project doc, first gate)?** Share of moments within 2 s of an event, by the edge model's p(Yes):
+
+| p(Yes) | val: moments | val: near an event | dev: moments | dev: near an event |
+|---|---|---|---|---|
+| below 0.3 | 246 | 6.1% | 486 | 5.3% |
+| 0.3 to 0.5 | 244 | 4.9% | 399 | 6.5% |
+| 0.5 to 0.6 | 205 | 9.8% | 375 | 9.3% |
+| 0.6 to 0.7 | 261 | 11.5% | 262 | 9.2% |
+| 0.7 to 0.8 | 496 | 14.7% | 552 | 16.8% |
+| 0.8 to 0.9 | 463 | 28.9% | 983 | 19.8% |
+| 0.9 and up | 68 | 42.6% | 215 | 28.8% |
+| all | 1,983 | 15.8% | 3,272 | 14.1% |
+
+**Reading.** The confidence points the right way on both splits (the top bin is two to three times the base rate) but it is far from a probability: at 0.9 and above the model is right 43% of the time on val and 29% on dev. And events are spread over the whole range: a third of val moments have p(Yes) below 0.6 and still hold events at 5 to 10%.
+
+### Row 6 by replay: Claude Opus 5.5 as the cloud model, confidence routing against random routing (val, 43 questions, 2026-11-24)
+
+**Question.** With the 2B as the decider everywhere, does it matter which moments are sent to the cloud model?
+**Setup** (D24). Cloud: Claude Opus 5.5, low effort, same frames and question as the edge model, stated 0 to 100 score, responds if 50 or more; scored at all 1,983 val moments through the subscription (about $25 at API prices as the CLI reports it; one shard was resumed after a hung call), cache `results/cache/decider/claude-opus-5-5__query_only__3e9e4fec`. `scripts/replay_routing.py`, output `results/cache/routing/routing_val_2B_opus55.json`: the edge answers its top 10% of moments by p(Yes); *confidence routing* sends the next band to the cloud and stays silent below it; *random routing* sends the same number of moments drawn at random from all moments and follows the edge's top 10% elsewhere (100 draws). 4 s cooldown; chance = the same number of responses in each question at random moments.
+
+**Opus against the 2B as a ranker** (within-question AUC, every moment): all 0.673 against 0.627, +0.046, interval [-0.008, +0.094]; tutorials +0.108 [+0.025, +0.198]; clue reveal +0.151 [+0.110, +0.231]; sports counting -0.041 [-0.108, +0.015]; everyday-object counting +0.001 [-0.104, +0.112]. Opus says Yes on 19% of moments, the 2B on 80%.
+
+**Routing** (F1, and F1 minus chance in brackets):
+
+| Unsure band (cloud calls) | Edge alone, top + band | Confidence routing | Random routing | Confidence - random | 95% interval |
+|---|---|---|---|---|---|
+| 5% (99) | 30.0 (+13.8) | 29.5 (+14.6) | 31.8 (+18.0) | -2.3 | [-5.1, +2.1] |
+| 10% (198) | 32.3 (+12.8) | 30.8 (+15.3) | 33.4 (+17.7) | -2.6 | [-5.9, +1.7] |
+| 20% (397) | 30.6 (+9.3) | 32.1 (+14.3) | 35.4 (+17.5) | -3.3 | [-6.3, +1.8] |
+| 30% (595) | 29.7 (+7.6) | 34.8 (+16.5) | 35.9 (+19.5) | -1.1 | [-6.2, +8.8] |
+
+References: edge alone on its top 10%, 29.9 (+16.3) with no cloud calls; cloud alone at every moment, 31.8 (+12.4) with 1,983 calls.
+
+**Reading.**
+- **Routing by the edge model's confidence has not been shown to beat random routing; the point estimate is against it at every band size** (-1 to -3 F1), and every interval includes zero.
+- **A likely reason, consistent with the calibration table:** confidence routing only lets the cloud remove responses inside the band, while random routing also lets it add responses at moments the edge was confidently silent about, and events are spread across the edge model's whole confidence range. A confidence signal that weak does not say where the cloud is needed.
+- **The cloud model helps a little wherever it is used:** both routing rules gain on the edge alone as the budget grows (confidence routing 29.5 to 34.8), and a few hundred cloud calls do as well as the cloud at every moment (31.8), whose threshold was not tuned.
+- **Opus is a better judge of timing than the 2B only on tutorials and clue reveal;** on counting it is no better. The overall gain (+0.046) is in the range of the 235B Qwen (+0.07 on 36 questions) and its interval touches zero.
+
+**Caveats.** Val only, one prompt, one cloud threshold (50), one definition of the bands (top 10% answered by the edge), low effort; the cloud score is a stated number, not a log-probability; intervals for the gaps against chance are not built; the explanation in the second bullet is an interpretation, not a test. Not yet done: the matcher gate in front of the decider (the full diagram), other routing signals (for example sending the edge's most confident moments to the cloud for confirmation), dev.
+
 ## 10. Glossary
 
 - **Edge model / edge VLM**: the small vision-language model that runs on the device.
@@ -1176,6 +1230,7 @@ By group the 1-frame loss is largest on clue reveal (-0.13) and present in every
 
 ## 11. Changelog
 
+- 2026-11-24 (branch `jmarsic`): D24 added (Claude as the cloud model, stated score, routing by replay). 9a: second-machine run of row 1 and the machine effect, first dev run of the 2B decider, confidence accuracy table, row 6 by replay (confidence against random routing with Opus 5.5).
 - 2026-11-23: Label-radius test, 8B and 235B decider results added to 9a; three experiments (shorter windows, scene-level cues, decider history) started and described.
 - 2026-11-23: Shorter windows (matcher and 8B decider) and scene-level oracle cues added to 9a: neither helps the matcher; one frame hurts the decider.
 - 2026-11-23: Decider history added to 9a: history frames help tutorials and hurt counting; a "what changed" sentence hurts overall.

@@ -11,7 +11,7 @@
  "fps": 2.0,
  "max_side": 448,
  "cues_key": null,
- "code_commit": "8a7c102",
+ "code_commit": "47bdb65",
  "score_mode": "verbal-0-100-v1",
  "transport": "cli",
  "effort": "low"

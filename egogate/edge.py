@@ -360,7 +360,11 @@ class ClaudeEdgeVLM(EdgeVLM):
         msg = json.dumps({"type": "user", "message": {"role": "user", "content": self._content(prompt, jpegs)}}) + "\n"
         last = ""
         for attempt in range(self.max_tries):
-            p = subprocess.run(cmd, input=msg, capture_output=True, text=True, env=env, timeout=300)
+            try:
+                p = subprocess.run(cmd, input=msg, capture_output=True, text=True, env=env, timeout=120)
+            except subprocess.TimeoutExpired:      # a hung call: try again
+                last = "timed out after 120 s"
+                continue
             res = None
             for line in p.stdout.splitlines():
                 try:

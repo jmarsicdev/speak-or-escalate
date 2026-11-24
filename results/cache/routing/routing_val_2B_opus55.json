@@ -1,0 +1,149 @@
+{
+ "args": {
+  "edge": "results/cache/decider/Qwen3-VL-2B-Instruct__query_only__4bbbd288",
+  "cloud": "results/cache/decider/claude-opus-5-5__query_only__3e9e4fec",
+  "samples": "data/processed/ovo_far_val.jsonl",
+  "hi_frac": 0.1,
+  "band_frac": [
+   0.05,
+   0.1,
+   0.2,
+   0.3
+  ],
+  "cloud_tau": 0.5,
+  "cooldown": 4.0,
+  "tol": 2.0,
+  "seeds": 100,
+  "out": "results/cache/routing/routing_val_2B_opus55.json"
+ },
+ "n_questions": 43,
+ "n_moments": 1983,
+ "rows": [
+  {
+   "system": "edge alone, top band",
+   "cloud_calls": 0,
+   "responses": 141,
+   "f1": 29.935460398064826,
+   "chance_f1": 13.623135510887735
+  },
+  {
+   "system": "cloud alone, every moment",
+   "cloud_calls": 1983,
+   "responses": 242,
+   "f1": 31.79713863328117,
+   "chance_f1": 19.399109073554584
+  },
+  {
+   "system": "  edge alone, top + band",
+   "cloud_calls": 0,
+   "responses": 204,
+   "f1": 30.040111303796667,
+   "chance_f1": 16.233721959989857
+  },
+  {
+   "system": "  confidence routing",
+   "cloud_calls": 99,
+   "responses": 160,
+   "f1": 29.547469734610115,
+   "chance_f1": 14.942416399535531
+  },
+  {
+   "system": "  random routing (mean of 100)",
+   "cloud_calls": 99,
+   "responses": 148,
+   "f1": 31.807282519476658,
+   "chance_f1": 13.853329442211631,
+   "confidence_minus_random": {
+    "diff": -2.2598127848665435,
+    "lo": -5.051123790334635,
+    "hi": 2.0776040612251907,
+    "excludes_zero": false,
+    "n_groups": 39
+   }
+  },
+  {
+   "system": "  edge alone, top + band",
+   "cloud_calls": 0,
+   "responses": 262,
+   "f1": 32.29888191477615,
+   "chance_f1": 19.51724212227325
+  },
+  {
+   "system": "  confidence routing",
+   "cloud_calls": 198,
+   "responses": 171,
+   "f1": 30.80686233667911,
+   "chance_f1": 15.47932626611774
+  },
+  {
+   "system": "  random routing (mean of 100)",
+   "cloud_calls": 198,
+   "responses": 157,
+   "f1": 33.367330862070474,
+   "chance_f1": 15.686653541782535,
+   "confidence_minus_random": {
+    "diff": -2.5604685253913644,
+    "lo": -5.855077865283747,
+    "hi": 1.6842918831146296,
+    "excludes_zero": false,
+    "n_groups": 39
+   }
+  },
+  {
+   "system": "  edge alone, top + band",
+   "cloud_calls": 0,
+   "responses": 370,
+   "f1": 30.567446947953176,
+   "chance_f1": 21.279450252310422
+  },
+  {
+   "system": "  confidence routing",
+   "cloud_calls": 397,
+   "responses": 200,
+   "f1": 32.07591594170783,
+   "chance_f1": 17.767251194690814
+  },
+  {
+   "system": "  random routing (mean of 100)",
+   "cloud_calls": 397,
+   "responses": 169,
+   "f1": 35.39199751589228,
+   "chance_f1": 17.911291922918657,
+   "confidence_minus_random": {
+    "diff": -3.3160815741844516,
+    "lo": -6.275926306630031,
+    "hi": 1.8049719928131314,
+    "excludes_zero": false,
+    "n_groups": 39
+   }
+  },
+  {
+   "system": "  edge alone, top + band",
+   "cloud_calls": 0,
+   "responses": 481,
+   "f1": 29.662381239785795,
+   "chance_f1": 22.072414660640273
+  },
+  {
+   "system": "  confidence routing",
+   "cloud_calls": 595,
+   "responses": 224,
+   "f1": 34.818926607306786,
+   "chance_f1": 18.322487504322936
+  },
+  {
+   "system": "  random routing (mean of 100)",
+   "cloud_calls": 595,
+   "responses": 182,
+   "f1": 35.92774509428472,
+   "chance_f1": 16.4395621902736,
+   "confidence_minus_random": {
+    "diff": -1.1088184869779312,
+    "lo": -6.244648904265615,
+    "hi": 8.802059381753066,
+    "excludes_zero": false,
+    "n_groups": 39
+   }
+  }
+ ]
+}
