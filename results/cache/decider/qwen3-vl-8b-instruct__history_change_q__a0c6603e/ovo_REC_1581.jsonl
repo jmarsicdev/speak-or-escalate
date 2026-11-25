@@ -1,0 +1,17 @@
+{"t": 2.0, "lp_yes": -10.000045776367188, "lp_no": -4.541766507980538e-05, "ms": 1643.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 4.0, "lp_yes": -7.2507100105285645, "lp_no": -0.0007098732808129696, "ms": 942.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 6.0, "lp_yes": -7.000911235809326, "lp_no": -0.0009114109640849557, "ms": 1254.6, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 8.0, "lp_yes": -0.07888962009897046, "lp_no": -2.5788897747316426, "ms": 1347.2, "n_frames": 6, "change": "The person picked up the pen and tapped it against the table, which counts as one instance of hitting something against something."}
+{"t": 10.0, "lp_yes": -0.06196761510522516, "lp_no": -2.8119675735671668, "ms": 1211.3, "n_frames": 6, "change": "The person picked up the yellow pencil and tapped it lightly against the table, which constitutes one instance of hitting something against something."}
+{"t": 12.0, "lp_yes": -8.250261306762695, "lp_no": -0.0002612692958193827, "ms": 1726.6, "n_frames": 6, "change": "The person picked up the notepad and began to fold it, which constitutes a new action of manipulating an object, but no hitting occurred in the last two seconds."}
+{"t": 14.0, "lp_yes": -6.002475611006339, "lp_no": -0.0024756330412369744, "ms": 1288.9, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 16.0, "lp_yes": -3.529749921351075, "lp_no": -0.029750346815190273, "ms": 1402.8, "n_frames": 6, "change": "The person picked up a piece of paper and began to fold it, which is a new action that doesn't involve hitting something against something."}
+{"t": 18.0, "lp_yes": -5.255233637129386, "lp_no": -0.005233734249023719, "ms": 1756.5, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 20.0, "lp_yes": -3.529750067823108, "lp_no": -0.029750376557081012, "ms": 1495.3, "n_frames": 6, "change": "The person picked up a small white object and began to fold or manipulate it with their hands, which is a new action not seen in the earlier frames."}
+{"t": 22.0, "lp_yes": -0.47407681310873656, "lp_no": -0.9740769892236943, "ms": 1268.5, "n_frames": 6, "change": "The person placed the white object down on the table and then picked it up again, which constitutes one instance of hitting or tapping the object against the table surface."}
+{"t": 24.0, "lp_yes": -0.31326160100784606, "lp_no": -1.3132617997602396, "ms": 4729.0, "n_frames": 6, "change": "The person picked up a small white object and hit it against the table surface twice in the last two seconds, which is one additional occurrence compared to the earlier frames."}
+{"t": 26.0, "lp_yes": -5.5040783108698585, "lp_no": -0.004078394163577031, "ms": 1483.6, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 28.0, "lp_yes": -0.25192912812324614, "lp_no": -1.5019293165667105, "ms": 1479.8, "n_frames": 6, "change": "The person picked up a small white object and hit it against the table, which is the first instance of the event occurring in the last two seconds."}
+{"t": 30.0, "lp_yes": -4.018149642103455, "lp_no": -0.01814992287919786, "ms": 1525.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 32.0, "lp_yes": -6.002475691613752, "lp_no": -0.0024756468713451876, "ms": 2059.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 34.0, "lp_yes": -5.504078327978346, "lp_no": -0.00407839555999845, "ms": 1103.6, "n_frames": 6, "change": "Nothing relevant changed."}

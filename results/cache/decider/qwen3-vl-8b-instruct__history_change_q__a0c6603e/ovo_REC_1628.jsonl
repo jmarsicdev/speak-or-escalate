@@ -1,0 +1,35 @@
+{"t": 2.0, "lp_yes": -8.250261306762695, "lp_no": -0.00026127170753185454, "ms": 1115.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 4.0, "lp_yes": -6.7511701583862305, "lp_no": -0.0011701800466740275, "ms": 843.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 6.0, "lp_yes": -7.500553131103516, "lp_no": -0.000552970907438047, "ms": 1004.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 8.0, "lp_yes": -7.2507100105285645, "lp_no": -0.000709868698195059, "ms": 2073.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 10.0, "lp_yes": -8.250261306762695, "lp_no": -0.0002612669506865097, "ms": 1063.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 12.0, "lp_yes": -8.000335693359375, "lp_no": -0.000335390503079903, "ms": 1138.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 14.0, "lp_yes": -7.2507100105285645, "lp_no": -0.0007098652968187241, "ms": 850.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 16.0, "lp_yes": -9.000123023986816, "lp_no": -0.0001233720410233188, "ms": 1016.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 18.0, "lp_yes": -9.50007438659668, "lp_no": -7.485843373686493e-05, "ms": 1107.6, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 20.0, "lp_yes": -9.7500581741333, "lp_no": -5.828975815221949e-05, "ms": 907.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 22.0, "lp_yes": -8.750158309936523, "lp_no": -0.00015841189304235321, "ms": 1286.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 24.0, "lp_yes": -9.50007438659668, "lp_no": -7.485830065601544e-05, "ms": 1281.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 26.0, "lp_yes": -9.50007438659668, "lp_no": -7.485843373686493e-05, "ms": 1073.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 28.0, "lp_yes": -9.250096321105957, "lp_no": -9.60756869434216e-05, "ms": 1672.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 30.0, "lp_yes": -8.500203132629395, "lp_no": -0.00020346521913482786, "ms": 3278.1, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 32.0, "lp_yes": -9.7500581741333, "lp_no": -5.829001712916675e-05, "ms": 2915.6, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 34.0, "lp_yes": -9.50007438659668, "lp_no": -7.485890024209241e-05, "ms": 2046.6, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 36.0, "lp_yes": -0.5759393586270161, "lp_no": -0.8259395342868254, "ms": 1451.6, "n_frames": 6, "change": "The long jump event happened once, as the athlete is shown in the process of taking the jump in the last two seconds, which is the only instance of the event occurring in the entire sequence."}
+{"t": 38.0, "lp_yes": -0.07888973599915995, "lp_no": -2.578889752199715, "ms": 1175.3, "n_frames": 6, "change": "The long jump event happened once, as shown in the last two seconds when the athlete launched and landed in the sand pit."}
+{"t": 40.0, "lp_yes": -0.04858731346340492, "lp_no": -3.0485872827991267, "ms": 1296.8, "n_frames": 6, "change": "The long jump event happened once, as shown by the athlete\u2019s complete takeoff, flight, and landing in the sand pit within the last two seconds."}
+{"t": 42.0, "lp_yes": -0.2014133112056122, "lp_no": -1.7014135183869383, "ms": 1198.0, "n_frames": 6, "change": "The long jump event happened once, and the last two seconds show the athlete in mid-air during the jump, confirming the completion of the single attempt."}
+{"t": 44.0, "lp_yes": -0.25192905460476805, "lp_no": -1.501929185163426, "ms": 1201.2, "n_frames": 6, "change": "The long jump event happened once, and the last two seconds show the athlete completing the jump and landing, which is the final stage of the single event."}
+{"t": 46.0, "lp_yes": -0.16022411245899387, "lp_no": -1.9102242644692724, "ms": 2170.8, "n_frames": 6, "change": "The long jump event happened once, and the last two seconds show the athlete completing the jump and landing in the sand pit, which is the final stage of the single event."}
+{"t": 48.0, "lp_yes": -0.1269280027484232, "lp_no": -2.126928043363403, "ms": 1215.5, "n_frames": 6, "change": "The long jump event happened once, and the last two seconds show the athlete completing the jump and landing in the sand pit, which is the final stage of the single event."}
+{"t": 50.0, "lp_yes": -0.07888969108034886, "lp_no": -2.578889804719185, "ms": 1275.5, "n_frames": 6, "change": "The long jump event happened once, and the last two seconds show the athlete landing in the sandpit, which completes the single jump."}
+{"t": 52.0, "lp_yes": -0.03804135806662754, "lp_no": -3.2880413371387363, "ms": 1477.4, "n_frames": 6, "change": "The long jump event has now completed, as the athlete has landed in the sandpit and is coming to a stop, whereas in the earlier frames they were still in mid-air or just beginning their landing."}
+{"t": 54.0, "lp_yes": -3.28804107987509, "lp_no": -0.038041364343967106, "ms": 1006.9, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 56.0, "lp_yes": -0.20141330895692058, "lp_no": -1.701413449906466, "ms": 2049.8, "n_frames": 6, "change": "The long jump event happened once, and the last two seconds show the athlete completing the jump and landing in the sand, which is the final stage of the single attempt."}
+{"t": 58.0, "lp_yes": -0.10020654528274654, "lp_no": -2.350206768473179, "ms": 1302.7, "n_frames": 6, "change": "The long jump event happened once, and the last two seconds show the athlete landing in the sandpit, which completes the single jump."}
+{"t": 60.0, "lp_yes": -0.06196756246598343, "lp_no": -2.8119675655406065, "ms": 1175.1, "n_frames": 6, "change": "The long jump event happened once, and the last two seconds show the athlete standing upright after the jump, confirming the completion of the single attempt."}
+{"t": 62.0, "lp_yes": -0.061967588517583036, "lp_no": -2.811967571876876, "ms": 1314.9, "n_frames": 6, "change": "The long jump event happened once, and the last two seconds show the athlete standing still after the jump, confirming the completion of the single attempt."}
+{"t": 64.0, "lp_yes": -0.06196763557082, "lp_no": -2.811967792352405, "ms": 1225.1, "n_frames": 6, "change": "The long jump event happened once, and the last two seconds show the athlete standing upright after the jump, confirming the completion of the single attempt."}
+{"t": 66.0, "lp_yes": -0.07888971661271386, "lp_no": -2.5788897542275633, "ms": 1142.0, "n_frames": 6, "change": "The long jump event happened once, and the last two seconds show the athlete standing still after the jump, confirming the event is complete."}
+{"t": 68.0, "lp_yes": -2.1269278030559575, "lp_no": -0.12692798960019755, "ms": 1086.5, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 70.0, "lp_yes": -8.500203132629395, "lp_no": -0.00020346696916127125, "ms": 969.6, "n_frames": 6, "change": "Nothing relevant changed."}

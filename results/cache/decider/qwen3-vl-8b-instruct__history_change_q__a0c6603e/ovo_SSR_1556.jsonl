@@ -1,0 +1,86 @@
+{"t": 2.0, "lp_yes": -13.000001907348633, "lp_no": -2.2648454527717356e-06, "ms": 1101.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 4.0, "lp_yes": -13.000001907348633, "lp_no": -2.2648927978957616e-06, "ms": 789.5, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 6.0, "lp_yes": -13.000001907348633, "lp_no": -2.264895261486233e-06, "ms": 1513.5, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 8.0, "lp_yes": -13.250001907348633, "lp_no": -1.7880540878610148e-06, "ms": 1350.9, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 10.0, "lp_yes": -12.500003814697266, "lp_no": -3.6952941193071023e-06, "ms": 1850.9, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 12.0, "lp_yes": -12.250004768371582, "lp_no": -4.768181465072625e-06, "ms": 1062.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 14.0, "lp_yes": -12.500003814697266, "lp_no": -3.6953760154331914e-06, "ms": 1329.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 16.0, "lp_yes": -12.75000286102295, "lp_no": -2.8609201711345203e-06, "ms": 1294.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 18.0, "lp_yes": -12.000005722045898, "lp_no": -6.198764282096067e-06, "ms": 1091.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 20.0, "lp_yes": -12.000005722045898, "lp_no": -6.198640887036398e-06, "ms": 1490.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 22.0, "lp_yes": -11.50001049041748, "lp_no": -1.0132402309636162e-05, "ms": 989.1, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 24.0, "lp_yes": -12.000005722045898, "lp_no": -6.1985606138614245e-06, "ms": 820.1, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 26.0, "lp_yes": -0.16022408763038945, "lp_no": -1.9102240767543717, "ms": 1325.7, "n_frames": 6, "change": "The woman now holds up a white neti pot, visually confirming the specific tool she is about to demonstrate for the user's question."}
+{"t": 28.0, "lp_yes": -0.02975039605820218, "lp_no": -3.5297503415346574, "ms": 2752.8, "n_frames": 6, "change": "In the last two seconds, the woman now holds up a white neti pot and a small white spoon, visually demonstrating the tools required for the neti pot procedure, which directly addresses the user's question."}
+{"t": 30.0, "lp_yes": -0.20141324282109138, "lp_no": -1.7014133644639053, "ms": 1368.8, "n_frames": 6, "change": "In the last two seconds, the person picked up and began to demonstrate the neti pot and its accompanying saline packet, which is the essential step for preparing the solution before use."}
+{"t": 32.0, "lp_yes": -7.2507100105285645, "lp_no": -0.0007098720480354742, "ms": 1096.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 34.0, "lp_yes": -7.500553131103516, "lp_no": -0.0005529714779914273, "ms": 1045.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 36.0, "lp_yes": -7.500553131103516, "lp_no": -0.0005529718772982692, "ms": 988.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 38.0, "lp_yes": -7.500553131103516, "lp_no": -0.0005529724627182053, "ms": 1097.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 40.0, "lp_yes": -7.500553131103516, "lp_no": -0.0005529718676001057, "ms": 1104.6, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 42.0, "lp_yes": -7.2507100105285645, "lp_no": -0.0007098717735959884, "ms": 1438.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 44.0, "lp_yes": -0.3132617190420382, "lp_no": -1.3132617384325747, "ms": 1326.6, "n_frames": 6, "change": "In the last two seconds, the user transitioned from holding the neti pot to holding and examining the accompanying saline packet, indicating she is now preparing to mix the solution before use."}
+{"t": 46.0, "lp_yes": -11.750007629394531, "lp_no": -7.8675853289053e-06, "ms": 1119.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 48.0, "lp_yes": -11.50001049041748, "lp_no": -1.0132467735075784e-05, "ms": 1051.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 50.0, "lp_yes": -10.250035285949707, "lp_no": -3.540328982846414e-05, "ms": 1026.1, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 52.0, "lp_yes": -10.000045776367188, "lp_no": -4.541655307854894e-05, "ms": 998.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 54.0, "lp_yes": -11.50001049041748, "lp_no": -1.0132362548927134e-05, "ms": 958.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 56.0, "lp_yes": -12.250004768371582, "lp_no": -4.768204164245709e-06, "ms": 1269.5, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 58.0, "lp_yes": -0.061967599905637674, "lp_no": -2.8119676046068154, "ms": 1433.3, "n_frames": 6, "change": "In the last two seconds, the person picked up a neti pot and a small packet, beginning the physical preparation step of adding saline solution, which is the core action for using a neti pot."}
+{"t": 60.0, "lp_yes": -0.03804139966753819, "lp_no": -3.2880413481930906, "ms": 1499.8, "n_frames": 6, "change": "The user is now actively pouring the saline solution from the packet into the neti pot, which is the critical next step after preparation."}
+{"t": 62.0, "lp_yes": -0.5759394137172709, "lp_no": -0.8259394986402404, "ms": 1310.4, "n_frames": 6, "change": "In the last two seconds, the user transitioned from preparing the neti pot to actively pouring the saline solution into it, which is the critical next step in the neti pot usage process."}
+{"t": 64.0, "lp_yes": -10.000045776367188, "lp_no": -4.5415728087754026e-05, "ms": 1184.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 66.0, "lp_yes": -2.350206528837465, "lp_no": -0.10020657132696198, "ms": 1481.4, "n_frames": 6, "change": "The user\u2019s question is about the steps of using a neti pot, and the last two seconds show the person actively performing the step of pouring the saline solution into the pot, which is a key part of the preparation phase before rinsing"}
+{"t": 68.0, "lp_yes": -1.3132617099312383, "lp_no": -0.3132618606693882, "ms": 2147.5, "n_frames": 6, "change": "The user\u2019s question is about the steps of using a neti pot, and the last two seconds show the user actively stirring the saline solution inside the pot with a small spoon, which is a preparatory step before rinsing. This action"}
+{"t": 70.0, "lp_yes": -4.758614440788065, "lp_no": -0.008614501363137345, "ms": 1097.9, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 72.0, "lp_yes": -6.251928661806849, "lp_no": -0.001928596161219734, "ms": 946.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 74.0, "lp_yes": -6.7511701583862305, "lp_no": -0.001170181183285492, "ms": 853.9, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 76.0, "lp_yes": -0.20141328135605055, "lp_no": -1.7014133738498431, "ms": 1753.2, "n_frames": 6, "change": "The user\u2019s question is about the steps of using a neti pot, and the last two seconds show the user beginning to tilt the pot to pour the saline solution into her nostril, which is the critical step of the procedure."}
+{"t": 78.0, "lp_yes": -0.07888966018100145, "lp_no": -2.5788898207915265, "ms": 1189.1, "n_frames": 6, "change": "The user\u2019s question is about the steps of using a neti pot, and the last two seconds show the user actively performing the final step\u2014tilting her head and pouring the saline solution into her nasal passage\u2014which is the core action of"}
+{"t": 80.0, "lp_yes": -0.25192910370007077, "lp_no": -1.5019292125948367, "ms": 1610.4, "n_frames": 6, "change": "The user\u2019s question is about the steps of using a neti pot, and the last two seconds show the critical step of tilting the head and inserting the spout into the nostril to begin the saline rinse, which is the core"}
+{"t": 82.0, "lp_yes": -0.9740769144442706, "lp_no": -0.47407709377466345, "ms": 1252.3, "n_frames": 6, "change": "The user\u2019s question is about the steps for using a neti pot, and the last two seconds show the person beginning to tilt her head and position the neti pot to pour the saline solution into her nostril, which is the critical"}
+{"t": 84.0, "lp_yes": -0.6931471665596174, "lp_no": -0.6931472695481528, "ms": 1219.2, "n_frames": 6, "change": "The user\u2019s question is about the steps of using a neti pot, and the last two seconds show the person bringing the neti pot to her nose, which is the critical step of initiating the saline rinse."}
+{"t": 86.0, "lp_yes": -7.2507100105285645, "lp_no": -0.0007098655698070049, "ms": 1359.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 88.0, "lp_yes": -0.6931471475641526, "lp_no": -0.6931472583871632, "ms": 1145.6, "n_frames": 6, "change": "The user\u2019s question is about the steps of using a neti pot, and the last two seconds show the person beginning to perform the actual nasal rinse by tilting their head and preparing to insert the spout, which is the critical next"}
+{"t": 90.0, "lp_yes": -0.3132616807367689, "lp_no": -1.3132618164917231, "ms": 1289.6, "n_frames": 6, "change": "The user\u2019s question is about the steps of using a neti pot, and the last two seconds show the person actively performing the step of tilting their head and inserting the spout into their nostril to begin the saline rinse, which"}
+{"t": 92.0, "lp_yes": -1.3132615649343462, "lp_no": -0.3132617712360834, "ms": 1256.3, "n_frames": 6, "change": "The user\u2019s question is about the steps of using a neti pot, and the last two seconds show the person actively performing the step of tilting their head and inserting the spout into their nostril to begin the saline rinse, which"}
+{"t": 94.0, "lp_yes": -7.000911235809326, "lp_no": -0.0009114029929374218, "ms": 946.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 96.0, "lp_yes": -7.000911235809326, "lp_no": -0.0009114054993464175, "ms": 878.6, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 98.0, "lp_yes": -7.000911235809326, "lp_no": -0.0009114014540619334, "ms": 920.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 100.0, "lp_yes": -7.750430583953857, "lp_no": -0.0004306054516688818, "ms": 798.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 102.0, "lp_yes": -1.1368709764455864, "lp_no": -0.38687107016930433, "ms": 1123.7, "n_frames": 6, "change": "The user\u2019s question is about the steps of using a neti pot, and the last two seconds show the person beginning to use it by inserting their finger into their nostril, which is the preparatory step for the actual rinsing process"}
+{"t": 104.0, "lp_yes": -9.000123023986816, "lp_no": -0.00012337158027888025, "ms": 835.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 106.0, "lp_yes": -7.500553131103516, "lp_no": -0.0005529682935434523, "ms": 776.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 108.0, "lp_yes": -7.000911235809326, "lp_no": -0.0009114039080103934, "ms": 905.5, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 110.0, "lp_yes": -7.750430583953857, "lp_no": -0.0004306060370886047, "ms": 907.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 112.0, "lp_yes": -7.500553131103516, "lp_no": -0.0005529725413464779, "ms": 775.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 114.0, "lp_yes": -7.2507100105285645, "lp_no": -0.000709867939351819, "ms": 1568.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 116.0, "lp_yes": -7.500553131103516, "lp_no": -0.0005529729996638761, "ms": 1139.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 118.0, "lp_yes": -7.000911235809326, "lp_no": -0.0009114053722728771, "ms": 1252.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 120.0, "lp_yes": -8.250261306762695, "lp_no": -0.0002612685516554286, "ms": 851.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 122.0, "lp_yes": -6.501502513885498, "lp_no": -0.001502328196397703, "ms": 1038.6, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 124.0, "lp_yes": -8.000335693359375, "lp_no": -0.0003353942823662431, "ms": 1226.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 126.0, "lp_yes": -1.9102240271678461, "lp_no": -0.16022423559300616, "ms": 997.6, "n_frames": 6, "change": "The woman lowered the neti pot from her face to her lap, indicating she has finished demonstrating its use or is preparing to explain the next step."}
+{"t": 128.0, "lp_yes": -0.16022413685578712, "lp_no": -1.9102241793938926, "ms": 1423.0, "n_frames": 6, "change": "The user\u2019s question is about the steps of using a neti pot, and the last two seconds show the person actively performing the step of tilting their head and inserting the spout into their nostril to begin the saline rinse, which"}
+{"t": 130.0, "lp_yes": -0.2014133236958908, "lp_no": -1.7014133457735803, "ms": 1139.3, "n_frames": 6, "change": "The user\u2019s question is about the steps of using a neti pot, and the last two seconds show the person actively performing the step of tilting their head and pouring the saline solution into one nostril, which is the core action of"}
+{"t": 132.0, "lp_yes": -0.07888965530705414, "lp_no": -2.5788898057646987, "ms": 971.1, "n_frames": 6, "change": "The user has progressed from holding the neti pot to actively tilting their head and inserting the spout into their nostril to begin the saline rinse."}
+{"t": 134.0, "lp_yes": -0.3132617258018106, "lp_no": -1.3132618361958002, "ms": 1105.9, "n_frames": 6, "change": "The user\u2019s question is about the steps of using a neti pot, and the last two seconds show the person actively performing the step of tilting their head and inserting the spout into their nostril to begin the saline rinse, which"}
+{"t": 136.0, "lp_yes": -0.20141332675889106, "lp_no": -1.7014133573634176, "ms": 1204.1, "n_frames": 6, "change": "The user\u2019s question is about the steps of using a neti pot, and the last two seconds show the person actively tilting their head and beginning to pour the saline solution into one nostril, which is the core action of the procedure"}
+{"t": 138.0, "lp_yes": -6.501502386366508, "lp_no": -0.0015023241092618975, "ms": 920.1, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 140.0, "lp_yes": -5.504078260695, "lp_no": -0.004078385173376637, "ms": 1089.1, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 142.0, "lp_yes": -6.002475574787691, "lp_no": -0.0024756345952883286, "ms": 823.9, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 144.0, "lp_yes": -5.753177543510327, "lp_no": -0.0031777014280744797, "ms": 1204.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 146.0, "lp_yes": -5.255233620150423, "lp_no": -0.005233735061753831, "ms": 4802.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 148.0, "lp_yes": -5.753177515303214, "lp_no": -0.0031776987993377232, "ms": 1702.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 150.0, "lp_yes": -5.753177515303214, "lp_no": -0.0031776991103182766, "ms": 2042.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 152.0, "lp_yes": -5.504078260695, "lp_no": -0.004078384115723274, "ms": 1003.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 154.0, "lp_yes": -5.255233637129386, "lp_no": -0.005233733668035463, "ms": 1045.5, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 156.0, "lp_yes": -0.10020652034664154, "lp_no": -2.3502065439512, "ms": 1108.7, "n_frames": 6, "change": "The user is now actively tilting their head to drain the saline solution from their nasal passage into their mouth, which is the final step in the neti pot rinsing process."}
+{"t": 158.0, "lp_yes": -0.1602241419418754, "lp_no": -1.9102243157238858, "ms": 1154.3, "n_frames": 6, "change": "The user has completed the rinsing step and is now actively draining the saline solution from her nasal passages, which is the final critical step in the neti pot procedure."}
+{"t": 160.0, "lp_yes": -0.01814987102291996, "lp_no": -4.018149814908041, "ms": 1047.1, "n_frames": 6, "change": "The user has completed the neti pot rinse and is now actively wiping their nose to clear the saline solution, which is the final step in the process."}
+{"t": 162.0, "lp_yes": -3.7732450357592042, "lp_no": -0.0232455882805499, "ms": 1000.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 164.0, "lp_yes": -4.511047482517969, "lp_no": -0.01104768992040449, "ms": 914.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 166.0, "lp_yes": -11.50001049041748, "lp_no": -1.0132100866486772e-05, "ms": 856.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 168.0, "lp_yes": -10.500027656555176, "lp_no": -2.753589121960551e-05, "ms": 1002.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 170.0, "lp_yes": -11.000016212463379, "lp_no": -1.6688448379423447e-05, "ms": 1013.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 172.0, "lp_yes": -11.000016212463379, "lp_no": -1.6688216979770387e-05, "ms": 812.0, "n_frames": 6, "change": "Nothing relevant changed."}

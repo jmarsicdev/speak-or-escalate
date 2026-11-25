@@ -1,0 +1,92 @@
+{"t": 2.0, "lp_yes": -7.500553131103516, "lp_no": -0.0005529750191684242, "ms": 978.6, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 4.0, "lp_yes": -6.002475678289654, "lp_no": -0.002475639966458528, "ms": 1369.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 6.0, "lp_yes": -6.251928738048868, "lp_no": -0.001928600896864265, "ms": 1106.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 8.0, "lp_yes": -6.7511701583862305, "lp_no": -0.0011701801960523743, "ms": 1026.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 10.0, "lp_yes": -4.758614399388653, "lp_no": -0.008614492065119573, "ms": 1131.9, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 12.0, "lp_yes": -6.7511701583862305, "lp_no": -0.0011701804439095422, "ms": 1199.5, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 14.0, "lp_yes": -5.504078288902126, "lp_no": -0.004078380087670785, "ms": 871.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 16.0, "lp_yes": -6.002475670269359, "lp_no": -0.0024756382094201254, "ms": 1208.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 18.0, "lp_yes": -5.504078319958047, "lp_no": -0.004078389881219722, "ms": 1156.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 20.0, "lp_yes": -6.002475685367539, "lp_no": -0.0024756411815233235, "ms": 996.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 22.0, "lp_yes": -5.255233658850876, "lp_no": -0.0052337360913359224, "ms": 966.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 24.0, "lp_yes": -0.20141327339332127, "lp_no": -1.7014133250319643, "ms": 1284.5, "n_frames": 6, "change": "The cricket shot happened once, and the last two seconds show the batter completing the follow-through after playing the shot, which is the key change from the earlier frames."}
+{"t": 26.0, "lp_yes": -4.018149732868401, "lp_no": -0.01814993222939675, "ms": 972.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 28.0, "lp_yes": -3.048587090241498, "lp_no": -0.04858727294018533, "ms": 1054.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 30.0, "lp_yes": -6.002475697126014, "lp_no": -0.002475644347122679, "ms": 791.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 32.0, "lp_yes": -5.2552336963924065, "lp_no": -0.00523373885061029, "ms": 846.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 34.0, "lp_yes": -6.501502513885498, "lp_no": -0.0015023299894439575, "ms": 1303.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 36.0, "lp_yes": -5.7531775551797875, "lp_no": -0.003177700400319498, "ms": 864.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 38.0, "lp_yes": -5.5040783108698585, "lp_no": -0.004078387285697483, "ms": 824.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 40.0, "lp_yes": -0.31326170435921896, "lp_no": -1.3132618269651963, "ms": 1607.3, "n_frames": 6, "change": "The event \u201ccricket shot\u201d happened once in the last two seconds, as the batsman completed his swing and made contact with the ball, which was not visible in the earlier frames."}
+{"t": 42.0, "lp_yes": -4.75861445475429, "lp_no": -0.008614503429030628, "ms": 1068.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 44.0, "lp_yes": -0.1269280328464355, "lp_no": -2.1269280501509207, "ms": 1500.8, "n_frames": 6, "change": "The event \u201ccricket shot\u201d happened once, and the last two seconds show the immediate aftermath (the batsman\u2019s reaction), whereas the earlier frames showed the action leading up to it."}
+{"t": 46.0, "lp_yes": -5.006715210056538, "lp_no": -0.006715331601198505, "ms": 1128.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 48.0, "lp_yes": -5.255233711490586, "lp_no": -0.005233739693858539, "ms": 800.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 50.0, "lp_yes": -5.504078300571591, "lp_no": -0.004078385040201031, "ms": 1417.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 52.0, "lp_yes": -6.501502513885498, "lp_no": -0.0015023279053654798, "ms": 914.1, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 54.0, "lp_yes": -7.500553131103516, "lp_no": -0.0005529740027303543, "ms": 2104.1, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 56.0, "lp_yes": -6.7511701583862305, "lp_no": -0.0011701768379273696, "ms": 880.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 58.0, "lp_yes": -7.000911235809326, "lp_no": -0.0009114097822631535, "ms": 820.1, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 60.0, "lp_yes": -5.255233687304221, "lp_no": -0.005233731507011849, "ms": 976.6, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 62.0, "lp_yes": -5.504078335056235, "lp_no": -0.004078391655128477, "ms": 1153.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 64.0, "lp_yes": -0.313261690351847, "lp_no": -1.313261821691942, "ms": 1209.2, "n_frames": 6, "change": "The cricket shot happened once in the last two seconds, as the batsman made contact with the ball, which is the key event the user is tracking."}
+{"t": 66.0, "lp_yes": -4.511047720234009, "lp_no": -0.011047720668470292, "ms": 891.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 68.0, "lp_yes": -5.50407834130245, "lp_no": -0.004078392818244406, "ms": 995.9, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 70.0, "lp_yes": -4.5110477085645435, "lp_no": -0.011047717707248411, "ms": 1013.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 72.0, "lp_yes": -5.504078335056235, "lp_no": -0.004078393031978159, "ms": 991.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 74.0, "lp_yes": -0.6931470906689143, "lp_no": -0.693147225851931, "ms": 1151.7, "n_frames": 6, "change": "The last two seconds show a replay of the cricket shot, indicating the event was reviewed, whereas the earlier frames showed the live action and a player\u2019s reaction."}
+{"t": 76.0, "lp_yes": -1.5019288967288835, "lp_no": -0.2519290052326061, "ms": 1200.9, "n_frames": 6, "change": "The event \u201ccricket shot\u201d happened once, and the last two seconds show the replay of that single shot, whereas the earlier frames showed the context before the shot was played."}
+{"t": 78.0, "lp_yes": -3.52975017270685, "lp_no": -0.029750379900505258, "ms": 1091.9, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 80.0, "lp_yes": -5.006715191901463, "lp_no": -0.006715331540492668, "ms": 966.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 82.0, "lp_yes": -4.511047704271587, "lp_no": -0.011047718059635721, "ms": 1153.9, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 84.0, "lp_yes": -4.758614446733987, "lp_no": -0.00861450409239903, "ms": 966.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 86.0, "lp_yes": -4.758614449684492, "lp_no": -0.008614504366838725, "ms": 1327.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 88.0, "lp_yes": -5.504078319958047, "lp_no": -0.00407838787111781, "ms": 834.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 90.0, "lp_yes": -0.06196753883665191, "lp_no": -2.8119675790087846, "ms": 1241.8, "n_frames": 6, "change": "The event \u201ccricket shot\u201d happened once in the last two seconds, as the batsman executed a shot, which is the key change from the earlier frames."}
+{"t": 92.0, "lp_yes": -6.002475685367539, "lp_no": -0.002475639966458528, "ms": 1681.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 94.0, "lp_yes": -4.26416336993287, "lp_no": -0.014163424516402215, "ms": 841.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 96.0, "lp_yes": -5.504078319958047, "lp_no": -0.004078389692600402, "ms": 1219.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 98.0, "lp_yes": -5.255233665336499, "lp_no": -0.005233732908033415, "ms": 1098.1, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 100.0, "lp_yes": -5.006715235557386, "lp_no": -0.006715339019103343, "ms": 1028.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 102.0, "lp_yes": -0.5759393401877231, "lp_no": -0.8259394831376754, "ms": 1274.2, "n_frames": 6, "change": "The event \u201ccricket shot\u201d happened once, and the last two seconds show the replay of that single shot, confirming it occurred only once."}
+{"t": 104.0, "lp_yes": -0.8259393404515651, "lp_no": -0.5759394311599938, "ms": 1143.8, "n_frames": 6, "change": "The event \u201ccricket shot\u201d happened once, and the last two seconds show a replay of that single shot, not a new one."}
+{"t": 106.0, "lp_yes": -4.264163313433298, "lp_no": -0.014163417047639964, "ms": 825.5, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 108.0, "lp_yes": -3.7732451806906306, "lp_no": -0.023245417827218263, "ms": 1166.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 110.0, "lp_yes": -4.758614457704795, "lp_no": -0.008614506376941606, "ms": 783.9, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 112.0, "lp_yes": -5.006715215303789, "lp_no": -0.006715332003551134, "ms": 1242.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 114.0, "lp_yes": -6.2519287697700925, "lp_no": -0.0019286069230657129, "ms": 911.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 116.0, "lp_yes": -6.251928746069166, "lp_no": -0.001928604916145495, "ms": 982.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 118.0, "lp_yes": -0.0788896696347822, "lp_no": -2.5788898144976686, "ms": 1442.4, "n_frames": 6, "change": "The cricket shot happened once in the last two seconds, as the batsman hit the ball and began running, which is the only instance of the event occurring in the provided frames."}
+{"t": 120.0, "lp_yes": -5.5040783108698585, "lp_no": -0.004078389692600402, "ms": 972.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 122.0, "lp_yes": -4.26416336993287, "lp_no": -0.014163423806114982, "ms": 1023.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 124.0, "lp_yes": -5.255233665336499, "lp_no": -0.00523373123257242, "ms": 883.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 126.0, "lp_yes": -5.504078319958047, "lp_no": -0.004078390569687814, "ms": 1274.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 128.0, "lp_yes": -7.000911235809326, "lp_no": -0.000911410726632518, "ms": 737.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 130.0, "lp_yes": -6.251928806304932, "lp_no": -0.0019286038438541093, "ms": 928.6, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 132.0, "lp_yes": -6.25192877406305, "lp_no": -0.0019286088405319976, "ms": 845.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 134.0, "lp_yes": -6.251928746069166, "lp_no": -0.0019286035477621192, "ms": 993.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 136.0, "lp_yes": -6.7511701583862305, "lp_no": -0.0011701820669911408, "ms": 931.9, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 138.0, "lp_yes": -7.500553131103516, "lp_no": -0.0005529757499198492, "ms": 931.1, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 140.0, "lp_yes": -7.000911235809326, "lp_no": -0.0009114136563026356, "ms": 962.1, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 142.0, "lp_yes": -6.7511701583862305, "lp_no": -0.0011701853699189338, "ms": 821.9, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 144.0, "lp_yes": -7.000911235809326, "lp_no": -0.0009114132950459103, "ms": 1113.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 146.0, "lp_yes": -0.12692803535446706, "lp_no": -2.126928041307112, "ms": 1181.0, "n_frames": 6, "change": "The cricket shot happened once in the last two seconds, as the batsman hit the ball, which is the key event the user is tracking."}
+{"t": 148.0, "lp_yes": -0.061967560061870854, "lp_no": -2.811967589110617, "ms": 1281.6, "n_frames": 6, "change": "The cricket shot happened once in the last two seconds, as the batsman hit the ball, which is the only relevant change compared to the earlier frames."}
+{"t": 150.0, "lp_yes": -5.50407834130245, "lp_no": -0.00407839397051071, "ms": 717.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 152.0, "lp_yes": -6.002475701990569, "lp_no": -0.002475643555182907, "ms": 916.6, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 154.0, "lp_yes": -5.504078346814715, "lp_no": -0.004078396109248492, "ms": 847.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 156.0, "lp_yes": -6.002475697126014, "lp_no": -0.00247564430118653, "ms": 846.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 158.0, "lp_yes": -6.002475701990569, "lp_no": -0.0024756437020796848, "ms": 1135.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 160.0, "lp_yes": -7.2507100105285645, "lp_no": -0.0007098749854927911, "ms": 889.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 162.0, "lp_yes": -7.000911235809326, "lp_no": -0.0009114128162991596, "ms": 1524.6, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 164.0, "lp_yes": -7.2507100105285645, "lp_no": -0.0007098757321807936, "ms": 741.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 166.0, "lp_yes": -6.7511701583862305, "lp_no": -0.0011701850589387096, "ms": 908.5, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 168.0, "lp_yes": -6.751170141128419, "lp_no": -0.0011701856125487218, "ms": 1017.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 170.0, "lp_yes": -5.255233704412701, "lp_no": -0.005233743569949637, "ms": 1080.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 172.0, "lp_yes": -0.029750353547402058, "lp_no": -3.5297503260288914, "ms": 1600.5, "n_frames": 6, "change": "The event \u201ccricket shot\u201d happened once in the last two seconds, as the batsman completed his shot and began his follow-through, which is the key action the user is tracking."}
+{"t": 174.0, "lp_yes": -5.006715244541149, "lp_no": -0.006715334976558073, "ms": 990.6, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 176.0, "lp_yes": -3.529750215583712, "lp_no": -0.029750386646834673, "ms": 1208.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 178.0, "lp_yes": -4.511047695341308, "lp_no": -0.011047719958182458, "ms": 911.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 180.0, "lp_yes": -5.255233677005959, "lp_no": -0.0052337335348600295, "ms": 994.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 182.0, "lp_yes": -6.002475691613752, "lp_no": -0.002475644085822539, "ms": 898.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 184.0, "lp_yes": -4.511047704271587, "lp_no": -0.011047713738936803, "ms": 918.8, "n_frames": 6, "change": "Nothing relevant changed."}

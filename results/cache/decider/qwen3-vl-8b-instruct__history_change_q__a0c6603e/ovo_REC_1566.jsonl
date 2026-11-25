@@ -1,0 +1,10 @@
+{"t": 2.0, "lp_yes": -1.136870800946229, "lp_no": -0.3868709667714997, "ms": 1390.8, "n_frames": 6, "change": "A hand lifted the leftmost cup, revealing nothing underneath, which constitutes one instance of hitting something against/with something."}
+{"t": 4.0, "lp_yes": -2.126927866959735, "lp_no": -0.12692801058531988, "ms": 941.0, "n_frames": 6, "change": "A hand lifted the leftmost cup, revealing a small object underneath, and then lifted the middle cup, revealing another small object underneath, which constitutes two separate instances of revealing something under a cup."}
+{"t": 6.0, "lp_yes": -5.006715097426555, "lp_no": -0.0067153211518430995, "ms": 872.5, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 8.0, "lp_yes": -6.25192875939327, "lp_no": -0.0019286075433222602, "ms": 1032.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 10.0, "lp_yes": -6.002475639213452, "lp_no": -0.0024756398195505103, "ms": 1004.5, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 12.0, "lp_yes": -5.753177565478049, "lp_no": -0.0031777042708556586, "ms": 2405.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 14.0, "lp_yes": -0.47407687947774546, "lp_no": -0.9740770092572382, "ms": 1248.9, "n_frames": 6, "change": "In the last two seconds, the hand lifted the leftmost cup, revealing the space underneath, which constitutes a new instance of the event \u201chitting something against/with something\u201d compared to the earlier frames where the cups were all resting on"}
+{"t": 16.0, "lp_yes": -0.5759393398317881, "lp_no": -0.8259394870472111, "ms": 1228.9, "n_frames": 6, "change": "In the last two seconds, the hand lifted the leftmost cup, revealing a small object underneath, which constitutes one instance of hitting something against/with something (the cup against the table surface as it was lifted)."}
+{"t": 18.0, "lp_yes": -5.0067151532010294, "lp_no": -0.006715317454327531, "ms": 791.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 20.0, "lp_yes": -5.753177601422889, "lp_no": -0.0031777090405830035, "ms": 891.2, "n_frames": 6, "change": "Nothing relevant changed."}

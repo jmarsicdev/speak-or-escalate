@@ -1,0 +1,16 @@
+{"t": 2.0, "lp_yes": -8.750158309936523, "lp_no": -0.00015841558411482773, "ms": 933.6, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 4.0, "lp_yes": -8.500203132629395, "lp_no": -0.00020346787157781993, "ms": 1146.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 6.0, "lp_yes": -7.2507100105285645, "lp_no": -0.0007098696314383169, "ms": 872.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 8.0, "lp_yes": -12.000005722045898, "lp_no": -6.1987007279842695e-06, "ms": 1329.1, "n_frames": 6, "change": "The user\u2019s question is about the event \u201cbreaking something,\u201d but in the last two seconds, the person is only shown picking up an egg and holding it over a mug \u2014 no breaking has occurred yet. Therefore, nothing relevant to the question"}
+{"t": 10.0, "lp_yes": -0.12692798073966724, "lp_no": -2.126928035331688, "ms": 1422.1, "n_frames": 6, "change": "The egg was picked up and held over the mug in the earlier frames, but in the last two seconds, the egg was cracked open into the mug, which constitutes the event of breaking something."}
+{"t": 12.0, "lp_yes": -0.4740770320757923, "lp_no": -0.9740770834799913, "ms": 1241.4, "n_frames": 6, "change": "The user\u2019s question is about the event \u201cbreaking something,\u201d and the only relevant change in the last two seconds is that the person is now actively cracking an egg into the mug, which is the action that could potentially result in breaking the egg"}
+{"t": 14.0, "lp_yes": -0.01814990139068131, "lp_no": -4.018149835494866, "ms": 1081.5, "n_frames": 6, "change": "The egg was broken in the last two seconds, which is one occurrence of the event \"breaking something.\""}
+{"t": 16.0, "lp_yes": -4.758614252512261, "lp_no": -0.008614469592623184, "ms": 870.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 18.0, "lp_yes": -4.758614202550923, "lp_no": -0.008614468507193192, "ms": 1029.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 20.0, "lp_yes": -7.500553131103516, "lp_no": -0.000552971465045065, "ms": 1600.5, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 22.0, "lp_yes": -7.750430583953857, "lp_no": -0.00043060587622286263, "ms": 1047.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 24.0, "lp_yes": -5.5040782437160285, "lp_no": -0.004078365231300187, "ms": 1060.5, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 26.0, "lp_yes": -5.753177515303214, "lp_no": -0.0031776821750703057, "ms": 1601.5, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 28.0, "lp_yes": -5.5040782437160285, "lp_no": -0.0040783696683672635, "ms": 1224.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 30.0, "lp_yes": -6.501502513885498, "lp_no": -0.0015023201892876469, "ms": 1011.1, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 32.0, "lp_yes": -7.000911235809326, "lp_no": -0.0009114060109507271, "ms": 1148.9, "n_frames": 6, "change": "Nothing relevant changed."}

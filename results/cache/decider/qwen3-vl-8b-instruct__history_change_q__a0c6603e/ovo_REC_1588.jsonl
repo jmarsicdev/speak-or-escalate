@@ -1,0 +1,16 @@
+{"t": 2.0, "lp_yes": -8.750158309936523, "lp_no": -0.00015841637382198645, "ms": 1581.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 4.0, "lp_yes": -8.500203132629395, "lp_no": -0.00020346928734347845, "ms": 1401.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 6.0, "lp_yes": -7.2507100105285645, "lp_no": -0.0007098751868347254, "ms": 2410.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 8.0, "lp_yes": -5.7531775551797875, "lp_no": -0.0031776978550602485, "ms": 1246.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 10.0, "lp_yes": -0.04858732852283127, "lp_no": -3.0485872845443285, "ms": 1903.1, "n_frames": 6, "change": "In the last two seconds, the person picked up a spoon and began scooping food from a bowl, which constitutes a new instance of the event \u201chitting something against/with something\u201d (the spoon hitting the bowl\u2019s contents)."}
+{"t": 12.0, "lp_yes": -4.018149589351608, "lp_no": -0.01814991115478601, "ms": 1649.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 14.0, "lp_yes": -0.06196753053408239, "lp_no": -2.811967552655677, "ms": 1469.6, "n_frames": 6, "change": "In the last two seconds, the person picked up a spoon and began scooping food from a bowl, which constitutes a new instance of hitting something (the spoon) against something (the bowl or food) that did not occur in the earlier"}
+{"t": 16.0, "lp_yes": -4.758614354560802, "lp_no": -0.008614474730915355, "ms": 1452.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 18.0, "lp_yes": -4.51104750190442, "lp_no": -0.01104769362950515, "ms": 1455.5, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 20.0, "lp_yes": -0.061967615432056415, "lp_no": -2.8119675810013636, "ms": 1351.9, "n_frames": 6, "change": "In the last two seconds, the person used the knife to scrape the inside of the orange bowl, which constitutes a new instance of hitting something against/with something."}
+{"t": 22.0, "lp_yes": -5.504078260695, "lp_no": -0.00407838238550399, "ms": 1331.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 24.0, "lp_yes": -5.255233600910738, "lp_no": -0.005233727419546835, "ms": 930.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 26.0, "lp_yes": -5.255233620150423, "lp_no": -0.005233725121693749, "ms": 5424.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 28.0, "lp_yes": -0.00861448947342032, "lp_no": -4.758614530862639, "ms": 1647.2, "n_frames": 6, "change": "In the last two seconds, the person completed assembling the sandwich by pressing the top slice of bread down onto the bottom slice, which constitutes one final \u201chitting\u201d action to secure the sandwich."}
+{"t": 30.0, "lp_yes": -0.10020655463166854, "lp_no": -2.350206563917625, "ms": 1799.6, "n_frames": 6, "change": "In the last two seconds, the person pressed down on the sandwich with both hands, which constitutes a single instance of hitting something against something, whereas in the earlier frames, they were either spreading or assembling the sandwich without pressing down."}
+{"t": 32.0, "lp_yes": -5.504078300571591, "lp_no": -0.004078389450393891, "ms": 1226.9, "n_frames": 6, "change": "Nothing relevant changed."}

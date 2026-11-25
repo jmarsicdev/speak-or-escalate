@@ -1,0 +1,13 @@
+{"t": 2.0, "lp_yes": -7.500553123909382, "lp_no": -0.000552977460036047, "ms": 967.1, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 4.0, "lp_yes": -7.000911229460529, "lp_no": -0.0009114156664617268, "ms": 1213.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 6.0, "lp_yes": -6.501502485432164, "lp_no": -0.0015023340682921871, "ms": 1389.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 8.0, "lp_yes": -7.0009112253419294, "lp_no": -0.0009114151928477712, "ms": 1019.5, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 10.0, "lp_yes": -6.501502491726019, "lp_no": -0.0015023352223353357, "ms": 1084.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 12.0, "lp_yes": -6.501502491726019, "lp_no": -0.0015023353635665495, "ms": 997.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 14.0, "lp_yes": -6.251928789047096, "lp_no": -0.001928611933563989, "ms": 1618.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 16.0, "lp_yes": -6.002475701990569, "lp_no": -0.0024756466526117756, "ms": 1210.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 18.0, "lp_yes": -0.018149989388746627, "lp_no": -4.018149821355761, "ms": 2253.3, "n_frames": 6, "change": "The person picked up the red lid and used it to cover the top of the glass jar, which constitutes one instance of the event \"covering something with something.\""}
+{"t": 20.0, "lp_yes": -0.0380413360659255, "lp_no": -3.2880413310234458, "ms": 1641.2, "n_frames": 6, "change": "The person is now actively covering the jar with its red lid, which is the event in question, whereas in the earlier frames they were just holding the lid or reaching for it."}
+{"t": 22.0, "lp_yes": -0.005233715248600714, "lp_no": -5.255233752787317, "ms": 1276.1, "n_frames": 6, "change": "The person placed the red lid on the jar, covering its contents, which constitutes one instance of the event."}
+{"t": 24.0, "lp_yes": -0.004078381170399672, "lp_no": -5.5040783810199745, "ms": 1638.9, "n_frames": 6, "change": "The event of covering something with something happened once, as the person placed the red lid on the jar in the last two seconds."}
+{"t": 26.0, "lp_yes": -0.002475637574048108, "lp_no": -6.002475732176591, "ms": 1649.4, "n_frames": 6, "change": "The person placed the red lid on the jar, completing the action of covering it."}

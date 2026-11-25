@@ -1,0 +1,17 @@
+{"t": 2.0, "lp_yes": -7.750430583953857, "lp_no": -0.00043060779591349527, "ms": 1155.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 4.0, "lp_yes": -8.000335693359375, "lp_no": -0.00033539692821341754, "ms": 988.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 6.0, "lp_yes": -8.250261306762695, "lp_no": -0.0002612685438031013, "ms": 1313.9, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 8.0, "lp_yes": -8.000335693359375, "lp_no": -0.00033539524245379776, "ms": 2091.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 10.0, "lp_yes": -8.750158309936523, "lp_no": -0.00015841525290526145, "ms": 1116.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 12.0, "lp_yes": -9.000123023986816, "lp_no": -0.00012337288702226194, "ms": 1631.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 14.0, "lp_yes": -9.000123023986816, "lp_no": -0.00012337335845002988, "ms": 1386.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 16.0, "lp_yes": -9.000123023986816, "lp_no": -0.00012337332653184326, "ms": 940.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 18.0, "lp_yes": -8.750158309936523, "lp_no": -0.00015841615835918146, "ms": 950.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 20.0, "lp_yes": -8.750158309936523, "lp_no": -0.00015841589903317646, "ms": 924.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 22.0, "lp_yes": -0.0040783879608291395, "lp_no": -5.5040783800620865, "ms": 1077.2, "n_frames": 6, "change": "The user picked up the paper and turned it to show the shapes to the camera, which constitutes showing something to the camera."}
+{"t": 24.0, "lp_yes": -0.003177676962759841, "lp_no": -5.753177623266585, "ms": 1138.2, "n_frames": 6, "change": "The person stopped drawing and began holding up the paper with the shapes to show it to the camera, which constitutes the event of showing something to the camera."}
+{"t": 26.0, "lp_yes": -0.008614539122077743, "lp_no": -4.758614503565311, "ms": 2315.5, "n_frames": 6, "change": "The user\u2019s question is about the event \u201cshowing something to the camera,\u201d and in the last two seconds, the person explicitly holds up the paper with the shapes to the camera, which directly constitutes showing something to the camera \u2014 an action"}
+{"t": 28.0, "lp_yes": -0.0024756827125803084, "lp_no": -6.002475738525391, "ms": 1441.1, "n_frames": 6, "change": "The user\u2019s question is about the event \u201cshowing something to the camera,\u201d and the key change in the last two seconds is that the person is now holding up the paper with the shapes to the camera, which constitutes showing something to the"}
+{"t": 30.0, "lp_yes": -0.011047775900711813, "lp_no": -4.511047740806423, "ms": 1377.2, "n_frames": 6, "change": "The user\u2019s question is about \u201cshowing something to the camera,\u201d and in the last two seconds, the person explicitly holds up the paper with the shapes to the camera, which is a direct instance of that event \u2014 whereas in the earlier"}
+{"t": 32.0, "lp_yes": -3.288041042484692, "lp_no": -0.038041338737747996, "ms": 1047.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 34.0, "lp_yes": -3.048586998112888, "lp_no": -0.048587255593069374, "ms": 896.7, "n_frames": 6, "change": "Nothing relevant changed."}

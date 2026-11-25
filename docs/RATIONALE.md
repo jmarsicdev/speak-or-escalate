@@ -1132,6 +1132,13 @@ By group the 1-frame loss is largest on clue reveal (-0.13) and present in every
 - **For the architecture:** history belongs in the decider for state-change questions (tutorials) and not for repetition questions, which suggests the decider's input should depend on the kind of question. Text summaries of the scene, at least as produced by these models, should not be fed to the decider.
 
 **Caveats.** One prompt; the history prompt also adds "compare now with the earlier frames" and shows 6 images instead of 4, so "history frames" is not a pure frames-only change; group intervals unadjusted; val only; the explanation for the counting loss is an interpretation.
+
+**Follow-up: a question-aware "what changed" (variant `change_q`, 43 questions, 2026-11-24).** The neutral sentence reported some change 97.5% of the time, so the change description was rewritten to include the user's question: "what changed ... that matters for the user's question? If nothing relevant to the question changed, answer: Nothing relevant changed." Everything else as in `change`.
+- *The sentence itself is informative.* It says "Nothing relevant changed" on 52% of moments (1,038 of 1,983), and those are near an event 8.3% of the time against 24.0% for moments where it describes a relevant change (counting 16.1% against 40.9%; tutorials 2.8% against 15.1%; clue reveal 7.4% against 14.7%).
+- *The decider follows the sentence almost completely:* mean p(Yes) 0.00 after "nothing relevant changed" and 0.72 otherwise (Yes on 80% of those moments). It acts as a yes/no gate set by the sentence.
+- *Within-question AUC:* 0.581, against 0.618 for the 8B on the last 2 s (-0.038, interval [-0.093, +0.011]), 0.552 for the neutral sentence (+0.029, [-0.012, +0.069]) and 0.578 for history frames alone (+0.002). The AUC is held down by construction: half the moments are tied near p(Yes) = 0, and the ranking among the other half is weak.
+- *Scored as responses* (next section, crossing rule, 36 shared questions, F1 minus the per-question timer, repeats not punished): -2.0, +13.6, +9.9, +16.4, +17.5, +16.4 at 3 to 30%: the best of the 8B variants from 5% up, close to the 2B and below the 235B at 15 to 20%. Event hit rate 41/34 at 15% (model/chance %).
+- *Reading.* Asking about change relative to the question turns the generated text from noise into a usable filter (a relevant-change moment is about three times as likely to be near an event). It does not make the decider rank moments better within that filter. A question-aware change check looks more useful as a gate in front of a decider or matcher than as text inside the decider's prompt.
 ### Rescoring stored decider runs with model-specific thresholds (val, CPU only, 2026-11-23)
 
 **Question.** The within-question AUC compares every moment near an event with every other moment; it penalizes a model whose p(Yes) also rises at other moments where the evidence is visible, and it never asks whether the model responds at the right time once confident. Does scoring the stored runs as responses, with a threshold chosen per model, change the picture?
@@ -1180,6 +1187,7 @@ By group the 1-frame loss is largest on clue reveal (-0.13) and present in every
 - 2026-11-23: Shorter windows (matcher and 8B decider) and scene-level oracle cues added to 9a: neither helps the matcher; one frame hurts the decider.
 - 2026-11-23: Decider history added to 9a: history frames help tutorials and hurt counting; a "what changed" sentence hurts overall.
 - 2026-11-23: Threshold rescoring of stored decider runs added to 9a (model-specific thresholds, crossing and first-time rules, per-question timer).
+- 2026-11-24: Question-aware "what changed" variant added to 9a (decider history section); rescoring and viewer updated with it.
 - 2026-11-15: Section 5 rewritten: chance-level table trimmed to the rules that ignore the video, and the rules for calling an improvement real (bootstrap intervals, paired comparison, power) added.
 - 2026-11-23: D22 (fix the base before routing; staged plan) added; cue-source tooling built.
 - 2026-11-22: Section 0 (overall status, bottlenecks, what to test and what not to do) added.

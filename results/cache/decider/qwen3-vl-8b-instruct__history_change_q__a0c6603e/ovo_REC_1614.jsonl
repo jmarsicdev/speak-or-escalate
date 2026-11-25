@@ -1,0 +1,74 @@
+{"t": 2.0, "lp_yes": -11.000016212463379, "lp_no": -1.668907841208339e-05, "ms": 746.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 4.0, "lp_yes": -11.000016212463379, "lp_no": -1.6689119700967544e-05, "ms": 793.9, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 6.0, "lp_yes": -11.750007629394531, "lp_no": -7.86774301112527e-06, "ms": 902.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 8.0, "lp_yes": -10.250035285949707, "lp_no": -3.540424756784161e-05, "ms": 761.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 10.0, "lp_yes": -10.750020980834961, "lp_no": -2.145732383194766e-05, "ms": 840.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 12.0, "lp_yes": -8.500203132629395, "lp_no": -0.00020346874646911628, "ms": 1123.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 14.0, "lp_yes": -9.50007438659668, "lp_no": -7.486018243705588e-05, "ms": 808.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 16.0, "lp_yes": -10.250035285949707, "lp_no": -3.540428113795553e-05, "ms": 1221.5, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 18.0, "lp_yes": -8.500203132629395, "lp_no": -0.00020346742042195868, "ms": 1085.1, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 20.0, "lp_yes": -8.750158309936523, "lp_no": -0.0001584153104747815, "ms": 1080.1, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 22.0, "lp_yes": -13.000001907348633, "lp_no": -2.2648333509802915e-06, "ms": 1282.4, "n_frames": 6, "change": "The baseball pitch has not yet occurred; the last two seconds show Tiffany Hwang walking toward the pitcher\u2019s mound, preparing to throw, but the actual pitch has not been executed."}
+{"t": 24.0, "lp_yes": -8.500203132629395, "lp_no": -0.0002034677922517893, "ms": 887.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 26.0, "lp_yes": -11.25001335144043, "lp_no": -1.2993272855592855e-05, "ms": 1118.1, "n_frames": 6, "change": "The baseball pitch has not yet occurred; the last two seconds show the person walking away from the pitcher\u2019s mound, indicating the pitch has not been thrown."}
+{"t": 28.0, "lp_yes": -0.01416341962025647, "lp_no": -4.264163483642711, "ms": 1154.4, "n_frames": 6, "change": "The baseball pitch has now occurred once, as the last two seconds show the pitcher having just thrown the ball, whereas the earlier frames showed her preparing to pitch."}
+{"t": 30.0, "lp_yes": -0.04858728929727738, "lp_no": -3.0485873117677107, "ms": 1046.6, "n_frames": 6, "change": "The baseball pitch has now occurred \u2014 in the earlier frames, Tiffany Hwang was preparing to throw, but in the last two seconds, she has completed the motion and released the ball."}
+{"t": 32.0, "lp_yes": -10.250035285949707, "lp_no": -3.5404126005663e-05, "ms": 1001.5, "n_frames": 6, "change": "The event of the baseball pitch has not yet occurred; the person is still in the preparatory motion, and the ball has not been thrown."}
+{"t": 34.0, "lp_yes": -0.16022416532395736, "lp_no": -1.9102242837022065, "ms": 1106.3, "n_frames": 6, "change": "The baseball pitch event occurred once, and the last two seconds show the ball having already been thrown, with the pitcher now holding the ball and looking toward the camera, indicating the action is complete."}
+{"t": 36.0, "lp_yes": -11.50001049041748, "lp_no": -1.0132449528565973e-05, "ms": 1182.3, "n_frames": 6, "change": "The event of the baseball pitch has not yet occurred in the last two seconds; the person is still in the preparatory motion of winding up, and the ball has not been released."}
+{"t": 38.0, "lp_yes": -9.000123023986816, "lp_no": -0.00012337184758605914, "ms": 1023.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 40.0, "lp_yes": -7.750430583953857, "lp_no": -0.00043060790652422906, "ms": 959.9, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 42.0, "lp_yes": -8.750158309936523, "lp_no": -0.00015841538301225686, "ms": 906.9, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 44.0, "lp_yes": -7.750430583953857, "lp_no": -0.00043060812025779355, "ms": 987.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 46.0, "lp_yes": -9.000123023986816, "lp_no": -0.00012337298539982525, "ms": 1009.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 48.0, "lp_yes": -9.000123023986816, "lp_no": -0.0001233728270711494, "ms": 808.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 50.0, "lp_yes": -7.500553131103516, "lp_no": -0.0005529756958795117, "ms": 1258.9, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 52.0, "lp_yes": -9.250096321105957, "lp_no": -9.607772886438245e-05, "ms": 1451.1, "n_frames": 6, "change": "The baseball pitch has not yet occurred; the pitcher is still in the wind-up motion in the last two frames, whereas in the earlier frames she was preparing to pitch."}
+{"t": 54.0, "lp_yes": -0.038041375810807056, "lp_no": -3.2880413377241555, "ms": 1155.2, "n_frames": 6, "change": "The event of a baseball pitch has now occurred once, as the pitcher has just thrown the ball toward home plate in the last two seconds, which was not visible in the earlier frames."}
+{"t": 56.0, "lp_yes": -5.504078288902126, "lp_no": -0.004078381021022922, "ms": 813.9, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 58.0, "lp_yes": -6.7511701583862305, "lp_no": -0.0011701825194634558, "ms": 893.1, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 60.0, "lp_yes": -5.504078327978346, "lp_no": -0.004078384930005761, "ms": 1201.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 62.0, "lp_yes": -4.7586144396021055, "lp_no": -0.00861449915568309, "ms": 1129.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 64.0, "lp_yes": -9.250096321105957, "lp_no": -9.607577140775597e-05, "ms": 1226.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 66.0, "lp_yes": -6.251928806304932, "lp_no": -0.0019285985350150144, "ms": 838.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 68.0, "lp_yes": -7.750430583953857, "lp_no": -0.0004306060817131356, "ms": 785.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 70.0, "lp_yes": -7.500553131103516, "lp_no": -0.0005529751079473045, "ms": 876.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 72.0, "lp_yes": -9.50007438659668, "lp_no": -7.48600443339584e-05, "ms": 849.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 74.0, "lp_yes": -10.750020980834961, "lp_no": -2.1456977218211183e-05, "ms": 792.5, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 76.0, "lp_yes": -8.750158309936523, "lp_no": -0.00015841476042057967, "ms": 1027.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 78.0, "lp_yes": -9.250096321105957, "lp_no": -9.607631855191514e-05, "ms": 870.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 80.0, "lp_yes": -7.750430583953857, "lp_no": -0.0004306051993944307, "ms": 1481.6, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 82.0, "lp_yes": -7.000911235809326, "lp_no": -0.0009114116767445254, "ms": 1100.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 84.0, "lp_yes": -7.000911235809326, "lp_no": -0.00091140859183139, "ms": 1365.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 86.0, "lp_yes": -5.0067152294429755, "lp_no": -0.006715328873822708, "ms": 1343.9, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 88.0, "lp_yes": -5.006715170179985, "lp_no": -0.006715317454327531, "ms": 910.9, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 90.0, "lp_yes": -6.7511701583862305, "lp_no": -0.0011701758310305262, "ms": 911.1, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 92.0, "lp_yes": -8.750158309936523, "lp_no": -0.0001584137087558834, "ms": 1532.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 94.0, "lp_yes": -9.250096321105957, "lp_no": -9.607533102723787e-05, "ms": 917.5, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 96.0, "lp_yes": -7.2507100105285645, "lp_no": -0.0007098719286268553, "ms": 1136.8, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 98.0, "lp_yes": -9.000123023986816, "lp_no": -0.00012336958616836292, "ms": 958.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 100.0, "lp_yes": -9.7500581741333, "lp_no": -5.829013240501357e-05, "ms": 1306.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 102.0, "lp_yes": -9.250096321105957, "lp_no": -9.60761114081409e-05, "ms": 1018.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 104.0, "lp_yes": -9.000123023986816, "lp_no": -0.0001233727713209729, "ms": 951.1, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 106.0, "lp_yes": -9.000123023986816, "lp_no": -0.0001233724927839458, "ms": 889.0, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 108.0, "lp_yes": -9.50007438659668, "lp_no": -7.485773928700915e-05, "ms": 1313.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 110.0, "lp_yes": -1.136870747953127, "lp_no": -0.38687094156109714, "ms": 1322.6, "n_frames": 6, "change": "The event \"baseball pitch\" happened once, and the last two seconds show the pitcher having just completed that pitch, whereas the earlier frames showed her preparing to pitch or the batter preparing to bat."}
+{"t": 112.0, "lp_yes": -6.501502513885498, "lp_no": -0.001502332886811432, "ms": 1646.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 114.0, "lp_yes": -0.12692796084343097, "lp_no": -2.1269280560985395, "ms": 1677.3, "n_frames": 6, "change": "The baseball pitch has now occurred once, as the woman in the white jersey has just thrown the ball toward the batter, which is the first and only pitch shown in the last two seconds."}
+{"t": 116.0, "lp_yes": -7.750430583953857, "lp_no": -0.000430608277941377, "ms": 968.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 118.0, "lp_yes": -0.20141330707287367, "lp_no": -1.701413346018491, "ms": 1070.2, "n_frames": 6, "change": "The event of a baseball pitch occurred once in the last two seconds, as the woman threw the ball toward the batter, which is the only pitch shown in the video."}
+{"t": 120.0, "lp_yes": -0.8259392955669763, "lp_no": -0.5759394229520455, "ms": 1983.2, "n_frames": 6, "change": "The baseball pitch has occurred once, and the last two seconds show the completion of that single pitch, with the ball now in flight toward the batter."}
+{"t": 122.0, "lp_yes": -0.00407839796276797, "lp_no": -5.5040783861529565, "ms": 1176.6, "n_frames": 6, "change": "The baseball pitch has now occurred once, as the woman has completed her throwing motion and the ball is in flight toward the batter in the last two seconds, whereas in the earlier frames she was still in the process of preparing to pitch."}
+{"t": 124.0, "lp_yes": -0.4740769134967647, "lp_no": -0.9740769597471559, "ms": 1076.0, "n_frames": 6, "change": "The baseball pitch has already occurred; the last two seconds show the aftermath as the pitcher watches the ball\u2019s trajectory, not the pitch itself."}
+{"t": 126.0, "lp_yes": -6.25192875939327, "lp_no": -0.0019286039907410741, "ms": 1037.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 128.0, "lp_yes": -3.2880412124254836, "lp_no": -0.03804137506911746, "ms": 1533.6, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 130.0, "lp_yes": -4.018149771141528, "lp_no": -0.0181499410905966, "ms": 1167.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 132.0, "lp_yes": -6.7511701583862305, "lp_no": -0.001170180965657413, "ms": 1119.1, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 134.0, "lp_yes": -9.000123023986816, "lp_no": -0.0001233711107292871, "ms": 1076.6, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 136.0, "lp_yes": -9.250096321105957, "lp_no": -9.607678283272453e-05, "ms": 1179.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 138.0, "lp_yes": -9.50007438659668, "lp_no": -7.486016155985851e-05, "ms": 998.1, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 140.0, "lp_yes": -8.500203132629395, "lp_no": -0.00020346869201658666, "ms": 874.2, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 142.0, "lp_yes": -8.750158309936523, "lp_no": -0.00015841537772864572, "ms": 878.7, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 144.0, "lp_yes": -9.50007438659668, "lp_no": -7.485931916292994e-05, "ms": 1228.3, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 146.0, "lp_yes": -13.000001907348633, "lp_no": -2.2649564313607216e-06, "ms": 730.4, "n_frames": 6, "change": "Nothing relevant changed."}
+{"t": 148.0, "lp_yes": -13.000001907348633, "lp_no": -2.2649614476927755e-06, "ms": 839.9, "n_frames": 6, "change": "Nothing relevant changed."}
