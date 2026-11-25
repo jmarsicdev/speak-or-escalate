@@ -1,0 +1,113 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Threshold rescoring</title>
+<style>
+:root{--bg:#fbfbfa;--fg:#1d1d1b;--mut:#6b6b66;--line:#e3e2de;--card:#fff;--ev:#d6453d;--band:rgba(214,69,61,.10);--sel:#2b6cb0;--ok:#2f855a;--bad:#c53030}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17181a;--fg:#e8e8e6;--mut:#9a9a96;--line:#2e3033;--card:#1f2023;--band:rgba(214,69,61,.18);--sel:#63a4ff;--ok:#48bb78;--bad:#fc8181}}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.45 system-ui,sans-serif}
+.wrap{max-width:1280px;margin:0 auto;padding:16px 20px 40px} h1{font-size:19px;margin:0 0 4px} h3{font-size:14px;margin:18px 0 6px}
+.hint{color:var(--mut);font-size:12px} .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-top:12px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;margin:0 10px 6px 0}
+.seg button{border:0;background:var(--card);color:var(--fg);padding:4px 10px;cursor:pointer;font-size:12px;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0} .seg button.on{background:var(--sel);color:#fff}
+table{border-collapse:collapse;font-size:13px} td,th{padding:4px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+#sum td.c{text-align:center;cursor:pointer;min-width:70px;border-radius:4px} #sum td.c.on{outline:2px solid var(--fg)}
+.layout{display:flex;gap:14px;margin-top:12px} #list{width:300px;flex:none;max-height:900px;overflow:auto;border:1px solid var(--line);border-radius:8px;background:var(--card)}
+#list .g{padding:6px 10px;font-size:11px;font-weight:600;color:var(--mut);text-transform:uppercase;background:var(--bg);border-bottom:1px solid var(--line)}
+#list .q{padding:7px 10px;border-bottom:1px solid var(--line);cursor:pointer;font-size:13px} #list .q.on{box-shadow:inset 3px 0 var(--sel)}
+#det{flex:1;min-width:0} svg{width:100%;display:block;cursor:crosshair}
+details summary{cursor:pointer;color:var(--mut);font-size:12px;margin-top:8px} .bar{height:8px;background:var(--sel);border-radius:4px;display:inline-block;vertical-align:middle;margin-right:6px}
+@media (max-width:860px){.layout{flex-direction:column}#list{width:auto;max-height:40vh}}
+</style></head><body><div class="wrap">
+<h1>Threshold rescoring of stored decider runs</h1>
+<p class="hint">No model was re-run. Each model gets its own threshold τ, set so that p(Yes) ≥ τ on a fixed share of <i>its own</i> moments (the column), because models say Yes at very different base rates. Counting and tutorial questions: respond each time p(Yes) crosses τ upward ("crossing"), or every tick above τ with a 4 s cooldown. Clue-reveal questions: respond the <b>first</b> time p(Yes) ≥ τ, then stop. Scored with the benchmark F1 (±2 s). Baselines: a timer with the same number of responses in each question; one random response for clue reveal; for hit rate, the same number of ticks above τ placed at random. No confidence intervals: read patterns across columns, not single cells. Clue reveal is 7 questions (one question moves its F1 by about 14 points).</p>
+<div class="card">
+ <div id="ctl"></div>
+ <table id="sum"></table>
+ <div id="sel" class="hint" style="margin-top:8px"></div>
+</div>
+<div class="layout"><div id="list"></div><div id="det"></div></div>
+</div>
+<script>
+const RES=/*RES*/, QS=/*QS*/;
+const M=RES.models, RATES=RES.rates;
+let st={set:"all",rule:"edge",view:"len",model:M.includes("8B")?"8B":M[0],rate:0.15,q:null,t:null,on:new Set(["2B","8B","235B"].filter(m=>M.includes(m)))};
+const GROUPS=[["Counting · sports clips",q=>q.task=="REC"&&q.source=="thumos"],["Counting · everyday objects",q=>q.task=="REC"&&q.source!="thumos"],["Tutorial steps",q=>q.task=="SSR"],["Story questions · clue reveal (needs plot understanding)",q=>q.task=="CRR"]];
+const seg=(k,opts)=>`<span class="seg">${opts.map(([v,l])=>`<button class="${st[k]==v?'on':''}" onclick="st.${k}='${v}';draw()">${l}</button>`).join("")}</span>`;
+function row(m,r){return RES.sets[st.set][m].rows.find(x=>x.rate==r&&x.rule==st.rule)}
+function color(g){const a=Math.min(Math.abs(g)/20,1)*.55;return g>=0?`rgba(47,133,90,${a})`:`rgba(197,48,48,${a})`}
+function cell(m,r){const x=row(m,r);let g,txt;
+ if(st.view=="perc"){g=x.perceptual-x.perceptual_base;txt=(g>=0?"+":"")+g.toFixed(1)}
+ else if(st.view=="len"){g=x.perceptual_len-x.perceptual_len_base;txt=(g>=0?"+":"")+g.toFixed(1)}
+ else if(st.view=="crr"){g=(x.f1.CRR??0)-x.base.CRR;txt=(g>=0?"+":"")+g.toFixed(1)}
+ else{g=x.hit-x.hit_base;txt=`${x.hit.toFixed(0)}<span class="hint">/${x.hit_base.toFixed(0)}</span>`}
+ return `<td class="c ${st.model==m&&st.rate==r?'on':''}" style="background:${color(g)}" onclick="st.model='${m}';st.rate=${r};draw()" title="τ=${x.tau.toFixed(3)}, ${x.responses} responses">${txt}</td>`}
+function draw(){
+ document.getElementById("ctl").innerHTML=seg("set",[["all","All questions each model has"],["common","36 questions all models share"]])+seg("rule",[["edge","Respond on upward crossing"],["cooldown","Every tick above τ + 4 s cooldown"]])+
+  seg("view",[["len","Counting + tutorials, repeats not punished: F1 − timer"],["perc","Counting + tutorials, benchmark F1 − timer"],["crr","Clue reveal (first time): F1 − random"],["hit","Event hit rate % / chance %"]]);
+ document.getElementById("sum").innerHTML=`<tr><th>Model (questions)</th>${RATES.map(r=>`<th style="text-align:center">fires on ${Math.round(r*100)}%</th>`).join("")}</tr>`+
+  M.map(m=>`<tr><td>${m} <span class="hint">(${RES.sets[st.set][m].n_questions})</span></td>${RATES.map(r=>cell(m,r)).join("")}</tr>`).join("");
+ const x=row(st.model,st.rate),T=["REC","SSR","CRR"];
+ document.getElementById("sel").innerHTML=`<b>${st.model}</b>, fires on ${Math.round(st.rate*100)}% of its moments: τ = ${x.tau.toFixed(3)}, ${x.responses} responses. F1 by task (model vs baseline): `+T.filter(k=>k in x.f1).map(k=>`${{REC:"counting",SSR:"tutorials",CRR:"clue reveal"}[k]} ${x.f1[k].toFixed(1)} vs ${x.base[k].toFixed(1)}`).join(" · ")+`. Timer matched only on the total: counting+tutorials ${x.perceptual_base_total.toFixed(1)}. Click a cell to choose the threshold level (column) for the charts below, and the model (row) whose events-caught counts the question list shows.`;
+ list();detail()}
+function dets(){return RES.detections[st.model]?.[st.rule]?.[String(st.rate)]}
+function caught(q,d){const D=d?.det?.[q.id]||[];const hit=q.events.filter(e=>D.some(t=>Math.abs(t-e)<=2)).length;const fa=D.filter(t=>!q.events.some(e=>Math.abs(t-e)<=2)).length;return [hit,fa,D.length]}
+function list(){const d=dets();document.getElementById("list").innerHTML=GROUPS.map(([g,f])=>`<div class="g">${g}</div>`+QS.filter(f).map(q=>{const [h,fa]=caught(q,d);const has=q.p[st.model];
+ return `<div class="q ${st.q==q.id?'on':''}" onclick="st.q='${q.id}';st.t=null;draw()"><div>${q.query.slice(0,85)}</div><div class="hint">${has?`${h}/${q.events.length} events caught · ${fa} false alarms`:"not run for this model"}</div></div>`}).join("")).join("")}
+function near(q,t){return q.events.some(e=>Math.abs(e-t)<=2)}
+const COL=["#2b6cb0","#c05621","#2f855a","#9f7aea","#b7791f","#319795","#b83280","#718096","#e53e3e"];
+const colOf=m=>COL[M.indexOf(m)%COL.length];
+const LM=150;  // left margin shared by both charts so their time axes line up
+function span(q){const all=[...M.filter(m=>st.on.has(m)&&q.p[m]).flatMap(m=>q.p[m].map(p=>p[0])),...q.events];return [Math.min(...all)-2,Math.max(...all)+2]}
+function chart(q){const W=1000,T=8,PH=200,LANE=20,on=M.filter(m=>st.on.has(m)&&q.p[m]);if(!on.length)return `<p class="hint">Tick at least one decider above.</p>`;
+ const [t0,t1]=span(q),H=T+PH+12+on.length*LANE+22;const x=t=>LM+(t-t0)/(t1-t0)*(W-LM-6),y=v=>T+(1-v)*PH;
+ let g=q.events.map(e=>`<rect x="${x(e-2)}" y="${T}" width="${x(e+2)-x(e-2)}" height="${H-T-22}" fill="var(--band)"/><line x1="${x(e)}" x2="${x(e)}" y1="${T}" y2="${H-22}" stroke="var(--ev)" stroke-width="1.5"/>`).join("");
+ for(const v of [0,.25,.5,.75,1])g+=`<line x1="${LM}" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${LM-4}" y="${y(v)+4}" text-anchor="end" font-size="10" fill="var(--mut)">${v}</text>`;
+ g+=`<text x="${LM-30}" y="${T+PH/2}" text-anchor="end" font-size="11" fill="var(--mut)">p(Yes)</text>`;
+ const stp=Math.max(5,Math.round((t1-t0)/10/5)*5);for(let t=Math.ceil(t0/stp)*stp;t<=t1;t+=stp)g+=`<text x="${x(t)}" y="${H-6}" text-anchor="middle" font-size="10" fill="var(--mut)">${t}s</text>`;
+ for(const m of on){const c=colOf(m),tau=RES.detections[m]?.[st.rule]?.[String(st.rate)]?.tau;
+  g+=`<polyline fill="none" stroke="${c}" stroke-width="1.7" points="${q.p[m].map(p=>x(p[0]).toFixed(1)+","+y(p[1]).toFixed(1)).join(" ")}"/>`;
+  if(tau!=null)g+=`<line x1="${LM}" x2="${W}" y1="${y(tau)}" y2="${y(tau)}" stroke="${c}" stroke-width="1.2" stroke-dasharray="2 4"/>`}
+ on.forEach((m,i)=>{const c=colOf(m),yy=T+PH+12+i*LANE,D=RES.detections[m]?.[st.rule]?.[String(st.rate)]?.det?.[q.id]||[];
+  const right=D.filter(t=>near(q,t)).length,caught=q.events.filter(e=>D.some(t=>Math.abs(t-e)<=2)).length;
+  g+=`<text x="${LM-6}" y="${yy+13}" text-anchor="end" font-size="11" fill="${c}">${m} · ${caught}/${q.events.length} caught</text><line x1="${LM}" x2="${W}" y1="${yy+LANE/2}" y2="${yy+LANE/2}" stroke="var(--line)"/>`;
+  for(const t of D){const ok=near(q,t);g+=`<rect x="${x(t)-4}" y="${yy+3}" width="8" height="${LANE-6}" rx="2" fill="${ok?c:'var(--card)'}" stroke="${c}" stroke-width="1.5"><title>${m} responded at ${t}s: ${ok?"within 2 s of a true event (right)":"no true event within 2 s (false alarm)"}</title></rect>`}});
+ if(st.t!=null)g+=`<line x1="${x(st.t)}" x2="${x(st.t)}" y1="${T}" y2="${H-22}" stroke="var(--fg)" stroke-dasharray="3 3"/>`;
+ return `<svg id="ch" viewBox="0 0 ${W} ${H}" data-t0="${t0}" data-t1="${t1}" aria-label="p(Yes) over time with each model's threshold and responses">${g}</svg>`}
+function legend(q){return `<div style="display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;margin:6px 0">${M.filter(m=>q.p[m]).map(m=>{const tau=RES.detections[m]?.[st.rule]?.[String(st.rate)]?.tau;
+ return `<label style="cursor:pointer"><input type="checkbox" ${st.on.has(m)?"checked":""} onchange="st.on.has('${m}')?st.on.delete('${m}'):st.on.add('${m}');detail()"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${colOf(m)};margin:0 4px"></span>${m} <span class="hint">τ ${tau?.toFixed(2)}</span></label>`}).join("")}</div>`}
+function scoreTable(q){const on=M.filter(m=>st.on.has(m)&&q.p[m]);return `<table style="margin-top:6px"><tr><th>Decider</th><th>Threshold τ</th><th>Responses</th><th>Right (within 2 s of an event)</th><th>Events caught</th></tr>${on.map(m=>{const d=RES.detections[m]?.[st.rule]?.[String(st.rate)],D=d?.det?.[q.id]||[];
+ const r=D.filter(t=>near(q,t)).length,c=q.events.filter(e=>D.some(t=>Math.abs(t-e)<=2)).length;return `<tr><td><span style="color:${colOf(m)}">■</span> ${m}</td><td>${d?.tau.toFixed(3)}</td><td>${D.length}</td><td>${r} of ${D.length}</td><td>${c} of ${q.events.length}</td></tr>`}).join("")}</table>`}
+function simchart(q){if(!q.mat)return `<p class="hint">No matcher run for this question.</p>`;
+ const W=1000,H=150,L=LM,B=22,T=8;const [t0,t1]=span(q);
+ const pts=q.mat.t.map((t,i)=>[t,Math.max(...q.mat.s[i])]).filter(p=>p[0]>=t0&&p[0]<=t1);if(!pts.length)return "";
+ const lo=Math.min(...pts.map(p=>p[1])),hi=Math.max(...pts.map(p=>p[1]));const x=t=>L+(t-t0)/(t1-t0)*(W-L-6),y=v=>T+(1-(v-lo)/((hi-lo)||1))*(H-T-B);
+ let g=q.events.map(e=>`<rect x="${x(e-2)}" y="${T}" width="${x(e+2)-x(e-2)}" height="${H-T-B}" fill="var(--band)"/><line x1="${x(e)}" x2="${x(e)}" y1="${T}" y2="${H-B}" stroke="var(--ev)" stroke-width="1.5"/>`).join("");
+ for(let k=0;k<=2;k++){const v=lo+(hi-lo)*k/2;g+=`<line x1="${L}" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${L-4}" y="${y(v)+4}" text-anchor="end" font-size="10" fill="var(--mut)">${v.toFixed(2)}</text>`}
+ g+=`<polyline fill="none" stroke="#c05621" stroke-width="1.5" points="${pts.map(p=>x(p[0]).toFixed(1)+","+y(p[1]).toFixed(1)).join(" ")}"/>`;
+ if(st.t!=null)g+=`<line x1="${x(st.t)}" x2="${x(st.t)}" y1="${T}" y2="${H-B}" stroke="var(--fg)" stroke-dasharray="3 3"/>`;
+ return `<svg id="ch2" viewBox="0 0 ${W} ${H}" data-t0="${t0}" data-t1="${t1}" aria-label="matcher similarity over time">${g}</svg>
+ <p class="hint">Matcher (Ops-MM, edge model's cues): best-cue similarity every 0.5 s, same time axis as above. The y-axis is zoomed to this question's range (${lo.toFixed(3)} to ${hi.toFixed(3)}), so small wiggles look large.</p>`}
+function closest(arr,t){let b=null,bd=1e9;for(const r of arr){const d=Math.abs(r[0]-t);if(d<bd){bd=d;b=r}}return bd<=1.01?b:null}
+function moment(q){if(st.t==null)return `<p class="hint">Click the chart to inspect a moment (← → step 2 s).</p>`;const t=st.t;
+ const fr=(tt,lab,h)=>{const k=Math.round(tt*2);return `<figure style="margin:0;text-align:center"><img src="frames/${q.id}/${String(k).padStart(5,"0")}.jpg" alt="frame at ${tt.toFixed(1)} s" style="height:115px;border-radius:4px;border:2px solid ${h?'var(--line)':(near(q,tt)?'var(--ev)':'var(--sel)')}" onerror="this.parentNode.style.display='none'"><figcaption class="hint">${lab}</figcaption></figure>`};
+ const strip=`<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">${fr(t-9.5,"−9.5 s (history)",1)}${fr(t-5,"−5 s (history)",1)}<div style="width:1px;align-self:stretch;background:var(--line);margin:0 6px"></div>${[1.5,1,.5,0].map(d=>fr(t-d,d?`−${d} s`:"now",0)).join("")}</div>
+ <p class="hint">Right: the 4 frames every decider saw. Left: the extra frames the history runs saw. Red border = within 2 s of an event.</p>`;
+ const rows=M.filter(m=>q.p[m]).map(m=>{const r=closest(q.p[m],t);const tau=RES.detections[m]?.[st.rule]?.[String(st.rate)]?.tau;if(!r)return "";const c=q.chg[m]?.[String(r[0])]||"";
+  return `<tr><td>${m}</td><td><span class="bar" style="width:${Math.round(r[1]*70)}px"></span>${r[1].toFixed(2)} ${tau!=null&&r[1]>=tau?`<b style="color:var(--ok)">≥ τ</b>`:`<span class="hint">&lt; τ ${tau?.toFixed(2)}</span>`}</td><td>${c?`<i>${c}</i>`:""}</td></tr>`}).join("");
+ let mat="";if(q.mat){let i=0,bd=1e9;q.mat.t.forEach((tt,j)=>{if(Math.abs(tt-t)<bd){bd=Math.abs(tt-t);i=j}});mat=q.edge_cues.map((c,k)=>`${q.mat.s[i][k].toFixed(3)} — ${c}`).join("<br>")}
+ return `<h3>At ${t.toFixed(1)} s ${near(q,t)?'<span style="color:var(--ev)">· within 2 s of an event</span>':'· not near an event'}</h3>${strip}
+ <table style="width:100%;margin-top:6px"><tr><th>Decider</th><th>p(Yes) (τ = its own threshold at ${Math.round(st.rate*100)}%)</th><th>What it said changed</th></tr>${rows}</table>
+ <details><summary>Matcher similarity to the edge model's cues at this moment</summary><p>${mat}</p></details>`}
+function detail(){const q=QS.find(q=>q.id==st.q);const D=document.getElementById("det");if(!q){D.innerHTML=`<div class="card"><p class="hint">Pick a question on the left.</p></div>`;return}
+ const [h,fa,n]=caught(q,dets());
+ D.innerHTML=`<div class="card"><h3 style="margin-top:0">${q.query}</h3><div class="hint">${q.id} · ${q.task} · ${q.source} · events at ${q.events.map(e=>e+" s").join(", ")}</div>
+ <p class="hint" style="margin:8px 0 0"><b>How to read this.</b> Each coloured line is one decider's p(Yes) over time. The dotted line in the same colour is that decider's own threshold τ (set so it fires on ${Math.round(st.rate*100)}% of its moments; change this with the table above). The decider <b>responds</b> where its line crosses its dotted line going up${q.task=="CRR"?" (on this clue-reveal question only the first time, then it stops)":""}. Those responses are drawn in the rows under the chart: a <b>filled</b> block = a response within 2 s of a true event (right), a <b>hollow</b> block = no true event within 2 s (false alarm). Red vertical line = true event, pink band = the ±2 s that counts as right. Several responses on the same event all count as right here (repeats are not punished).</p>
+ ${legend(q)}${chart(q)}${scoreTable(q)}
+ ${simchart(q)}
+ ${moment(q)}
+ <details><summary>Cues: edge model's (used by the matcher), and the oracle / scene-level ablations</summary><p><b>Edge model's cues:</b> ${(q.edge_cues||[]).join(" · ")}</p><p class="hint"><b>Oracle (ablation only):</b> ${q.oracle.join(" · ")}<br><b>Scene-level oracle (ablation only):</b> ${q.general.join(" · ")}</p></details></div>`;
+ for(const id of ["ch","ch2"]){const s=document.getElementById(id);if(s)s.onclick=e=>{const r=s.getBoundingClientRect(),vx=(e.clientX-r.left)/r.width*1000,t0=+s.dataset.t0,t1=+s.dataset.t1;st.t=Math.round((t0+(vx-LM)/(1000-LM-6)*(t1-t0))*2)/2;detail()}}}
+document.onkeydown=e=>{if(st.t==null)return;if(e.key=="ArrowRight"){st.t+=2;detail()}if(e.key=="ArrowLeft"){st.t-=2;detail()}};
+st.q=QS[0].id;draw();
+</script></body></html>

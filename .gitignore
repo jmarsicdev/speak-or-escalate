@@ -32,3 +32,6 @@ third_party/ProactiveVideoQA/
 
 # window embeddings are large and recomputable; keep them local
 results/cache/**/*.npy
+
+# viewer frame thumbnails are cut from the benchmark videos; regenerate with viewer/dump_frames.py
+viewer/frames/
