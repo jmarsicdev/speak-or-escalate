@@ -51,6 +51,8 @@ By kind of video (matcher alone, against the closest timer): sports clips 57.0 v
 | Evaluation | 43 questions, clue reveal only 7; settings chosen and scored on the same split; F1 intervals not yet built (AUC intervals are) | Throughout | Intervals on F1; confirm chosen settings on dev, then test once |
 | Compute | 8.6 GB laptop GPU: no model above about 2B, a 6-hour matcher run for all splits | D16, D17 | A cluster or rented GPU for dev, test, a 7B decider and Gemma |
 
+**Update 2026-11-26:** since the update below, on val (all in 9a): no embedder separates event moments well (Ops-MM 0.62, SigLIP2 0.62, the video-native X-CLIP 0.53); window length and scene-level cue wording do not change the matcher; text added to a decider's prompt raises its Yes-rate without improving its ranking (cues, scene graphs, "what changed"); history frames help tutorials and hurt counting; a question-aware change check is an informative filter (moments it flags are about three times as likely to be near an event) and helps tutorials as a separate gate; scored as responses with a per-model threshold, the 2B, 8B (at loose thresholds), 235B and the question-aware variant beat a per-question timer on counting and tutorials, with intervals. Decision D24: the 8B is the main model, and further evidence is combined with its p(Yes) by formula, not placed in its prompt; Stage 0 is done, Stage 1 is running. Clue-reveal questions need story understanding and are reported apart. Other benchmarks (StreamingBench, ESTP-Bench) are being checked.
+
 **Update 2026-11-23 (later):** the model-size question has a first answer (9a, "Larger deciders"): Qwen3-VL-8B ranks moments no better than the 2B (+0.004, interval [-0.037, +0.045]); Qwen3-VL-235B-A22B is better by +0.07 (interval above zero) but still only 0.67. Capacity helps a little and only at cloud scale; the 2 s view without history limits even a large model.
 
 **Update 2026-11-23:** by decision (D22), the GPT ceiling check and the router are deferred until the edge parts are informative. The order is now: the cue-quality ceiling, a scene-graph pilot, then cues aligned to the memory.
@@ -1245,6 +1247,17 @@ SigLIP2 against X-CLIP (conditioned): -0.091 [-0.192, +0.007]. Conditioned again
 | 8B, with 5 frames | 0.521 | -0.097 | [-0.165, -0.029] |
 
 8B with frames against 8B question only: -0.065 [-0.133, -0.000], lower on tutorials (-0.12) and sports counting (-0.13, the title cards). **Reading.** For the matcher, the larger writer does not help (consistent with step A: wording is not the limit), and grounding the writer in the opening frames hurts, partly because the opening frames are not representative. Whether either cue set is better for the 8B's own cue-presence check (signal C) is Stage 1.
+### D24 Stage 1 (running, 2026-11-26)
+
+Started in parallel through the API; results will replace this entry. Each run stores every decision and resumes after an interruption.
+- C, cue presence with the 8B's question-only cues: `scripts/run_cue_presence.py --cues results/cache/cues/qwen3-vl-8b-instruct__text/cues.jsonl` -> `results/cache/decider/qwen3-vl-8b-instruct__cuepresence__qwen3-vl-8b-instruct__text/` (about 6,000 calls).
+- C, cue presence with the frame-grounded cues: the same with `__frames5` (about 6,000 calls).
+- G, graded change gate: `scripts/run_decider_history.py --variant gate_q` -> `results/cache/decider/qwen3-vl-8b-instruct__history_gate_q__*/` (about 2,000 calls).
+- Then `scripts/d24_combine.py` (Stages 1 to 3, CPU), output `results/cache/rescore/d24_val.json`.
+
+### Tools: the viewer (2026-11-24)
+
+`viewer/rescore.html` shows, for each val question, the stored p(Yes) of any chosen deciders with each model's own threshold, the responses each model makes under the crossing rule (filled = within 2 s of an event, hollow = false alarm, repeats not punished), the matcher similarity on the same time axis, and for a clicked moment the frames each decider saw, every model's p(Yes) against its threshold and the "what changed" sentences. The summary table holds the rescoring gaps (`results/cache/rescore/rescore_thresholds_val.json`). Rebuild with `python viewer/build_viewer.py` after new runs; frame thumbnails come from `viewer/dump_frames.py` (gitignored, cut from the benchmark videos).
 ## 10. Glossary
 
 - **Edge model / edge VLM**: the small vision-language model that runs on the device.

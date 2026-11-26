@@ -41,16 +41,23 @@ Commit results with `git add results/cache && git commit ... && git pull --rebas
 - The cooldown (dropping a response within N seconds of the previous one) is worth about ten F1 points on its own; compare with a timer, not with zero.
 - Models above about 2B do not fit this GPU (the 3B spilled into shared memory and ran at 37 s per decision).
 - The cue writer's JSON sometimes lacks its closing brace; `parse_cue_json` handles it. Re-run the cue stage if the cue file predates that fix.
-- `results/cache/**/*.npy` is git-ignored on purpose (the window vectors are large and recomputable); the `.json` files are what get pushed.
+- `results/cache/**/*.npy` is git-ignored on purpose (the window vectors are large and recomputable); the `.json` files are what get pushed. The SigLIP2 per-frame vectors (`*.frames.npz`, 37 MB) were committed; `.npz` is not covered by that rule.
+- `results/*.json` is git-ignored: anything meant to be committed goes under `results/cache/` (a `git add` that names an ignored file fails as a whole).
+- API log-probabilities come from the top 20 tokens; check that Yes and No are both present (no -30 floor values) and that values are not heavily tied before trusting an AUC (both checked for the 8B and 235B).
+- A plain image of the first seconds is not representative: many sports clips open with a title card (the frame-grounded cues described it).
+- With the history prompt, the first 10 s of a video have no 10 s of history; the earliest frame stands in.
 
-## Where we are (2026-11-23) and what is next
-Rows 0 to 4 done on val. Findings in one paragraph: the 2B decider ranks moments weakly (AUC about 0.61) however it is prompted; the cue matcher is modestly better than a timer on distinctive clips; the decider adds nothing on top of the matcher; cues in the decider's prompt do not help.
-Decision D22: fix the base before routing. In order:
-1. **A. Cue-quality ceiling.** `python scripts/recompute_matcher_sims.py --cache results/cache/matcher/<dir> --samples data/processed/ovo_far_val.jsonl --source oracle` (and `--source question`), then `replay_matcher.py` and `analyze_matcher.py` on each output (`<cache>.cues-oracle`, `<cache>.cues-question`).
-   Report the Gate 2 diagnostic and the by-group table next to the baseline cues. Rule: if oracle cues clearly lift the matcher, cue wording is a main limit; if not, the embedder is.
-2. **B. Scene-graph pilot** (not built): the 2B model writes (subject, relation, object) triplets every 5 s without the question in the prompt (`egogate/evidence.py` has the prompt and parser); try a few val questions, read the triplets, time the generation, measure a quality proxy.
-3. **C.** If the graphs are usable: question-as-triplet retrieval, the decider with evidence (row 5), and a memory-aware cue writer that writes short subject-relation-object cues about what should appear next.
-Not now: the GPT ceiling check, the router (Gate 3), Gemma, quantization, more decider prompts, dev/test embedding runs.
+## Larger models through the API (since 2026-11-23)
+- The 8B and 235B Qwen3-VL models run through OpenRouter (`edge.backend=api`, D23). The key is read from the gitignored `.env` (`OPENROUTER_API_KEY=...`); `pip install -e ".[api]"` installs the client. Requests are restricted to providers that return log-probabilities, and rate-limit errors (429) are retried up to 10 times.
+- API runs decode video on the laptop's CPU and send frames; they do not use the GPU, so they can run alongside a GPU job. Every run stores each decision as it goes and resumes with the same command after a crash or a restart of the session.
+- New scripts (all write under `results/cache/`): `run_reference_model.py` (row 1 with any API model), `run_decider_history.py` (history frames; variants frames, change, change_q, gate_q), `write_cues_8b.py`, `run_cue_presence.py`, `run_embed_alt.py` (SigLIP2, now also stores per-frame vectors), `run_embed_xclip.py`; CPU analyses `pilot_window_cues.py`, `pilot_label_radius.py`, `score_cueset_siglip.py`, `rescore_thresholds.py`, `bootstrap_rescore.py`, `build_change_gate.py`, `d24_combine.py`.
+- The viewer: `viewer/rescore.html` (built by `viewer/build_viewer.py`; frame thumbnails from `viewer/dump_frames.py`, gitignored).
+
+## Where we are (2026-11-26) and what is next
+Done on val since D22 (details and numbers in RATIONALE 9a): cue-quality ceiling (step A), scene-graph pilot and row 5, several-window and contrast tests, SigLIP2 and X-CLIP embedders, label radius, 8B and 235B deciders, shorter windows, scene-level cues, decider history and "what changed" (neutral and question-aware), threshold rescoring with intervals, the change sentence as a gate. In one paragraph: every embedder tried barely moves at events (X-CLIP is worst); cue wording is not the limit; the 8B ranks moments no better than the 2B, the 235B a little better; text in a decider's prompt makes it agree more and discriminate less; scored as responses with a per-model threshold, deciders do beat a per-question timer on counting and tutorials (with intervals); history and a question-aware change check help tutorials, not counting.
+Decision D24 (RATIONALE section 8): the 8B is the main model; other evidence is combined with its p(Yes) by formula instead of going into its prompt. Stage 0 is done (8B cues; frame-grounded cues). Stage 1 signals C (cue presence, both cue sets) and G (graded change gate) are running; then `python scripts/d24_combine.py --samples data/processed/ovo_far_val.jsonl` runs Stages 1 to 3 on the CPU.
+Also open: other benchmarks (StreamingBench's proactive output task, ESTP-Bench), to be checked for license, size, released timing labels and whether scoring needs an LLM judge.
+Not now: the router (Gate 3), Gemma, quantization, dev/test runs.
 
 ## Context that is not written anywhere else
 - **People and roles.** The user (branch `abhi`) owns the experiments in this repo. A teammate (jmarsicdev) wrote the first scaffold; quantization and Jetson deployment of the edge model are separate work by other teammates, out of scope here. This is a course project (ITCS 6169/8169).
@@ -61,4 +68,4 @@ Not now: the GPT ceiling check, the router (Gate 3), Gemma, quantization, more d
 - **What the user cares about:** understanding why each choice was made (every decision has a reason and evidence in the rationale), honest reads over optimistic ones, getting to the question "does the approach work" without drowning in ablations, and keeping the GPU laptop usable.
 
 ## To start a fresh session with this context
-Paste: "Read docs/HANDOFF.md, then docs/RATIONALE.md section 0 and section 8. We are on branch abhi. Do step A in docs/HANDOFF.md, then tell me what it shows and what you would do next."
+Paste: "Read docs/HANDOFF.md, then docs/RATIONALE.md section 0, D24 in section 8, and the last sections of 9a. We are on branch abhi. Continue D24 from where 'Where we are' leaves it."
