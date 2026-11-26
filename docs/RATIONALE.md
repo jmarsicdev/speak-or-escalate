@@ -1255,6 +1255,17 @@ Started in parallel through the API; results will replace this entry. Each run s
 - G, graded change gate: `scripts/run_decider_history.py --variant gate_q` -> `results/cache/decider/qwen3-vl-8b-instruct__history_gate_q__*/` (about 2,000 calls).
 - Then `scripts/d24_combine.py` (Stages 1 to 3, CPU), output `results/cache/rescore/d24_val.json`.
 
+### Other benchmarks checked (2026-11-26, from the papers; not yet downloaded)
+
+| Benchmark | What is scored | LLM judge | Ground truth | Size, release |
+|---|---|---|---|---|
+| OVO-Bench forward tasks (ours) | timing only, +/- 2 s, F1 | none | event times | 172 questions; released |
+| StreamingBench, Proactive Output (arXiv 2411.03628, HTML v1 Sec. 4.1, App. A.2) | timing only: correct if the response is within 2 s of the ground-truth time; the model is polled every second over [-4, +4] s around it with "Is it the right time to output ...? yes or no"; it is then asked for keywords, but the paper states no rule for checking them | none stated | one timestamp per question; GPT-4o-generated, human-verified | **50 questions evaluated** (250 created); YouTube videos (card games, sports scoring, scoreboards in the examples); data on Hugging Face (mjuicem/StreamingBench), code MIT |
+| ESTP-Bench (arXiv 2510.14560, NeurIPS 2025) | ESTP-F1 = 2 sum S(g) / (2 sum S(g) + FP + FN), where S combines answer quality, timing and precision | **one component**: answer quality by an LLM (cited reference: DeepSeek-V3); the timing score S_time is from timestamps but its formula is not in the HTML version | **3.96 valid answer intervals per question** on average, annotated and checked by two annotators | 2,264 questions, 890 Ego4D validation videos, 14 task types; **data not yet released** (project page lists "release ESTP-Bench" as a to-do; code at github.com/zhangyl4/EyeWO) |
+| ProactiveVideoQA (arXiv 2507.09313) | PAUC over response time and answer correctness | answer correctness by GPT-4.1 (verified in its scorer, D2) | answer times per question | released; scorer fetched by `scripts/fetch_proactivevideoqa.sh` |
+
+**Reading.** Where an LLM judge appears it scores what the model *says*, not *when* it speaks; the timing part comes from timestamps. Since this project grades timing, any benchmark with released answer times can be scored timing-only with our own metric and no judge. StreamingBench's proactive task is timing-only already but small (50 evaluated questions). ESTP-Bench has the most suitable labels (egocentric, several valid intervals per question, which fits grading without punishing repeat hits) but is not released yet.
+
 ### Tools: the viewer (2026-11-24)
 
 `viewer/rescore.html` shows, for each val question, the stored p(Yes) of any chosen deciders with each model's own threshold, the responses each model makes under the crossing rule (filled = within 2 s of an event, hollow = false alarm, repeats not punished), the matcher similarity on the same time axis, and for a clicked moment the frames each decider saw, every model's p(Yes) against its threshold and the "what changed" sentences. The summary table holds the rescoring gaps (`results/cache/rescore/rescore_thresholds_val.json`). Rebuild with `python viewer/build_viewer.py` after new runs; frame thumbnails come from `viewer/dump_frames.py` (gitignored, cut from the benchmark videos).
