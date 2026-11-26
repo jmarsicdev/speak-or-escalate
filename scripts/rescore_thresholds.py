@@ -46,6 +46,10 @@ MODELS = {
     "8B + what changed": "qwen3-vl-8b-instruct__history_change__d9dc4ad4",
     "8B + what changed (question-aware)": "qwen3-vl-8b-instruct__history_change_q__*",
     "235B": "qwen3-vl-235b-a22b-instruct__query_only__b1bb72f9",
+    "change gate only": "gate_changeq__gate_only",
+    "change gate + 2B": "gate_changeq__2B",
+    "change gate + 8B": "gate_changeq__8B",
+    "change gate + 235B": "gate_changeq__235B",
 }
 RATES = (0.03, 0.05, 0.10, 0.15, 0.20, 0.30)
 TOL = 2.0

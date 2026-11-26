@@ -1,0 +1,6 @@
+{
+ "derived": true,
+ "gate": "qwen3-vl-8b-instruct__history_change_q__a0c6603e",
+ "decider": "qwen3-vl-235b-a22b-instruct__query_only__b1bb72f9",
+ "score": "(gate + p_yes) / 2"
+}

@@ -1167,7 +1167,42 @@ By group the 1-frame loss is largest on clue reveal (-0.13) and present in every
 - **The hit rate says something different:** for the 8B, the share of events where p(Yes) reaches tau at all is at or below chance, while the 2B, 235B and "what changed" are 6 to 10 points above. Responding at upward crossings gains through timing of the rise, not through being above tau near more events. The two views need intervals before either is trusted.
 - **Responding on crossings beats every-tick-with-cooldown** for most models and thresholds (the cooldown table is in the JSON), which supports the user's point that a model should commit when it first becomes confident.
 
-**Caveats.** 36 to 43 questions; six thresholds times two rules per model, chosen and scored on val; no bootstrap intervals yet (the next step before quoting any cell); the per-question timer is a stronger baseline than the totals-matched timer used in earlier sections, so the gaps here are not comparable with those.
+**Caveats.** 36 to 43 questions; six thresholds times two rules per model, chosen and scored on val; intervals follow below; the per-question timer is a stronger baseline than the totals-matched timer used in earlier sections, so the gaps here are not comparable with those.
+
+**Intervals** (`scripts/bootstrap_rescore.py`, output `results/cache/rescore/bootstrap_common_val.json`; the 29 counting and tutorial questions of the shared set, crossing rule, repeats not punished; F1 gap over the per-question timer with the timer averaged over 20 phases per question; 95% interval from 1,000 resamples of whole videos; * = excludes 0):
+
+| Model | 3% | 5% | 10% | 15% | 20% | 30% |
+|---|---|---|---|---|---|---|
+| 2B | +10.1* | +13.6* | +17.0* | +14.0* | +13.2* | +10.6* |
+| 2B + cues | +2.2 | +1.9 | +2.7 | +2.6 | +7.8 | +5.9 |
+| 8B | +3.9 | +2.4 | +6.0 | +5.9 | +19.6* | +15.1* |
+| 8B, 1 frame | +3.0 | +3.1 | +6.7 | +5.6* | +8.2 | +10.4* |
+| 8B, 2 frames | +3.5 | +3.4 | +7.2 | +11.6* | +13.0* | +9.8* |
+| 8B + history | +2.6 | +4.9 | +7.0 | +11.4* | +12.8* | +12.3* |
+| 8B + what changed | +5.8 | +5.8 | +11.4* | +7.5 | +9.6* | +4.8 |
+| 8B + what changed, question-aware | -1.5 | +12.0* | +11.5* | +17.3* | +16.8* | +15.1* |
+| 235B | +2.3 | +8.8* | +14.7* | **+26.5*** [+16.7, +36.6] | +23.8* | +18.2* |
+
+Paired differences of gaps: 235B minus 8B excludes zero only at 15% (+20.6 [+8.4, +33.1]); 2B minus 8B only at 5% (+11.2 [+1.1, +20.6]). With six shares looked at per pair, single cells crossing zero are weak evidence.
+
+**Reading of the intervals.** The claim that deciders scored as responses beat a timer holds with intervals for the 2B (every share), the 235B and the question-aware change variant (5 to 30%), and for most 8B variants at 15 to 30%; it does not hold for the 2B with cues, and the 8B alone needs a loose threshold (20 to 30%). Differences between models are mostly not resolved on 29 questions: the 235B is clearly ahead of the 8B at one share only.
+
+### The question-aware change sentence as a gate in front of a decider (val, CPU only, 2026-11-26)
+
+**Question.** Used as prompt text, the question-aware change sentence only switches the decider on or off. Is it worth more as a separate signal, a gate that ranks "relevant change" moments above the rest while the decider orders moments within each group?
+**Setup** (`scripts/build_change_gate.py`, no model calls). Score = (gate + p(Yes)) / 2 from the stored change_q sentences and each decider's stored p(Yes) at the same tick; "gate only" is the sentence alone. Stored as decider caches (`results/cache/decider/gate_changeq__*`), so the same comparisons and rescoring apply.
+
+| Comparison (within-question AUC) | n | A | B | B - A | 95% interval |
+|---|---|---|---|---|---|
+| 8B prompt-text version (change_q) vs gate + 8B | 43 | 0.581 | 0.632 | **+0.051** | [+0.011, +0.098] |
+| 8B alone vs gate + 8B | 43 | 0.618 | 0.632 | +0.014 | [-0.011, +0.032] |
+| 2B alone vs gate + 2B | 43 | 0.614 | 0.641 | +0.026 | [-0.003, +0.050] |
+| 235B alone vs gate + 235B | 36 | 0.666 | 0.663 | -0.003 | [-0.038, +0.028] |
+| 8B alone vs gate only | 43 | 0.618 | 0.600 | -0.018 | [-0.075, +0.037] |
+
+By group, the gate helps every decider on tutorials (8B +0.048 [+0.025, +0.070]; 2B +0.087 [+0.049, +0.129]; 235B +0.047 [+0.016, +0.091]) and is neutral to harmful on everyday-object counting (235B -0.066 [-0.127, -0.013]). Scored as responses (table above, rescoring JSON), the gated versions are not different from their deciders alone except in single cells of mixed sign (gate + 8B minus 8B: +7.6 [+1.3, +15.7] at 15%, -6.0 at 20%); the gate alone is +10.7 [-0.4, +21.2] at every share (it is binary).
+
+**Reading.** The same sentence is worth more as a separate signal than as prompt text (+0.05 AUC). As a gate it adds little on top of a decider overall, but consistently helps on tutorials, the state-change questions where history also helped, and does not help on counting. A gate that the matcher or the decider consults only for state-change questions is plausible; a gate for everything is not supported. Group intervals unadjusted.
 ## 10. Glossary
 
 - **Edge model / edge VLM**: the small vision-language model that runs on the device.
@@ -1188,6 +1223,7 @@ By group the 1-frame loss is largest on clue reveal (-0.13) and present in every
 - 2026-11-23: Decider history added to 9a: history frames help tutorials and hurt counting; a "what changed" sentence hurts overall.
 - 2026-11-23: Threshold rescoring of stored decider runs added to 9a (model-specific thresholds, crossing and first-time rules, per-question timer).
 - 2026-11-24: Question-aware "what changed" variant added to 9a (decider history section); rescoring and viewer updated with it.
+- 2026-11-26: Bootstrap intervals on the rescoring gaps; the question-aware change sentence as a gate in front of deciders.
 - 2026-11-15: Section 5 rewritten: chance-level table trimmed to the rules that ignore the video, and the rules for calling an improvement real (bootstrap intervals, paired comparison, power) added.
 - 2026-11-23: D22 (fix the base before routing; staged plan) added; cue-source tooling built.
 - 2026-11-22: Section 0 (overall status, bottlenecks, what to test and what not to do) added.

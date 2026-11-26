@@ -1,0 +1,6 @@
+{
+ "derived": true,
+ "gate": "qwen3-vl-8b-instruct__history_change_q__a0c6603e",
+ "decider": null,
+ "score": "0.25 + 0.5 * gate"
+}
