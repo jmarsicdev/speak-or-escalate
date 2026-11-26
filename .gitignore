@@ -13,6 +13,8 @@ results/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 !data/processed/ovo_far_*.jsonl
+!data/processed/sb_po.jsonl
+!data/processed/pvqa_*.jsonl
 !results/.gitkeep
 !results/cache/
 !results/floors/
