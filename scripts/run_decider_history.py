@@ -80,8 +80,9 @@ def main():
     ap.add_argument("--samples", required=True)
     ap.add_argument("--variant", choices=["frames", "change", "change_q", "gate_q"], required=True)
     ap.add_argument("--model", default="qwen/qwen3-vl-8b-instruct")
+    ap.add_argument("--set", action="append", default=[], help="data.video_root=... for other benchmarks")
     a = ap.parse_args()
-    cfg = load_config(None, {})
+    cfg = load_config(None, dict(p.split("=", 1) for p in a.set))
     meta = {"model_id": a.model, "variant": f"history_{a.variant}", "hist_s": HIST_S, "fps": FPS, "max_side": MAX_SIDE, "stride_s": 2.0,
             "prompt_hash": hashlib.sha1((CHANGE_Q + DECIDE + (CHANGE_QA if a.variant == "change_q" else "") + (GATE_Q if a.variant == "gate_q" else "")).encode()).hexdigest()[:10]}
     key = hashlib.sha1(json.dumps(meta, sort_keys=True).encode()).hexdigest()[:8]

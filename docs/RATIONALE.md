@@ -1377,6 +1377,8 @@ ProactiveVideoQA EGO (60; an event is a reply interval, caught by a response ins
 - The 235B catches no more than the 8B at these budgets on its 29 questions: its advantage is in precision and ranking, not in finding more events.
 - **On EGO the 8B's recall saturates at about 60%:** allowing a second false alarm per minute adds almost nothing, and a timer allowed 2 false alarms per minute catches more intervals (72%). With about 5 reply intervals per question covering a third of the clip, the decider stays above its threshold over long stretches, and one upward crossing covers a stretch that spans several intervals. A response rule that re-fires within a long confident stretch (the re-arm rule, which did not help on OVO's point events, or a minimum response rate while confident) is the obvious test for EGO.
 
+**Started 2026-11-26 (settings fixed before results):** the before/after question as the decider, and the graded change gate, on the same 60 ProactiveVideoQA EGO questions (`run_event_signals.py --kind beforeafter` and `run_decider_history.py --variant gate_q`, each with `--set data.video_root=data/raw/proactivevideoqa/EGO/videos`; about 10,800 calls each). Scored exactly as the 8B decider there: `score_intervals.py` (AUC, interval F1 over the per-question timer at 5, 15 and 30%) and recall at <= 1 and <= 2 false alarms per minute.
+
 ### Other benchmarks checked (2026-11-26, from the papers; not yet downloaded)
 
 | Benchmark | What is scored | LLM judge | Ground truth | Size, release |
