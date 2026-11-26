@@ -1347,6 +1347,36 @@ The goal sentences describe visible states but invent details when the question 
 
 **C4, rolling goal** (`scripts/run_rolling_goal.py`, `results/cache/decider/qwen3-vl-8b-instruct__signal_rollinggoal/`, 2,047 calls; the run stopped once on an empty API response, now retried in the backend, and resumed). Counting + tutorials: rise of p(goal) under the same goal (the primary signal) AUC **0.514** against D 0.631 (**-0.117 [-0.196, -0.038]**) and against the fixed goal's rise **-0.085 [-0.171, -0.010]**; p(goal) 0.610 (-0.021); progress 0.552 (**-0.079**); tutorials 0.53 to 0.60, all below D. Rescue at chance; union rules no better than D at the same number of responses (-5.8 to +4.8, none significant). Alone, progress scores +16.7 F1 over the timer at 15% (vs D +7.8 [-3.7, +18.9]), not significant and at odds with its AUC. **What happened:** both risks named in the settings. The goal chases the scene: in the bike-patch tutorial it was rewritten 16 times in 100 s, cycling through near-identical states ("hand presses patch firmly onto puncture site", "... onto inner tube surface", "... onto glued area"), and each rewrite resets the rise; and the "not yet visible" states are so specific that the check says yes on only 6% of ticks. **Reading.** Re-grounding the goal in recent frames makes it concrete, but a goal rewritten from what is on screen describes the next instant of the current action, not the state that answers the question, so it neither accumulates nor anticipates. Not run on EGO.
 
+### Recall at equal false-alarm rates, across all stored runs (CPU, 2026-11-26)
+
+**Why.** Recall is the property that matters most for this project (a router can only escalate events the edge model notices), and recall alone rewards responding more. `scripts/recall_summary.py` (output `results/cache/rescore/recall_summary.json`) sweeps each model's threshold (crossing rule) and reports the highest share of events caught (a response within 2 s; repeats not punished) with at most 1 and at most 2 false alarms per minute (a false alarm = a response with no event within 2 s). A timer is swept the same way. No intervals; the threshold grid is coarse (70 shares) and the 8B's response count is not monotone in its threshold, so single cells can jump by several points.
+
+| Recall at <= 1 / <= 2 false alarms per minute | OVO counting + tutorials (36) | OVO tutorials only (12) |
+|---|---|---|
+| Timer (no model) | 6.2 / 20.1% | 12.2 / 24.4% |
+| 2B decider | 40.3 / 45.1% | 19.5 / 31.7% |
+| 2B + cues in prompt | 27.8 / 36.8% | 9.8 / 24.4% |
+| **8B decider** | **34.7 / 53.5%** | 19.5 / 39.0% |
+| 8B, 1 frame | 47.2 / 47.9% | 9.8 / 26.8% |
+| 8B + history frames | 27.1 / 43.1% | 24.4 / 36.6% |
+| 8B + "what changed" in prompt | 18.8 / 30.6% | 12.2 / 34.1% |
+| 8B + question-aware "what changed" in prompt | 20.8 / 34.0% | 22.0 / 29.3% |
+| G, graded change gate (alone) | 18.1 / 36.8% | 26.8 / 41.5% |
+| C, cue presence (alone) | 26.4 / 31.2% | 17.1 / 34.1% |
+| C1, fixed goal (alone) | 22.9 / 30.6% | 29.3 / 29.3% |
+| **C2, before/after (alone)** | 24.3 / 50.0% | **24.4 / 51.2%** |
+| C3, anticipation (alone) | 35.4 / 53.5% | 22.0 / 46.3% |
+| C4, rolling goal (alone) | 18.8 / 34.0% | 19.5 / 34.1% |
+| 235B decider (29 questions) | 37.7 / 49.1% | |
+
+ProactiveVideoQA EGO (60; an event is a reply interval, caught by a response inside it): timer 49.3 / **71.8%**, 8B decider **58.1 / 59.7%**.
+
+**Reading.**
+- Every model catches far more events than a timer at a strict budget (<= 1 false alarm per minute: about 20 to 47% against 6%), but **no change since the plain deciders raised recall on counting and tutorials together**: the 8B and 2B deciders are at or near the top (35 to 54%), and every prompt addition (cues, "what changed") lowers recall, as it lowered ranking.
+- On **tutorials**, the step questions where recall was weakest, the change-type signals raise it at 2 false alarms per minute: before/after 51% and anticipation 46% against 39% for the 8B decider, the graded change gate 42% (12 questions; indications only).
+- The 235B catches no more than the 8B at these budgets on its 29 questions: its advantage is in precision and ranking, not in finding more events.
+- **On EGO the 8B's recall saturates at about 60%:** allowing a second false alarm per minute adds almost nothing, and a timer allowed 2 false alarms per minute catches more intervals (72%). With about 5 reply intervals per question covering a third of the clip, the decider stays above its threshold over long stretches, and one upward crossing covers a stretch that spans several intervals. A response rule that re-fires within a long confident stretch (the re-arm rule, which did not help on OVO's point events, or a minimum response rate while confident) is the obvious test for EGO.
+
 ### Other benchmarks checked (2026-11-26, from the papers; not yet downloaded)
 
 | Benchmark | What is scored | LLM judge | Ground truth | Size, release |
