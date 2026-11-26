@@ -231,7 +231,34 @@ def features(t, g):
     return np.column_stack([logit(g["D"]), logit(g["C_text"]), logit(g["G"]), zs(g["S"]), g["Dr"]])
 
 
-def learned(samples, sig, video_of):
+def evidence_rule_pct(samples, sig, alpha, ss):
+    """Post hoc version of Stage 2 (ii), on a scale that does not depend on the model's p(Yes) range: respond when D's percentile among
+    all of its moments crosses 0.85 - alpha * E(t) upward (0.85 = its 15% threshold). The pre-registered version subtracts alpha in
+    probability units from the 8B's tau0 = 0.037, which pushes the bar below zero (see the rationale)."""
+    allD = np.sort(np.concatenate([sig[s.id][1]["D"] for s in ss]))
+    det = {}
+    for s in samples:
+        if s.id not in sig:
+            continue
+        t, g = sig[s.id]
+        dp = np.searchsorted(allD, g["D"], side="right") / len(allD)
+        e = leaky(np.mean([pct(g["C_text"]), pct(g["G"]), pct(g["S"])], axis=0), t)
+        det[s.id] = detect(t, dp - (0.85 - alpha * e) + 0.5, 0.5, s.task, "edge")
+    return det
+
+
+def features_d_only(t, g):
+    return logit(g["D"])[:, None]
+
+
+def learned(samples, sig, video_of, feat=None):
+    global features   # noqa: PLW0603
+    if feat is not None:
+        saved, features = features, feat
+        try:
+            return learned(samples, sig, video_of)
+        finally:
+            features = saved
     """Stage 3: leave-one-video-out; weights and the response threshold (share of moments, chosen on the training videos) fit without
     the held-out video. Returns held-out scores per question (for AUC) and held-out detections (for F1)."""
     ss = [s for s in samples if s.id in sig]
@@ -321,6 +348,14 @@ def main():
         res["stage2_evidence"][f"alpha={alpha}"] = {**cf, "f1_minus_D_alone": gap}
         print(f"  alpha={alpha:<4}         caught {100 * cf['events_caught']:5.1f}%  false alarms {cf['false_alarms_per_min']:.2f}/min   F1 minus D alone {gap:+.1f}")
 
+    print("  post hoc, percentile scale (not pre-registered): respond when D's percentile crosses 0.85 - alpha * E(t)")
+    for alpha in (0.1, 0.2, 0.3):
+        det = evidence_rule_pct(samples, sig, alpha, ss)
+        cf = caught_fa(samples, sig, det)
+        gap = perceptual_gap([(s.task, *lenient(det[s.id], [e.t for e in s.events]), *lenient(base_det[s.id], [e.t for e in s.events])) for s in ss if s.task != "CRR"])
+        res["stage2_evidence"][f"posthoc_pct alpha={alpha}"] = {**cf, "f1_minus_D_alone": gap}
+        print(f"  alpha={alpha:<4}         caught {100 * cf['events_caught']:5.1f}%  false alarms {cf['false_alarms_per_min']:.2f}/min   F1 minus D alone {gap:+.1f}")
+
     q = lambda k, r: float(np.quantile(np.concatenate([sig[s.id][1][k] for s in ss]), 1 - r))  # noqa: E731
     thr = {"D_hi": q("D", 0.05), "D_lo": q("D", 0.15), "C_text": q("C_text", 0.15), "G": q("G", 0.15)}
     det2 = two_threshold(samples, sig, thr)
@@ -341,12 +376,23 @@ def main():
             per[s.id] = (auc(held_score[s.id][lab], held_score[s.id][~lab]), auc(sig[s.id][1]["D"][lab], sig[s.id][1]["D"][~lab]))
     ids = [s.id for s in ss if s.task != "CRR" and s.id in per]
     d = paired_diff([per[i][0] for i in ids], [per[i][1] for i in ids], lambda v: float(np.mean(v)), ids, video_of)
-    f1rows = [(s.task, *lenient(held_det[s.id], [e.t for e in s.events]), *lenient(base_det[s.id], [e.t for e in s.events])) for s in ss if s.task != "CRR"]
+    # fair comparison: the same leave-one-video-out procedure (threshold chosen inside each fold) with D as the only feature
+    _, held_det_d, _ = learned(samples, sig, video_of, feat=features_d_only)
+    f1rows = [(s.task, *lenient(held_det[s.id], [e.t for e in s.events]), *lenient(held_det_d[s.id], [e.t for e in s.events])) for s in ss if s.task != "CRR"]
+    vids = sorted({video_of[s.id] for s in ss if s.task != "CRR"})
+    qrow = {s.id: r for s, r in zip([s for s in ss if s.task != "CRR"], f1rows)}
+    groups = [[q for q in qrow if video_of[q] == v] for v in vids]
+    rng = np.random.default_rng(0)
+    bs = []
+    for _ in range(1000):
+        pick = [q for k in rng.integers(0, len(groups), len(groups)) for q in groups[k]]
+        bs.append(perceptual_gap([qrow[q] for q in pick]))
+    f1_ci = list(np.percentile(bs, [2.5, 97.5]))
     res["stage3"] = {"auc_heldout": float(np.mean([per[i][0] for i in ids])), "auc_D": float(np.mean([per[i][1] for i in ids])), "vs_D": d,
-                     "f1_minus_D_at_15pct": perceptual_gap(f1rows), "weights_mean": W.mean(0).tolist(), "weights_sd": W.std(0).tolist(),
+                     "f1_minus_D_same_cv": perceptual_gap(f1rows), "f1_minus_D_same_cv_ci": f1_ci, "weights_mean": W.mean(0).tolist(), "weights_sd": W.std(0).tolist(),
                      "features": ["intercept", "logit D", "logit C_text", "logit G", "z S", "D rise"]}
     print(f"\nSTAGE 3 learned weights, leave-one-video-out ({len(W)} folds): held-out AUC {res['stage3']['auc_heldout']:.3f} vs D {res['stage3']['auc_D']:.3f}"
-          f"  ({d['diff']:+.3f} [{d['lo']:+.3f}, {d['hi']:+.3f}]{'*' if d['excludes_zero'] else ''}); F1 minus D at its 15% threshold {res['stage3']['f1_minus_D_at_15pct']:+.1f}")
+          f"  ({d['diff']:+.3f} [{d['lo']:+.3f}, {d['hi']:+.3f}]{'*' if d['excludes_zero'] else ''}); F1 minus D under the same cross-validation {res['stage3']['f1_minus_D_same_cv']:+.1f} [{f1_ci[0]:+.1f}, {f1_ci[1]:+.1f}]")
     print("  mean weights (standardised features): " + ", ".join(f"{n} {m:+.2f}±{s:.2f}" for n, m, s in zip(res["stage3"]["features"], W.mean(0), W.std(0))))
     out = Path("results/cache/rescore/d24_val.json")
     json.dump(res, open(out, "w"), indent=1, default=float)

@@ -1264,13 +1264,33 @@ SigLIP2 against X-CLIP (conditioned): -0.091 [-0.192, +0.007]. Conditioned again
 | 8B, with 5 frames | 0.521 | -0.097 | [-0.165, -0.029] |
 
 8B with frames against 8B question only: -0.065 [-0.133, -0.000], lower on tutorials (-0.12) and sports counting (-0.13, the title cards). **Reading.** For the matcher, the larger writer does not help (consistent with step A: wording is not the limit), and grounding the writer in the opening frames hurts, partly because the opening frames are not representative. Whether either cue set is better for the 8B's own cue-presence check (signal C) is Stage 1.
-### D24 Stage 1 (running, 2026-11-26)
+### D24 Stages 1 to 3: separate signals and their combinations (val, 2026-11-26)
 
-Started in parallel through the API; results will replace this entry. Each run stores every decision and resumes after an interruption.
-- C, cue presence with the 8B's question-only cues: `scripts/run_cue_presence.py --cues results/cache/cues/qwen3-vl-8b-instruct__text/cues.jsonl` -> `results/cache/decider/qwen3-vl-8b-instruct__cuepresence__qwen3-vl-8b-instruct__text/` (about 6,000 calls).
-- C, cue presence with the frame-grounded cues: the same with `__frames5` (about 6,000 calls).
-- G, graded change gate: `scripts/run_decider_history.py --variant gate_q` -> `results/cache/decider/qwen3-vl-8b-instruct__history_gate_q__*/` (about 2,000 calls).
-- Then `scripts/d24_combine.py` (Stages 1 to 3, CPU), output `results/cache/rescore/d24_val.json`.
+**Runs.** C, cue presence (`scripts/run_cue_presence.py`, one 8B call per cue per tick, about 6,000 calls per cue set): `results/cache/decider/qwen3-vl-8b-instruct__cuepresence__qwen3-vl-8b-instruct__{text,frames5}/`. G, graded change gate (`run_decider_history.py --variant gate_q`, about 2,000 calls): `results/cache/decider/qwen3-vl-8b-instruct__history_gate_q__*/`. Analysis `scripts/d24_combine.py`, output `results/cache/rescore/d24_val.json`. All 43 questions; moments from 5 s; counting and tutorials (36) are the main result.
+
+**Stage 1, each signal alone** (counting + tutorials; within-question AUC with the paired difference from D; rescue = share of the 66 events D misses at its 15% threshold that the signal catches at its own 15% threshold, against chance; correlation with D across moments):
+
+| Signal | AUC | vs D | Rescue / chance | Corr. with D |
+|---|---|---|---|---|
+| D, 8B decider | 0.631 | reference | | |
+| H, decider with history frames | 0.590 | -0.041 [-0.096, +0.009] | 9% / 23% | +0.64 |
+| C, cue presence, question-only cues | 0.624 | -0.007 [-0.059, +0.052] | 14% / 16% | +0.51 |
+| C, cue presence, frame-grounded cues | 0.533 | -0.098 [-0.199, -0.003] | 18% / 21% | +0.27 |
+| G, graded change gate | **0.661** | +0.030 [-0.025, +0.082] | 24% / 29% | +0.64 |
+| S, SigLIP2 similarity (8B cues) | 0.624 | -0.007 [-0.089, +0.080] | 27% / 24% | +0.26 |
+| S rise | 0.598 | -0.033 [-0.108, +0.038] | 33% / 27% | +0.13 |
+| D rise | 0.603 | -0.028 [-0.083, +0.032] | 26% / 32% | +0.57 |
+
+G alone on all 43 questions against D: 0.630 vs 0.618 (+0.011 [-0.034, +0.053]); on tutorials **0.744** vs 0.659 (+0.085 [+0.021, +0.141]), the best single signal on tutorials so far. Clue reveal (7 questions): all signals 0.40 to 0.63, no reliable differences.
+
+**Stage 2, fixed combinations** (counting + tutorials, crossing rule, repeats not punished, F1 gap over the per-question timer; difference from D at the same share, 95% interval; full table in the JSON):
+- *(i) log-odds vote* and *(iii) gate nudge*: AUC 0.638 to 0.670 against 0.631 (gate nudge w = 0.5: +0.039, not significant). Scored as responses, at 15% every variant is +2 to +7 above D with intervals that include zero (best: vote w = 0.25, +7.0 [-0.9, +13.6]); at 30% most are 4 to 8 below D, several significantly. No combination is reliably better than D.
+- *(ii) evidence lowers the bar, as pre-registered*: invalid. The 8B's threshold is p(Yes) >= 0.037, and alpha (0.1 to 0.3) was set in probability units without knowing that scale, so the bar falls below zero, the decider sits above it for long stretches, and the crossing rule responds once per stretch: events caught fall from 34.7% to 10 to 16%. *Post hoc, on a percentile scale* (D's percentile against 0.85 - alpha * E): events caught rise to 44 to 49% with more false alarms (1.6 to 2.2 per minute against 1.4), and at the same number of responses it equals D alone (alpha 0.2: F1 gap over the timer +19.7 [+12.9, +26.5] against +19.7 [+12.8, +26.9] for D at a matched share). The extra events come from responding more, not from the evidence.
+- *(iv) two thresholds* (D at its 5% threshold alone, or at 15% with C or G agreeing): catches 30.6% of events with 0.98 false alarms per minute, against 34.7% and 1.39 for D at 15% (and 14.6%, 0.53 for D at 5% alone); F1 equal to D (-0.1). Fewer false alarms for slightly fewer events, no net gain.
+
+**Stage 3, learned weights** (leave-one-video-out, 39 folds): held-out AUC 0.633 against 0.631 (+0.002 [-0.034, +0.034]); F1 against D under the same cross-validation (threshold chosen inside each fold for both): +4.2 [-0.4, +8.8]. Mean standardised weights: D +0.84, G +0.17, S +0.16, C -0.03, D rise -0.04 (stable across folds). (A first version compared the learned model, with its threshold chosen per fold, against D at a fixed 15% and showed +15.2; that came from the threshold, not the weights, and was replaced by the fair comparison.)
+
+**Reading.** Measured as separate signals, the other evidence does not add reliably to the 8B decider on counting and tutorials. The best extra signal is the graded change gate (best alone on tutorials, the largest learned weight after D); similarity carries a little independent information (low correlation with D, weight +0.16); cue presence adds nothing (weight about 0), and frame-grounded cues are worse than question-only ones. Lowering the bar catches more events only by responding more. Stage 4 (stability) is not warranted by these results. With 36 questions the intervals are wide; the consistent direction (G and S positive, C nothing) is the most that can be read.
 
 ### Other benchmarks checked (2026-11-26, from the papers; not yet downloaded)
 
@@ -1325,6 +1345,7 @@ Other egocentric proactive benchmarks found (recent preprints, release not confi
 - 2026-11-24: Question-aware "what changed" variant added to 9a (decider history section); rescoring and viewer updated with it.
 - 2026-11-26: Bootstrap intervals on the rescoring gaps; the question-aware change sentence as a gate in front of deciders.
 - 2026-11-26: D24 (8B as main model, evidence as separate signals) written before Stage 1; X-CLIP embedder and D24 Stage 0 cue sets added to 9a.
+- 2026-11-26: D24 Stages 1 to 3 results (no combination reliably better than the 8B decider; graded change gate best extra signal); StreamingBench and ProactiveVideoQA WEB results.
 - 2026-11-15: Section 5 rewritten: chance-level table trimmed to the rules that ignore the video, and the rules for calling an improvement real (bootstrap intervals, paired comparison, power) added.
 - 2026-11-23: D22 (fix the base before routing; staged plan) added; cue-source tooling built.
 - 2026-11-22: Section 0 (overall status, bottlenecks, what to test and what not to do) added.

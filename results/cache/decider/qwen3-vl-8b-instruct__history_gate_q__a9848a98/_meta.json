@@ -1,0 +1,9 @@
+{
+ "model_id": "qwen/qwen3-vl-8b-instruct",
+ "variant": "history_gate_q",
+ "hist_s": 10.0,
+ "fps": 2.0,
+ "max_side": 448,
+ "stride_s": 2.0,
+ "prompt_hash": "cf2e308939"
+}
