@@ -1300,6 +1300,26 @@ G alone on all 43 questions against D: 0.630 vs 0.618 (+0.011 [-0.034, +0.053]);
 
 **Reading.** Measured as separate signals, the other evidence does not add reliably to the 8B decider on counting and tutorials. The best extra signal is the graded change gate (best alone on tutorials, the largest learned weight after D); similarity carries a little independent information (low correlation with D, weight +0.16); cue presence adds nothing (weight about 0), and frame-grounded cues are worse than question-only ones. Lowering the bar catches more events only by responding more. Stage 4 (stability) is not warranted by these results. With 36 questions the intervals are wide; the consistent direction (G and S positive, C nothing) is the most that can be read.
 
+### D25 A: routing uncertain moments from the 8B to the 235B, the first Gate 3 test (val, CPU, 2026-11-26)
+
+**Setup** (`scripts/d25_route_cusum.py`, output `results/cache/rescore/d25_val.json`; as fixed in D25). The 29 counting and tutorial questions both models have (1,385 moments). Each model's p(Yes) as its percentile among its own moments; a budget of moments takes the 235B's percentile. Routers: *uncertain* (8B moments nearest its 15% threshold), *gate* (change gate high while the 8B is below its threshold), *random* (20 seeds). Responses at the 15% share of the combined score (crossing rule, repeats not punished); F1 gap over the per-question timer; router minus random with a video-level 95% interval.
+
+| Moments routed to the 235B | Random: AUC, F1 gap | Uncertain: AUC, F1 gap | Uncertain minus random | Gate: F1 gap | Gate minus random |
+|---|---|---|---|---|---|
+| 0% (8B everywhere) | 0.609, +8.9 | | | | |
+| 5% | 0.611, +9.4 | 0.604, +13.7 | +4.4 [-1.8, +11.2] | +6.9 | -2.5 [-8.2, +3.5] |
+| 10% | 0.611, +8.3 | 0.604, +15.9 | +7.6 [-0.6, +16.1] | +7.7 | -0.6 [-5.4, +4.4] |
+| 20% | 0.614, +8.8 | 0.635, +14.8 | +6.0 [-0.3, +14.1] | +8.8 | +0.0 [-6.4, +6.0] |
+| 30% | 0.619, +9.8 | 0.643, +17.1 | **+7.3 [+0.5, +15.0]** | +8.6 | -1.2 [-7.9, +5.6] |
+| 50% | 0.615, +11.8 | 0.646, +21.1 | **+9.3 [+3.0, +15.8]** | +8.6 | -3.2 [-9.6, +2.3] |
+| 100% (235B everywhere) | 0.658, +20.4 | | | | |
+
+**Reading.** Routing by the 8B's own uncertainty beats random routing at the same number of cloud calls, with intervals that exclude zero at 30 and 50% and just include it at 10 and 20%. Sending half the moments matches sending all of them (+21.1 against +20.4), and at 10% the routed system already recovers about 60% of the 235B's gain over the 8B. This is the first result in the project for its central question: the edge model's confidence is informative enough to choose which moments to escalate. Routing moments the change gate flags but the decider does not is no better than random. **Caveats.** 29 questions on val (7 sports questions missing from the 235B run); the budget levels and the 15% share were fixed in advance but scored on the same split; "uncertain" here means near the threshold in percentile, and calibration (temperature scaling) was not applied; the cost counted is cloud calls, not latency or video sent.
+
+### D25 B: CUSUM change-point responses (val, CPU, 2026-11-26)
+
+CUSUM on the mean within-question percentile of D, G and S, or of D alone, with h set to match the 8B's response count at the 5, 15 and 30% shares (36 counting and tutorial questions; gap over the per-question timer minus that of D alone at the same count): D, G, S: +4.4 [-3.9, +12.3], -4.4 [-13.7, +4.7], -5.3 [-13.2, +3.0]; D alone: +1.1 [-6.2, +8.5], **-9.4 [-19.2, -0.1]**, **-12.2 [-20.8, -2.7]**. **Reading.** Accumulating evidence until a change point does not beat responding when the decider crosses its threshold, and on the decider alone it is worse: its brief rises are the signal, and accumulation delays or merges them. Not pursued further.
+
 ### Other benchmarks checked (2026-11-26, from the papers; not yet downloaded)
 
 | Benchmark | What is scored | LLM judge | Ground truth | Size, release |
@@ -1354,6 +1374,7 @@ Other egocentric proactive benchmarks found (recent preprints, release not confi
 - 2026-11-26: Bootstrap intervals on the rescoring gaps; the question-aware change sentence as a gate in front of deciders.
 - 2026-11-26: D24 (8B as main model, evidence as separate signals) written before Stage 1; X-CLIP embedder and D24 Stage 0 cue sets added to 9a.
 - 2026-11-26: D24 Stages 1 to 3 results (no combination reliably better than the 8B decider; graded change gate best extra signal); StreamingBench and ProactiveVideoQA WEB results.
+- 2026-11-26: D25 written before results; A (routing uncertain moments to the 235B beats random routing) and B (CUSUM, no gain) added to 9a.
 - 2026-11-15: Section 5 rewritten: chance-level table trimmed to the rules that ignore the video, and the rules for calling an improvement real (bootstrap intervals, paired comparison, power) added.
 - 2026-11-23: D22 (fix the base before routing; staged plan) added; cue-source tooling built.
 - 2026-11-22: Section 0 (overall status, bottlenecks, what to test and what not to do) added.
