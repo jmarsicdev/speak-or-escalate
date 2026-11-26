@@ -1218,6 +1218,33 @@ Paired differences of gaps: 235B minus 8B excludes zero only at 15% (+20.6 [+8.4
 By group, the gate helps every decider on tutorials (8B +0.048 [+0.025, +0.070]; 2B +0.087 [+0.049, +0.129]; 235B +0.047 [+0.016, +0.091]) and is neutral to harmful on everyday-object counting (235B -0.066 [-0.127, -0.013]). Scored as responses (table above, rescoring JSON), the gated versions are not different from their deciders alone except in single cells of mixed sign (gate + 8B minus 8B: +7.6 [+1.3, +15.7] at 15%, -6.0 at 20%); the gate alone is +10.7 [-0.4, +21.2] at every share (it is binary).
 
 **Reading.** The same sentence is worth more as a separate signal than as prompt text (+0.05 AUC). As a gate it adds little on top of a decider overall, but consistently helps on tutorials, the state-change questions where history also helped, and does not help on counting. A gate that the matcher or the decider consults only for state-change questions is plausible; a gate for everything is not supported. Group intervals unadjusted.
+### A video-native embedder: X-CLIP in place of Ops-MM and SigLIP2 (val, 38 questions, 2026-11-26)
+
+**Question.** Ops-MM and SigLIP2 summarise what is in a clip and barely move when the event happens. Does an embedder trained on video-text pairs, which models the frames of a clip jointly (cross-frame attention and a multi-frame integration transformer), separate event steps better?
+**Setup** (`scripts/run_embed_xclip.py`). `microsoft/xclip-large-patch14` (fp16, 2.3 GB peak on the laptop GPU, 13 minutes for val), 8 frames over the last 2 s (4 fps) on exactly the steps of the Ops-MM cache, with the same edge-model cues and the oracle cues. X-CLIP's own similarity conditions the text embedding on each clip (video-specific prompting), which makes the text vector change from step to step; a second run (`--text plain`) uses the plain projected text embedding (checked to equal the text projection of the pooled output), the same vector for every clip.
+
+| Comparison (within-question AUC, best cue) | X-CLIP | Ops-MM | X-CLIP - Ops-MM | 95% interval |
+|---|---|---|---|---|
+| Edge cues, clip-conditioned text | 0.526 | 0.624 | -0.099 | [-0.186, -0.015] |
+| Edge cues, plain text | 0.528 | 0.624 | -0.096 | [-0.177, -0.018] |
+| Oracle cues, plain text | 0.580 | 0.608 | -0.028 | [-0.115, +0.055] |
+
+SigLIP2 against X-CLIP (conditioned): -0.091 [-0.192, +0.007]. Conditioned against plain: +0.004 [-0.046, +0.053]. Label radius (AUC for steps within R s of an event, R = 2 to 15 s): flat at 0.50 to 0.55 for both X-CLIP runs. By group, X-CLIP is lowest on everyday-object counting (0.38 to 0.43) and tutorials (0.54 to 0.59); the clue-reveal differences (4 questions) change sign between runs.
+
+**Reading.** X-CLIP is worse than both image-text embedders, near chance, and the clip-conditioned text is not the reason (plain text gives the same). A plausible reason, not tested: it was trained on Kinetics-style action labels ("playing tennis"), which name the activity of a whole clip, and the activity is constant through the event, the same failure as the scene summaries of the other embedders. A video model that encodes motion is therefore not by itself a fix; the comparison the matcher needs (this moment against the moments around it) is not what any of these embedders is trained for. Matcher work stays on SigLIP2 (D24, Stage 0c).
+
+### D24 Stage 0: the 8B's cues, from the question alone and with frames (val, 2026-11-26)
+
+**Cues** (`scripts/write_cues_8b.py`, 43 calls each). Question only (`results/cache/cues/qwen3-vl-8b-instruct__text`): concrete action cues ("Athlete's foot lifts off sandy runway, airborne over pit."). With 5 frames from the start (`__frames5`): specific to the scene, but for many sports clips the first 5 s are a title card, and the cues describe it ("Text 'DISCUS THROW' appears on black screen."), despite the instruction to describe what will change.
+**Matcher** (`scripts/score_cueset_siglip.py`, SigLIP2 frame vectors, 2 s windows, within-question AUC, 38 questions):
+
+| Cue set | AUC | vs 2B cues | 95% interval |
+|---|---|---|---|
+| 2B, question only (D18) | 0.618 | reference | |
+| 8B, question only | 0.585 | -0.032 | [-0.093, +0.028] |
+| 8B, with 5 frames | 0.521 | -0.097 | [-0.165, -0.029] |
+
+8B with frames against 8B question only: -0.065 [-0.133, -0.000], lower on tutorials (-0.12) and sports counting (-0.13, the title cards). **Reading.** For the matcher, the larger writer does not help (consistent with step A: wording is not the limit), and grounding the writer in the opening frames hurts, partly because the opening frames are not representative. Whether either cue set is better for the 8B's own cue-presence check (signal C) is Stage 1.
 ## 10. Glossary
 
 - **Edge model / edge VLM**: the small vision-language model that runs on the device.
@@ -1239,6 +1266,7 @@ By group, the gate helps every decider on tutorials (8B +0.048 [+0.025, +0.070];
 - 2026-11-23: Threshold rescoring of stored decider runs added to 9a (model-specific thresholds, crossing and first-time rules, per-question timer).
 - 2026-11-24: Question-aware "what changed" variant added to 9a (decider history section); rescoring and viewer updated with it.
 - 2026-11-26: Bootstrap intervals on the rescoring gaps; the question-aware change sentence as a gate in front of deciders.
+- 2026-11-26: D24 (8B as main model, evidence as separate signals) written before Stage 1; X-CLIP embedder and D24 Stage 0 cue sets added to 9a.
 - 2026-11-15: Section 5 rewritten: chance-level table trimmed to the rules that ignore the video, and the rules for calling an improvement real (bootstrap intervals, paired comparison, power) added.
 - 2026-11-23: D22 (fix the base before routing; staged plan) added; cue-source tooling built.
 - 2026-11-22: Section 0 (overall status, bottlenecks, what to test and what not to do) added.
