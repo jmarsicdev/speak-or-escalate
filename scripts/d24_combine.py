@@ -186,6 +186,19 @@ def evidence_rule(samples, sig, alpha, tau0):
     return det
 
 
+def two_threshold(samples, sig, thr):
+    """Stage 2 (iv): respond when D reaches its high threshold (its 5% share) alone, or its low threshold (15% share) while another signal
+    agrees (C_text or G at its own 15% threshold). Upward crossings of that combined condition; first time for clue reveal."""
+    det = {}
+    for s in samples:
+        if s.id not in sig:
+            continue
+        t, g = sig[s.id]
+        ok = (g["D"] >= thr["D_hi"]) | ((g["D"] >= thr["D_lo"]) & ((g["C_text"] >= thr["C_text"]) | (g["G"] >= thr["G"])))
+        det[s.id] = detect(t, ok.astype(float), 0.5, s.task, "edge")
+    return det
+
+
 def caught_fa(samples, sig, det):
     ev = fa = dur = c = 0
     for s in samples:
@@ -307,6 +320,17 @@ def main():
         gap = perceptual_gap([(s.task, *lenient(det[s.id], [e.t for e in s.events]), *lenient(base_det[s.id], [e.t for e in s.events])) for s in ss if s.task != "CRR"])
         res["stage2_evidence"][f"alpha={alpha}"] = {**cf, "f1_minus_D_alone": gap}
         print(f"  alpha={alpha:<4}         caught {100 * cf['events_caught']:5.1f}%  false alarms {cf['false_alarms_per_min']:.2f}/min   F1 minus D alone {gap:+.1f}")
+
+    q = lambda k, r: float(np.quantile(np.concatenate([sig[s.id][1][k] for s in ss]), 1 - r))  # noqa: E731
+    thr = {"D_hi": q("D", 0.05), "D_lo": q("D", 0.15), "C_text": q("C_text", 0.15), "G": q("G", 0.15)}
+    det2 = two_threshold(samples, sig, thr)
+    cf = caught_fa(samples, sig, det2)
+    gap = perceptual_gap([(s.task, *lenient(det2[s.id], [e.t for e in s.events]), *lenient(base_det[s.id], [e.t for e in s.events])) for s in ss if s.task != "CRR"])
+    hi_det = {s.id: detect(sig[s.id][0], sig[s.id][1]["D"], thr["D_hi"], s.task, "edge") for s in ss}
+    res["stage2_two_threshold"] = {**thr, **cf, "f1_minus_D_alone_15pct": gap, "D_hi_alone": caught_fa(samples, sig, hi_det)}
+    print(f"\nSTAGE 2 (iv) two thresholds: D >= {thr['D_hi']:.3f} alone, or D >= {thr['D_lo']:.3f} with C or G agreeing")
+    print(f"  caught {100 * cf['events_caught']:5.1f}%  false alarms {cf['false_alarms_per_min']:.2f}/min   F1 minus D alone (15%) {gap:+.1f}"
+          f"   (D at its high threshold alone: caught {100 * res['stage2_two_threshold']['D_hi_alone']['events_caught']:.1f}%, {res['stage2_two_threshold']['D_hi_alone']['false_alarms_per_min']:.2f}/min)")
 
     held_score, held_det, W = learned(samples, sig, video_of)
     per = {}

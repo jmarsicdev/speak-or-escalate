@@ -43,7 +43,7 @@ function cell(m,r){const x=row(m,r);let g,txt;
  else{g=x.hit-x.hit_base;txt=`${x.hit.toFixed(0)}<span class="hint">/${x.hit_base.toFixed(0)}</span>`}
  return `<td class="c ${st.model==m&&st.rate==r?'on':''}" style="background:${color(g)}" onclick="st.model='${m}';st.rate=${r};draw()" title="τ=${x.tau.toFixed(3)}, ${x.responses} responses">${txt}</td>`}
 function draw(){
- document.getElementById("ctl").innerHTML=seg("set",[["all","All questions each model has"],["common","36 questions all models share"]])+seg("rule",[["edge","Respond on upward crossing"],["cooldown","Every tick above τ + 4 s cooldown"]])+
+ document.getElementById("ctl").innerHTML=seg("set",[["all","All questions each model has"],["common","36 questions all models share"]])+seg("rule",[["edge","Respond on upward crossing"],["rearm","Crossing + re-arm after a dip"],["cooldown","Every tick above τ + 4 s cooldown"]])+
   seg("view",[["len","Counting + tutorials, repeats not punished: F1 − timer"],["perc","Counting + tutorials, benchmark F1 − timer"],["crr","Clue reveal (first time): F1 − random"],["hit","Event hit rate % / chance %"]]);
  document.getElementById("sum").innerHTML=`<tr><th>Model (questions)</th>${RATES.map(r=>`<th style="text-align:center">fires on ${Math.round(r*100)}%</th>`).join("")}</tr>`+
   M.map(m=>`<tr><td>${m} <span class="hint">(${RES.sets[st.set][m].n_questions})</span></td>${RATES.map(r=>cell(m,r)).join("")}</tr>`).join("");

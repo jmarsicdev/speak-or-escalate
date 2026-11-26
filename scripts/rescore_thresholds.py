@@ -52,6 +52,7 @@ MODELS = {
     "change gate + 235B": "gate_changeq__235B",
 }
 RATES = (0.03, 0.05, 0.10, 0.15, 0.20, 0.30)
+REARM = 1.0   # log-odds dip and recovery that re-arms a response inside one stretch above tau (D24)
 TOL = 2.0
 
 
@@ -79,6 +80,30 @@ def detect(t, p, tau, task, rule):
     if rule == "edge":
         prev = np.concatenate([[False], above[:-1]])
         return [float(x) for x in t[above & ~prev]]
+    if rule == "rearm":
+        # D24: respond on the upward crossing, and again inside the same stretch above tau when the log-odds have dipped and risen back
+        # by at least REARM (1.0) since the last response: a repeated event (another rep) inside one long clump above the threshold
+        pc = np.clip(p, 1e-6, 1 - 1e-6)
+        lo = np.log(pc / (1 - pc))
+        out, peak, low, armed = [], 0.0, 0.0, False
+        for i in range(len(p)):
+            if not above[i]:
+                continue
+            if i == 0 or not above[i - 1]:          # upward crossing: respond, start tracking this stretch
+                out.append(float(t[i]))
+                peak = low = lo[i]
+                armed = False
+                continue
+            if not armed and lo[i] > peak:          # still climbing after the last response
+                peak = low = lo[i]
+            low = min(low, lo[i])
+            if peak - low >= REARM:                 # dipped far enough below the peak
+                armed = True
+            if armed and lo[i] - low >= REARM:      # and came back up: a new event inside the same stretch
+                out.append(float(t[i]))
+                peak = low = lo[i]
+                armed = False
+        return out
     return apply_cooldown([float(x) for x in t[above]], 4.0)
 
 
@@ -131,8 +156,13 @@ def timer_per_question(samples, data, dets, seeds=20):
             lr, lp = lenient(det, [e.t for e in s.events])
             rows.append({"task": s.task, "recall": q.recall, "precision": q.precision, "lrec": lr, "lpre": lp})
         agg.append((aggregate(rows), aggregate([{"task": r["task"], "recall": r["lrec"], "precision": r["lpre"]} for r in rows])))
+    TIMER_RP.clear()   # per-task recall and precision of the timer (lenient), averaged over the phases, for the diagnosis
+    TIMER_RP.update({task: {k: float(np.mean([a[1]["tasks"][task][k] for a in agg])) for k in ("recall", "precision")} for task in agg[0][1]["tasks"]})
     return ({task: float(np.mean([a[0]["tasks"][task]["f1"] for a in agg])) for task in agg[0][0]["tasks"]},
             {task: float(np.mean([a[1]["tasks"][task]["f1"] for a in agg])) for task in agg[0][1]["tasks"]})
+
+
+TIMER_RP: dict = {}
 
 
 def crr_random(samples, data):
@@ -185,7 +215,7 @@ def main():
             for r in RATES:
                 tau = float(np.quantile(allp, 1 - r))
                 hr, hr0 = hit_rate(ss, dd, tau)
-                for rule in ("edge", "cooldown"):
+                for rule in ("edge", "cooldown", "rearm"):
                     rows, lrows, dets, n_multi = [], [], {}, 0
                     for s in ss:
                         t, p = dd[s.id]
@@ -212,6 +242,8 @@ def main():
                            "perceptual_base_total": float(np.mean([base_total[x] for x in perc])),
                            "hit": hr * 100, "hit_base": hr0 * 100,
                            "f1_len": fl, "base_len": basel,
+                           "rp_len": {task: {"recall": v["recall"] * 100, "precision": v["precision"] * 100} for task, v in lagg["tasks"].items()},
+                           "rp_len_timer": {task: {k: v * 100 for k, v in d.items()} for task, d in TIMER_RP.items()},
                            "perceptual_len": float(np.mean([fl[x] for x in perc])), "perceptual_len_base": float(np.mean([basel[x] for x in perc]))}
                     res[name]["rows"].append(row)
                     if set_name == "all":
