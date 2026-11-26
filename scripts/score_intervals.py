@@ -106,6 +106,9 @@ def main():
     video_of = {s.id: str(s.video) for s in samples}
     sbpo = samples[0].task == "SBPO"
     res = {"samples": a.samples, "models": {}}
+    if sbpo:   # every answer comes 4 to 24 s after the question: a no-video rule "answer d seconds after the question" is a telling floor
+        res["fixed_delay"] = {d: 100 * float(np.mean([abs(s.start_s + d - s.events[0].t) <= TOL for s in samples])) for d in (4, 6, 8, 10, 12)}
+        print("  no-video floor, answer d s after the question: " + ", ".join(f"{d} s {v:.1f}%" for d, v in res["fixed_delay"].items()))
     print(f"{a.samples}: {len(samples)} questions; " + ("accuracy (first response within 2 s) minus one random response" if sbpo else
           "interval F1 (repeats not punished) minus a per-question timer") + ", 95% interval over videos")
     for d in a.caches:

@@ -64,18 +64,29 @@ def extract(repo_zip: str, members: dict[str, Path]):
 
 
 def ingest_sb():
-    rows = list(csv.DictReader(open(RAW / "streamingbench/StreamingBench/Proactive_Output_50.csv", encoding="utf-8")))
+    """The question-to-video mapping comes from the benchmark's own src/data/questions_proactive_50.json (each entry: a video_path
+    ./videos/sample_N_proactive.mp4 and its questions; 50 videos, 51 questions). The CSV's question numbers are NOT video numbers: read
+    as sample_N, 6 of 50 questions fall after the end of their video. Times are taken from the JSON, which the official evaluation uses."""
+    subsets = json.load(open(RAW / "streamingbench/questions_proactive_50.json", encoding="utf-8"))
     vdir = RAW / "streamingbench/videos"
-    for zp, lo, hi in (("Proactive Output_1-25.zip", 1, 25), ("Proactive Output_26-50.zip", 26, 50)):
-        extract(f"datasets/mjuicem/StreamingBench/{zp}", {f"sample_{k}/video.mp4": vdir / f"sample_{k}.mp4" for k in range(lo, hi + 1)})
+    from huggingface_hub import HfFileSystem  # noqa: PLC0415
+
+    for zp in ("Proactive Output_1-25.zip", "Proactive Output_26-50.zip"):
+        path = f"datasets/mjuicem/StreamingBench/{zp}"
+        with HfFileSystem().open(path, "rb", block_size=1 << 20) as f:   # most samples hold video.mp4, a few another name: take the one .mp4
+            names = [i.filename for i in zipfile.ZipFile(f).infolist() if i.filename.endswith(".mp4") and not i.filename.startswith("__MACOSX")]
+        extract(path, {n: vdir / f"{n.split('/')[0]}.mp4" for n in names})
     out = []
-    for r in rows:
-        k = int(r["question_id"].rsplit("_", 1)[1])
-        v = vdir / f"sample_{k}.mp4"
-        start, gt, dur = hms(r["time_stamp"]), hms(r["ground_truth_time_stamp"]), duration(v)
-        out.append({"id": f"sbpo_{k}", "video": f"sample_{k}.mp4", "query": r["question"], "task": "SBPO",
-                    "events": [{"t": gt, "answer": r["ground_truth_output"]}], "start_s": start, "end_s": min(start + 60.0, dur),
-                    "meta": {"source": "streamingbench", "duration": dur, "temporal_clue_type": r["temporal_clue_type"]}})
+    for sub in subsets:
+        sample = Path(sub["video_path"]).stem.replace("_proactive", "")   # sample_N
+        v = vdir / f"{sample}.mp4"
+        dur = duration(v)
+        for j, q in enumerate(sub["questions"]):
+            start, gt = hms(q["time_stamp"]), hms(q["ground_truth_time_stamp"])
+            out.append({"id": f"sbpo_{sample.split('_')[1]}" + (f"_{j}" if j else ""), "video": f"{sample}.mp4", "query": q["question"],
+                        "task": "SBPO", "events": [{"t": gt, "answer": q["ground_truth_output"]}], "start_s": start, "end_s": min(start + 60.0, dur),
+                        "meta": {"source": "streamingbench", "duration": dur, "category": sub.get("video_categories"),
+                                 "required_ability": q.get("required_ability")}})
     return out, vdir
 
 
