@@ -1328,6 +1328,23 @@ G alone on all 43 questions against D: 0.630 vs 0.618 (+0.011 [-0.034, +0.053]);
 
 CUSUM on the mean within-question percentile of D, G and S, or of D alone, with h set to match the 8B's response count at the 5, 15 and 30% shares (36 counting and tutorial questions; gap over the per-question timer minus that of D alone at the same count): D, G, S: +4.4 [-3.9, +12.3], -4.4 [-13.7, +4.7], -5.3 [-13.2, +3.0]; D alone: +1.1 [-6.2, +8.5], **-9.4 [-19.2, -0.1]**, **-12.2 [-20.8, -2.7]**. **Reading.** Accumulating evidence until a change point does not beat responding when the decider crosses its threshold, and on the decider alone it is worse: its brief rises are the signal, and accumulation delays or merges them. Not pursued further.
 
+### D25 C: signals aimed at finding more events, C1 to C3 (val, 2026-11-26; C4 running)
+
+**Runs** (`scripts/run_event_signals.py`, 8B through the API, about 2,000 calls each): C1 fixed goal `results/cache/decider/qwen3-vl-8b-instruct__signal_goal/` (goal sentences in `results/cache/cues/qwen3-vl-8b-instruct__goal/`), C2 before/after `..._signal_beforeafter/`, C3 anticipation `..._signal_anticipate/`. Analysis `scripts/d25_event_signals.py`, output `results/cache/rescore/d25_event_signals_val.json`. 43 questions, moments from 5 s; counting + tutorials (36) unless stated.
+
+| Signal | AUC (D 0.631) | Tutorials (D 0.655) | Clue reveal (D 0.474) | Rescue / chance | Alone: F1 gap over the timer at 15% (D +8.9) | vs D at 15% |
+|---|---|---|---|---|---|---|
+| C1 fixed goal, p(goal) | 0.643 (+0.012 [-0.061, +0.090]) | 0.605 (-0.050) | 0.442 | 17% / 20% | +14.1 | +5.2 [-4.2, +13.5] |
+| C1, rise over 4 s | 0.600 (-0.031) | 0.563 (**-0.092**) | 0.575 | 18% / 22% | +8.1 | -0.8 |
+| **C2 before/after** | **0.677** (+0.046 [-0.022, +0.114]) | **0.746 (+0.091)** | 0.348 | 18% / 25% | **+19.2** | **+10.3 [+2.1, +18.0]** |
+| C3 anticipation | 0.641 (+0.010 [-0.034, +0.056]) | 0.683 (**+0.027**) | 0.478 | 27% / 27% | +17.2 | +8.3 [-0.3, +16.0] |
+
+Bold differences have intervals that exclude zero (tutorial differences: 12 questions, unadjusted). **Union rule** (respond when D crosses its threshold at a share s/2 or the signal at s/2), against D alone at the same number of responses, s = 10, 20, 30%: C1 +3.1, -4.6, -6.0; C1 rise +0.4, **-13.1**, -1.0; C2 +3.1, **-12.0**, -1.7; C3 +0.3, **-9.1**, +1.4. Events caught by the union rules (21 to 49%) never exceed D's at the same response count, and the false-alarm rates are similar. (On this data D's own response count is not monotone in its threshold, because long stretches above it merge into one crossing, so "D at the same number of responses" sometimes sits at an unusual share.)
+
+The goal sentences describe visible states but invent details when the question is generic ("a hand holds up a phone, screen facing the camera" for every "showing something to the camera").
+
+**Reading.** None of the three finds the events the decider misses: rescue rates are at chance and no union rule catches more events at equal cost. But **the before/after comparison is a better decider than the decider**: asked to compare a clip from about 5 s ago with the last 2 s ("did something happen in between that answers the question?"), the 8B scores +10.3 F1 [+2.1, +18.0] above its own "is now the moment?" at the same share, and 0.746 against 0.655 on tutorials. Anticipation points the same way, more weakly. With the graded change gate (G, 0.744 on tutorials), the two best signals in the project both ask about a **change relative to the question** rather than about the current frames, which matches the literature's view that comparison is easier than absolute judgement for small models. A fixed goal state written from text does not help, and its rise is worse. The natural next step is to use the before/after question as the decider (not as an extra signal) and test it on ProactiveVideoQA EGO.
+
 ### Other benchmarks checked (2026-11-26, from the papers; not yet downloaded)
 
 | Benchmark | What is scored | LLM judge | Ground truth | Size, release |

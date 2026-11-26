@@ -1,0 +1,6 @@
+{
+ "model_id": "qwen/qwen3-vl-8b-instruct",
+ "kind": "anticipate",
+ "prompt": "You are shown the 4 most recent frames of a video stream, covering the last 2 seconds.\nThe user asked earlier: \"{query}\"\nIs the moment that answers the user's question happening now or about to happen in the next few seconds?\nAnswer with a single word: Yes or No.",
+ "goal_write": null
+}

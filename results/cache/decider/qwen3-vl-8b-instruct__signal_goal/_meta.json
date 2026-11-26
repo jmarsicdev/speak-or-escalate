@@ -1,0 +1,6 @@
+{
+ "model_id": "qwen/qwen3-vl-8b-instruct",
+ "kind": "goal",
+ "prompt": "You are shown the 4 most recent frames of a video, covering the last 2 seconds.\nIs the following visible in these frames: \"{goal}\"?\nAnswer with a single word: Yes or No.",
+ "goal_write": "A user watching a video asked: \"{query}\"\nIn one short sentence (under 20 words), describe what the camera would SEE at the moment the answer becomes available: the visible state of the people and objects, not an intention. If the question asks to count a repeated action, describe one repetition being completed. Reply with the sentence only."
+}

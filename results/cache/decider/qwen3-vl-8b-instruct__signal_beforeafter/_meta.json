@@ -1,0 +1,6 @@
+{
+ "model_id": "qwen/qwen3-vl-8b-instruct",
+ "kind": "beforeafter",
+ "prompt": "You are shown two short clips from a video stream, in time order: the first 4 frames are from about 5 seconds ago, the last 4 frames cover the last 2 seconds.\nThe user asked earlier: \"{query}\"\nDid something happen between the first clip and the second clip that answers the user's question?\nAnswer with a single word: Yes or No.",
+ "goal_write": null
+}
