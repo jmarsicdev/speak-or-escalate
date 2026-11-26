@@ -245,11 +245,22 @@ class APIEdgeVLM(EdgeVLM):
         return self.client.chat.completions.create(model=self.model, messages=[{"role": "user", "content": self._content(prompt, images)}],
                                                    temperature=0, **self.extra, **kw)
 
+    def _call_ok(self, prompt, images, tries=5, **kw):
+        """Retry when a provider returns a response without choices (seen once in a 2,000-call run), with a short growing wait."""
+        import time  # noqa: PLC0415
+
+        for k in range(tries):
+            r = self._call(prompt, images, **kw)
+            if getattr(r, "choices", None):
+                return r
+            time.sleep(2 * (k + 1))
+        raise RuntimeError(f"{self.model}: {tries} empty responses in a row")
+
     def _generate(self, prompt, images, max_new_tokens):
-        return (self._call(prompt, images, max_tokens=max_new_tokens).choices[0].message.content or "").strip()
+        return (self._call_ok(prompt, images, max_tokens=max_new_tokens).choices[0].message.content or "").strip()
 
     def _yes_no_logprobs(self, prompt, images):
-        r = self._call(prompt, images, max_tokens=1, logprobs=True, top_logprobs=self.top)
+        r = self._call_ok(prompt, images, max_tokens=1, logprobs=True, top_logprobs=self.top)
         lp = getattr(r.choices[0], "logprobs", None)
         content = getattr(lp, "content", None) if lp else None
         if not content:
