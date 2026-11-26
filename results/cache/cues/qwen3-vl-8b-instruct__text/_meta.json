@@ -1,0 +1,6 @@
+{
+ "model_id": "qwen/qwen3-vl-8b-instruct",
+ "variant": "text",
+ "n_cues": 3,
+ "prompt": "You are helping a small vision model watch a first-person video stream.\nThe user asked: \"{query}\"\n\nWrite {n} short visual cues (each under 15 words) describing what the CAMERA WOULD SEE\nat the exact moment the user should be notified. Rules:\n- concrete, visible things only (objects, hand actions, text on screen), not intentions\n- each cue should appear only when the response is due, not before\n- cover different viewpoints or sub-steps of the same event\n\nReturn JSON: {{\"cues\": [\"...\", \"...\"]}}"
+}

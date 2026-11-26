@@ -4,6 +4,8 @@ Row 1 shows the decider only the last 2 s (4 frames). Events such as "a step has
 what came before, so here the decider also sees two earlier frames, from about 10 s and 5 s before the decision (causal: nothing after t).
 
   --variant frames   one call: the 2 earlier frames + the last 4, the row 1 question, plus "compare now with the earlier frames"
+  --variant gate_q   one call: the same 6 frames, "did something change ... that matters for the user's question? Yes or No", read as a
+                     probability (D24 signal G); no decider call
   --variant change_q as change, but the "what changed" question includes the user's question and allows "Nothing relevant changed"
   --variant change   two calls: (1) the same 6 frames, "in one sentence, what changed between the earlier frames and now?" (generated,
                      neutral: the user's question is not shown, so the description is not steered toward "yes"); (2) the row 1 question
@@ -41,6 +43,9 @@ CHANGE_Q = HEAD + ("In one sentence, what changed between the earlier frames and
 CHANGE_QA = HEAD + ('The user asked earlier: "{query}"\n'
                     "In one sentence, what changed between the earlier frames and the last two seconds that matters for the user's question? "
                     "If nothing relevant to the question changed, answer: Nothing relevant changed.")
+GATE_Q = HEAD + ('The user asked earlier: "{query}"\n'
+                 "Did something change between the earlier frames and the last two seconds that matters for the user's question?\n"
+                 "Answer with a single word: Yes or No.")
 DECIDE = (HEAD + 'The user asked earlier: "{query}"\n{extra}'
           "Respond only at the moment the answer becomes available: when what the user asked about has just happened or has just become visible. "
           "Compare now with the earlier frames. Is RIGHT NOW such a moment?\nAnswer with a single word: Yes or No.")
@@ -73,12 +78,12 @@ def pick(frames):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--samples", required=True)
-    ap.add_argument("--variant", choices=["frames", "change", "change_q"], required=True)
+    ap.add_argument("--variant", choices=["frames", "change", "change_q", "gate_q"], required=True)
     ap.add_argument("--model", default="qwen/qwen3-vl-8b-instruct")
     a = ap.parse_args()
     cfg = load_config(None, {})
     meta = {"model_id": a.model, "variant": f"history_{a.variant}", "hist_s": HIST_S, "fps": FPS, "max_side": MAX_SIDE, "stride_s": 2.0,
-            "prompt_hash": hashlib.sha1((CHANGE_Q + DECIDE + (CHANGE_QA if a.variant == "change_q" else "")).encode()).hexdigest()[:10]}
+            "prompt_hash": hashlib.sha1((CHANGE_Q + DECIDE + (CHANGE_QA if a.variant == "change_q" else "") + (GATE_Q if a.variant == "gate_q" else "")).encode()).hexdigest()[:10]}
     key = hashlib.sha1(json.dumps(meta, sort_keys=True).encode()).hexdigest()[:8]
     out = Path("results/cache/decider") / f"{a.model.split('/')[-1]}__history_{a.variant}__{key}"
     out.mkdir(parents=True, exist_ok=True)
@@ -108,7 +113,10 @@ def main():
                     cq = CHANGE_QA.format(h1=h1, h2=h2, query=s.query) if a.variant == "change_q" else CHANGE_Q.format(h1=h1, h2=h2)
                     change = (edge.complete(cq, imgs, max_new_tokens=48).strip().splitlines() or [""])[0][:300]
                     extra = f"What changed recently, described from these frames: {change}\n"
-                lp_yes, lp_no = edge._yes_no_logprobs(DECIDE.format(h1=h1, h2=h2, query=s.query, extra=extra), imgs)
+                if a.variant == "gate_q":   # D24 signal G: the question-aware change check as a probability, no decider call
+                    lp_yes, lp_no = edge._yes_no_logprobs(GATE_Q.format(h1=h1, h2=h2, query=s.query), imgs)
+                else:
+                    lp_yes, lp_no = edge._yes_no_logprobs(DECIDE.format(h1=h1, h2=h2, query=s.query, extra=extra), imgs)
                 row = {"t": round(t, 6), "lp_yes": lp_yes, "lp_no": lp_no, "ms": round((time.perf_counter() - ts) * 1000, 1), "n_frames": len(imgs)}
                 if change is not None:
                     row["change"] = change
