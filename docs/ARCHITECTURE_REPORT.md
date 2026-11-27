@@ -70,6 +70,8 @@ Removed or demoted, with the evidence in section 4: the embedding matcher and cu
 
 On egocentric activity questions the three questions rank moments about equally; on OVO tutorials the change questions are clearly better.
 
+**Update after the OVO test split (D26, 2026-11-27).** On the 56 test questions, never used before, the decider beats the per-question timer (+16.5 [+9.3, +23.9] and +13.8 [+6.3, +21.4] at the 15 and 30% shares; confirmed). Before/after does **not** beat the decider overall on test (-6.1 [-13.8, +1.1] at 15%; the val result +10.3 did not replicate), but its tutorial advantage does hold (+0.075 [+0.006, +0.145] AUC). The change gate's tutorial advantage points the same way on test (+0.048) but its interval includes zero. So the supported claim is narrower than the val table above: comparing before and after helps on state-change (tutorial) questions, not in general.
+
 ### 3.3 On EGO, recall was limited by the response rule, not by the model
 
 **What is provided to the model.** Every 2 s of video (a "tick"), the model gets the question and frames ending at that tick: the last 4 frames (2 s) for the decider; for the change gate, two earlier frames (about 10 s and 5 s back) plus the last 4; for before/after, 4 frames from about 6.5 to 5 s back plus the last 4. It returns one number, p(Yes), from its log-probabilities for "Yes" and "No".
