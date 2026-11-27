@@ -53,7 +53,16 @@ def main():
             for w in stream_windows(root / s.video, decision_times(s, 2.0), 2.0, 2.0, 448):
                 if round(w.t_end, 6) in done:
                     continue
-                r = edge._call_ok(PROMPT.format(query=s.query), list(w.frames), max_tokens=80)
+                try:
+                    r = edge._call_ok(PROMPT.format(query=s.query), list(w.frames), max_tokens=80)
+                except Exception as x:   # noqa: BLE001
+                    # the provider's safety filter refuses some requests ("Gemini blocked the request"); record them as blocked (counted as No)
+                    # and go on. Anything else (spending limit, network) stops the run, which resumes from the last stored tick.
+                    if "blocked the request" not in str(x):
+                        raise
+                    f.write(json.dumps({"t": round(w.t_end, 6), "yes": False, "text": "BLOCKED", "blocked": True, "in_tokens": 0, "out_tokens": 0}) + "\n")
+                    f.flush()
+                    continue
                 text = (r.choices[0].message.content or "").strip()
                 u = r.usage
                 tin += u.prompt_tokens
