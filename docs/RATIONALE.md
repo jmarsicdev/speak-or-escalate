@@ -1430,6 +1430,23 @@ ProactiveVideoQA EGO (60; an event is a reply interval, caught by a response ins
 
 **Calibration (leave-one-video-out; per-moment label = inside a target window; ECE with 10 bins).** Raw p(Yes) is far off: EGO 8B mean p 0.035 against a base rate of 36% (ECE 0.326); OVO 2B mean p 0.648 against 16% (ECE 0.485); change gate ECE 0.244 (EGO) and 0.559 (OVO). Temperature scaling alone helps the 8B (ECE 0.086 EGO, 0.023 OVO) but not the 2B or the change gate (0.16 to 0.29), because their base rate is wrong, not only their spread. Platt scaling (a * logit + b) brings every run to ECE **0.011 to 0.036**, with reliability close to the diagonal where there are enough moments (EGO 8B: predicted 0.55 / observed 0.55, 0.65 / 0.63, 0.74 / 0.71). **Reading.** The models' probabilities are not meaningful as given, but a two-parameter calibration fitted on other videos makes them so; routing by confidence (D25 A) should use calibrated scores.
 
+### D26 confirmation, part 1: the OVO test split (56 questions, used once, 2026-11-27)
+
+`scripts/d26_ovo_test.py`, output `results/cache/rescore/d26_ovo_test.json`. The three runs (8B decider D, change gate G, before/after BA) were interrupted once by the API key's spending limit and resumed from their stored decisions; all 56 questions complete. Scored exactly as fixed in D26 (counting + tutorials, 38 questions; tutorials 13; crossing rule; repeats not punished; 2,000 video resamples).
+
+| | OVO test | OVO val (for comparison) |
+|---|---|---|
+| D, F1 gap over the per-question timer at 5 / 15 / 30% | +6.8 [+1.0, +12.6] / **+16.5 [+9.3, +23.9]** / **+13.8 [+6.3, +21.4]** | +2.1 / +9.1 / +18.6 |
+| BA minus D, F1 gap at 5 / 15 / 30% | +4.4 [-3.9, +11.4] / **-6.1 [-13.8, +1.1]** / -4.8 [-12.9, +3.3] | +6.9 / **+10.0 [+1.9, +17.9]** / +4.2 |
+| G minus D, F1 gap at 5 / 15 / 30% | +5.4 / -6.8 / +5.5 (all intervals include 0) | +6.8 / +2.0 / -6.4 |
+| Within-question AUC, counting + tutorials: D / BA / G | 0.678 / 0.641 / 0.672 | 0.646 / 0.673 / 0.663 |
+| Tutorials AUC: BA minus D | **+0.075 [+0.006, +0.145]** | +0.090 [+0.047, +0.134] |
+| Tutorials AUC: G minus D | +0.048 [-0.020, +0.112] | +0.085 [+0.021, +0.141] |
+
+**Verdicts (claims fixed in D26 before the runs).** **T1 confirmed:** the 8B decider beats a per-question timer with the same number of responses (+16.5 and +13.8 at the 15 and 30% shares, intervals above zero). **T2 failed:** before/after does not beat the decider at the 15% share on test (-6.1, interval [-13.8, +1.1]); the +10.0 on val did not replicate. **T3 confirmed for before/after** (tutorials +0.075, interval above zero) **and not for the change gate** (+0.048, interval includes zero; same direction as on val).
+
+**Reading.** The edge decider's advantage over a timer on exact-moment questions holds on unseen questions, and is larger on test than on val. The claim that the before/after question is a better decider overall was a val result that does not hold; what holds is narrower: comparing before and after helps on tutorial steps (state changes). The change gate's tutorial advantage points the same way but is not established. The EGO part of D26 is still running.
+
 ### Other benchmarks checked (2026-11-26, from the papers; not yet downloaded)
 
 | Benchmark | What is scored | LLM judge | Ground truth | Size, release |
