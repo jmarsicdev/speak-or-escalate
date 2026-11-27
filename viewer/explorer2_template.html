@@ -1,0 +1,105 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Experiment explorer 2</title>
+<style>
+:root{--bg:#fbfbfa;--fg:#1d1d1b;--mut:#6b6b66;--line:#e3e2de;--card:#fff;--ev:#d6453d;--band:rgba(214,69,61,.11);--sel:#2b6cb0;--ok:#2f855a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17181a;--fg:#e8e8e6;--mut:#9a9a96;--line:#2e3033;--card:#1f2023;--band:rgba(214,69,61,.2);--sel:#63a4ff;--ok:#48bb78}}
+:root[data-theme="dark"]{--bg:#17181a;--fg:#e8e8e6;--mut:#9a9a96;--line:#2e3033;--card:#1f2023;--band:rgba(214,69,61,.2);--sel:#63a4ff;--ok:#48bb78}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.45 system-ui,sans-serif}
+.wrap{max-width:1320px;margin:0 auto;padding:16px 20px 40px} h1{font-size:19px;margin:0 0 4px} h3{font-size:14px;margin:14px 0 6px}
+.hint{color:var(--mut);font-size:12px} .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-top:12px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;margin:0 10px 6px 0;vertical-align:middle}
+.seg button{border:0;background:var(--card);color:var(--fg);padding:4px 10px;cursor:pointer;font-size:12px;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0} .seg button.on{background:var(--sel);color:#fff} .lab{font-size:12px;color:var(--mut);margin-right:4px}
+table{border-collapse:collapse;font-size:13px;width:100%} td,th{padding:4px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top} th{font-weight:600;color:var(--mut);font-size:12px}
+td.n{text-align:right;font-variant-numeric:tabular-nums} tr.grp td{background:var(--bg);font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.03em}
+.layout{display:flex;gap:14px;margin-top:12px} #list{width:300px;flex:none;max-height:1000px;overflow:auto;border:1px solid var(--line);border-radius:8px;background:var(--card)}
+#list .g{padding:6px 10px;font-size:11px;font-weight:600;color:var(--mut);text-transform:uppercase;background:var(--bg);border-bottom:1px solid var(--line)}
+#list .q{padding:7px 10px;border-bottom:1px solid var(--line);cursor:pointer;font-size:13px} #list .q.on{box-shadow:inset 3px 0 var(--sel)}
+#det{flex:1;min-width:0} svg{width:100%;display:block;cursor:crosshair} details summary{cursor:pointer;color:var(--mut);font-size:12px;margin-top:8px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px} .bar{height:8px;border-radius:4px;display:inline-block;vertical-align:middle;margin-right:6px}
+@media (max-width:860px){.layout{flex-direction:column}#list{width:auto;max-height:40vh}}
+</style></head><body><div class="wrap">
+<h1>Experiment explorer 2</h1>
+<p class="hint">Every stored run, on OVO-Bench val and ProactiveVideoQA EGO. Nothing is re-run: each model's p(Yes) per 2 s tick is embedded, and the threshold, response rule and scores are computed here. <b>Threshold</b>: each model fires on the chosen share of its own moments (models say Yes at very different base rates). <b>Rules</b>: <i>crossing</i> = respond when p(Yes) rises above the threshold; <i>re-arm</i> = also respond again after the log-odds fall 1.0 below the stretch's peak and recover 1.0; <i>every 6 s / 10 s</i> = after the crossing, respond again every 6 or 10 s while still above. One-answer questions (clue reveal) always answer once, the first time. <b>Scoring</b>: OVO, an event is caught by a response within 2 s; EGO, a reply interval is caught by a response inside it; a false alarm is a response that catches nothing. Repeats on one event are not punished. The timer makes the same number of responses per question, evenly spaced. No confidence intervals here; see docs/RATIONALE.md and docs/ARCHITECTURE_REPORT.md.</p>
+<div class="card"><div id="ctl"></div><table id="sum"></table></div>
+<div class="layout"><div id="list"></div><div id="det"></div></div>
+</div>
+<script>
+const DATA=/*DATA*/;
+const COL=["#2b6cb0","#c05621","#2f855a","#9f7aea","#b7791f","#319795","#b83280","#718096","#e53e3e","#4c51bf","#38a169","#d69e2e","#805ad5","#dd6b20","#3182ce","#00a3c4","#97266d","#2c7a7b"];
+const GROUPS={decider:"Deciders, question only",prompt:"Decider with evidence in its prompt",change:"Change questions (asked instead of 'is now the moment?')",signal:"Separate signals",combo:"Combinations"};
+const SHARES=[0.05,0.10,0.15,0.20,0.30],RULES=[["edge","Crossing"],["rearm","Re-arm"],["every6","Every 6 s while above"],["every10","Every 10 s while above"]];
+let st={ds:0,share:0.15,rule:"edge",qset:"ct",on:new Set(["8B decider","Before/after","Change gate (graded)"]),q:null,t:null};
+const D=()=>DATA[st.ds], Q=()=>D().questions, M=()=>D().models.map(m=>m.label);
+const colOf=l=>COL[M().indexOf(l)%COL.length];
+const oneShot=q=>q.task=="CRR"||q.task=="SBPO";
+const ego=()=>Q()[0]&&Q()[0].intervals!=null;
+function inQset(q){if(ego())return true;return st.qset=="all"||(st.qset=="ct"&&q.task!="CRR")||(st.qset=="tut"&&q.task=="SSR")||(st.qset=="crr"&&q.task=="CRR")||(st.qset=="cnt"&&q.task=="REC")}
+const tauCache={};
+function tau(l){const k=st.ds+"|"+l+"|"+st.share;if(k in tauCache)return tauCache[k];const v=[];for(const q of Q())for(const r of q.p[l]||[])v.push(r[1]);if(!v.length)return null;v.sort((a,b)=>a-b);const x=v[Math.min(v.length-1,Math.floor((1-st.share)*v.length))];return tauCache[k]=x}
+const lo=p=>{p=Math.min(Math.max(p,1e-6),1-1e-6);return Math.log(p/(1-p))};
+function respond(q,l){const s=q.p[l];const T=tau(l);if(!s||T==null)return[];const out=[];let peak=0,low=0,armed=false,last=-1e9;
+ for(let i=0;i<s.length;i++){const[t,p]=s[i];const ab=p>=T,pab=i>0&&s[i-1][1]>=T;
+  if(oneShot(q)){if(ab){out.push(t);break}continue}
+  if(!ab)continue;
+  if(!pab){out.push(t);last=t;peak=low=lo(p);armed=false;continue}
+  if(st.rule=="rearm"){const L=lo(p);if(!armed&&L>peak)peak=low=L;low=Math.min(low,L);if(peak-low>=1)armed=true;if(armed&&L-low>=1){out.push(t);peak=low=L;armed=false}}
+  else if(st.rule=="every6"||st.rule=="every10"){const k=st.rule=="every6"?6:10;if(t-last>=k-1e-6){out.push(t);last=t}}}
+ return out}
+function hits(q,r){return q.intervals?q.intervals.some(([a,b])=>a<=r&&r<=b):q.events.some(e=>Math.abs(e-r)<=2)}
+function caughtEv(q,R){return q.intervals?q.intervals.filter(([a,b])=>R.some(r=>a<=r&&r<=b)).length:q.events.filter(e=>R.some(r=>Math.abs(e-r)<=2)).length}
+const nEv=q=>q.intervals?q.intervals.length:q.events.length;
+function timerResp(q,l,n){const s=q.p[l];if(!n||!s)return[];const out=[],step=s.length/n;for(let j=0;j<n;j++)out.push(s[Math.min(s.length-1,Math.floor((j+.5)*step))][0]);return out}
+function summary(l){let ev=0,c=0,ct=0,n=0,fa=0,mins=0,nq=0;for(const q of Q()){if(!inQset(q)||!q.p[l])continue;nq++;const R=respond(q,l);ev+=nEv(q);c+=caughtEv(q,R);n+=R.length;fa+=R.filter(r=>!hits(q,r)).length;
+ const s=q.p[l];mins+=(s[s.length-1][0]-s[0][0])/60;ct+=caughtEv(q,timerResp(q,l,R.length))}
+ return nq?{nq,n,rec:100*c/ev,trec:100*ct/ev,fa:fa/mins,prec:n?100*(n-fa)/n:0}:null}
+const seg=(k,opts,num)=>`<span class="seg">${opts.map(([v,l])=>`<button class="${st[k]==v?'on':''}" onclick="st.${k}=${num?v:`'${v}'`};${k=='ds'?'st.q=null;st.t=null;':''}draw()">${l}</button>`).join("")}</span>`;
+function draw(){
+ const qsets=ego()?"":`<span class="lab">Questions</span>${seg("qset",[["ct","Counting + tutorials"],["tut","Tutorials"],["cnt","Counting"],["crr","Clue reveal"],["all","All"]])}`;
+ document.getElementById("ctl").innerHTML=`<span class="lab">Dataset</span>${seg("ds",DATA.map((d,i)=>[i,d.name]),true)}<span class="lab">Threshold share</span>${seg("share",SHARES.map(s=>[s,Math.round(s*100)+"%"]),true)}<br><span class="lab">Response rule</span>${seg("rule",RULES)}${qsets}`;
+ let html=`<tr><th></th><th>Run</th><th>Threshold</th><th class="n">Questions</th><th class="n">Responses</th><th class="n">Events caught</th><th class="n">Timer, same responses</th><th class="n">Caught minus timer</th><th class="n">Precision</th><th class="n">False alarms / min</th></tr>`;
+ let lastG=null;
+ for(const m of D().models){const s=summary(m.label);if(!s)continue;if(m.group!=lastG){html+=`<tr class="grp"><td colspan="10">${GROUPS[m.group]}</td></tr>`;lastG=m.group}
+  const d=s.rec-s.trec;html+=`<tr><td><input type="checkbox" ${st.on.has(m.label)?"checked":""} onchange="tog('${m.label}')"></td><td><span class="sw" style="background:${colOf(m.label)}"></span>${m.label}</td><td>${tau(m.label).toFixed(3)}</td><td class="n">${s.nq}</td><td class="n">${s.n}</td><td class="n"><b>${s.rec.toFixed(1)}%</b></td><td class="n">${s.trec.toFixed(1)}%</td><td class="n" style="color:${d>=0?'var(--ok)':'var(--ev)'}">${d>=0?"+":""}${d.toFixed(1)}</td><td class="n">${s.prec.toFixed(1)}%</td><td class="n">${s.fa.toFixed(2)}</td></tr>`}
+ document.getElementById("sum").innerHTML=html;list();detail()}
+function tog(l){st.on.has(l)?st.on.delete(l):st.on.add(l);draw()}
+function list(){const groups=ego()?[["Egocentric questions",q=>true]]:[["Counting · sports clips",q=>q.task=="REC"&&q.source=="thumos"],["Counting · everyday objects",q=>q.task=="REC"&&q.source!="thumos"],["Tutorial steps",q=>q.task=="SSR"],["Clue reveal (needs plot understanding)",q=>q.task=="CRR"]];
+ if(!st.q||!Q().some(q=>q.id==st.q))st.q=Q()[0].id;
+ document.getElementById("list").innerHTML=groups.map(([g,f])=>`<div class="g">${g}</div>`+Q().filter(f).map(q=>{const on=[...st.on].filter(l=>q.p[l]);const c=on.map(l=>`<span style="color:${colOf(l)}">${caughtEv(q,respond(q,l))}</span>`).join(" · ");
+  return `<div class="q ${st.q==q.id?'on':''}" onclick="st.q='${q.id}';st.t=null;draw()"><div>${q.query.slice(0,85)}</div><div class="hint">${nEv(q)} ${q.intervals?"reply intervals":"events"} · caught: ${c||"–"}</div></div>`}).join("")).join("")}
+const LM=170;
+function span(q){const on=[...st.on].filter(l=>q.p[l]);const ts=on.flatMap(l=>q.p[l].map(p=>p[0]));const ev=q.intervals?q.intervals.flat():q.events;const all=ts.concat(ev);return[Math.min(...all)-2,Math.max(...all)+2]}
+function bands(q,x,T,Hb){if(q.intervals)return q.intervals.map(([a,b])=>`<rect x="${x(a)}" y="${T}" width="${Math.max(1,x(b)-x(a))}" height="${Hb}" fill="var(--band)"/><line x1="${x(a)}" x2="${x(a)}" y1="${T}" y2="${T+Hb}" stroke="var(--ev)" stroke-width="1"/>`).join("");
+ return q.events.map(e=>`<rect x="${x(e-2)}" y="${T}" width="${x(e+2)-x(e-2)}" height="${Hb}" fill="var(--band)"/><line x1="${x(e)}" x2="${x(e)}" y1="${T}" y2="${T+Hb}" stroke="var(--ev)" stroke-width="1.5"/>`).join("")}
+function chart(q){const on=[...st.on].filter(l=>q.p[l]);if(!on.length)return `<p class="hint">Tick at least one run in the table.</p>`;
+ const W=1000,T=8,PH=190,LANE=19,[t0,t1]=span(q),H=T+PH+12+on.length*LANE+22,x=t=>LM+(t-t0)/(t1-t0)*(W-LM-6),y=v=>T+(1-v)*PH;
+ let g=bands(q,x,T,H-T-22);
+ for(const v of [0,.25,.5,.75,1])g+=`<line x1="${LM}" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${LM-4}" y="${y(v)+4}" text-anchor="end" font-size="10" fill="var(--mut)">${v}</text>`;
+ const stp=Math.max(5,Math.round((t1-t0)/10/5)*5);for(let t=Math.ceil(t0/stp)*stp;t<=t1;t+=stp)g+=`<text x="${x(t)}" y="${H-6}" text-anchor="middle" font-size="10" fill="var(--mut)">${t}s</text>`;
+ for(const l of on){const c=colOf(l),T_=tau(l);g+=`<polyline fill="none" stroke="${c}" stroke-width="1.6" points="${q.p[l].map(p=>x(p[0]).toFixed(1)+","+y(p[1]).toFixed(1)).join(" ")}"/><line x1="${LM}" x2="${W}" y1="${y(T_)}" y2="${y(T_)}" stroke="${c}" stroke-dasharray="2 4"/>`}
+ on.forEach((l,i)=>{const c=colOf(l),yy=T+PH+12+i*LANE,R=respond(q,l);g+=`<text x="${LM-6}" y="${yy+13}" text-anchor="end" font-size="11" fill="${c}">${l.length>24?l.slice(0,23)+"…":l} · ${caughtEv(q,R)}/${nEv(q)}</text><line x1="${LM}" x2="${W}" y1="${yy+LANE/2}" y2="${yy+LANE/2}" stroke="var(--line)"/>`;
+  for(const r of R){const ok=hits(q,r);g+=`<rect x="${x(r)-4}" y="${yy+3}" width="8" height="${LANE-6}" rx="2" fill="${ok?c:'var(--card)'}" stroke="${c}" stroke-width="1.5"><title>${l} at ${r}s: ${ok?"catches an event":"false alarm"}</title></rect>`}});
+ if(st.t!=null)g+=`<line x1="${x(st.t)}" x2="${x(st.t)}" y1="${T}" y2="${H-22}" stroke="var(--fg)" stroke-dasharray="3 3"/>`;
+ return `<svg id="ch" viewBox="0 0 ${W} ${H}" data-t0="${t0}" data-t1="${t1}" aria-label="p(Yes) per run with thresholds and responses">${g}</svg>`}
+function simchart(q){if(!q.sim)return "";const W=1000,H=120,T=8,B=22,[t0,t1]=span(q);const pts=q.sim.filter(p=>p[0]>=t0&&p[0]<=t1);if(!pts.length)return "";
+ const lo_=Math.min(...pts.map(p=>p[1])),hi=Math.max(...pts.map(p=>p[1])),x=t=>LM+(t-t0)/(t1-t0)*(W-LM-6),y=v=>T+(1-(v-lo_)/((hi-lo_)||1))*(H-T-B);
+ let g=bands(q,x,T,H-T-B)+`<polyline fill="none" stroke="#c05621" stroke-width="1.4" points="${pts.map(p=>x(p[0]).toFixed(1)+","+y(p[1]).toFixed(1)).join(" ")}"/><text x="${LM-6}" y="${T+12}" text-anchor="end" font-size="11" fill="var(--mut)">matcher similarity</text><text x="${LM-6}" y="${T+26}" text-anchor="end" font-size="10" fill="var(--mut)">${lo_.toFixed(3)}–${hi.toFixed(3)}</text>`;
+ if(st.t!=null)g+=`<line x1="${x(st.t)}" x2="${x(st.t)}" y1="${T}" y2="${H-B}" stroke="var(--fg)" stroke-dasharray="3 3"/>`;
+ return `<details><summary>Matcher similarity (SigLIP2, the 8B's cues), same time axis — not part of the current architecture</summary><svg id="ch2" viewBox="0 0 ${W} ${H}" data-t0="${t0}" data-t1="${t1}">${g}</svg></details>`}
+function closest(arr,t){let b=null,bd=1e9;for(const r of arr){const d=Math.abs(r[0]-t);if(d<bd){bd=d;b=r}}return bd<=1.01?b:null}
+function moment(q){if(st.t==null)return `<p class="hint">Click the chart to see a moment (← → step 2 s).</p>`;const t=st.t,near=hits(q,t);
+ const fr=(tt,lab,h)=>{const k=Math.round(tt*2);return `<figure style="margin:0;text-align:center"><img src="${D().frames}/${q.id}/${String(k).padStart(5,"0")}.jpg" alt="frame at ${tt.toFixed(1)} s" style="height:110px;border-radius:4px;border:2px solid ${h?'var(--line)':(hits(q,tt)?'var(--ev)':'var(--sel)')}" onerror="this.parentNode.style.display='none'"><figcaption class="hint">${lab}</figcaption></figure>`};
+ const strip=`<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">${fr(t-9.5,"−9.5 s",1)}${fr(t-6.5,"−6.5 s",1)}${fr(t-5,"−5 s",1)}<div style="width:1px;align-self:stretch;background:var(--line);margin:0 6px"></div>${[1.5,1,.5,0].map(d=>fr(t-d,d?`−${d} s`:"now",0)).join("")}</div>
+ <p class="hint">Right: the last 2 s that every run sees. Left: earlier frames used by the history, change-gate (−9.5, −5 s) and before/after (−6.5 to −5 s) runs. Red border = inside an event window.</p>`;
+ const rows=M().filter(l=>q.p[l]).map(l=>{const r=closest(q.p[l],t);if(!r)return "";const T_=tau(l),tx=(q.txt[l]||{})[String(r[0])]||"";return `<tr><td><span class="sw" style="background:${colOf(l)}"></span>${l}</td><td><span class="bar" style="width:${Math.round(r[1]*70)}px;background:${colOf(l)}"></span>${r[1].toFixed(3)} ${r[1]>=T_?`<b style="color:var(--ok)">≥ threshold</b>`:`<span class="hint">&lt; ${T_.toFixed(3)}</span>`}</td><td>${tx?`<i>${tx}</i>`:""}</td></tr>`}).join("");
+ return `<h3>At ${t.toFixed(1)} s ${near?'<span style="color:var(--ev)">· inside an event window</span>':'· not in an event window'}</h3>${strip}<table style="margin-top:6px"><tr><th>Run</th><th>p(Yes)</th><th>Text the run produced</th></tr>${rows}</table>`}
+function detail(){const q=Q().find(q=>q.id==st.q);const E=document.getElementById("det");if(!q){E.innerHTML="";return}
+ const cues=q.cues?`<p><b>8B's cues:</b> ${q.cues.join(" · ")}</p>`:"";const goal=q.goal?`<p><b>Fixed goal (8B, from the question):</b> ${q.goal}</p>`:"";const orc=q.oracle?`<p class="hint"><b>Oracle annotation (ablation only):</b> ${q.oracle.join(" · ")}</p>`:"";
+ E.innerHTML=`<div class="card"><h3 style="margin-top:0">${q.query}</h3><div class="hint">${q.id} · ${q.task} · ${q.source} · ${q.intervals?q.intervals.length+" reply intervals":"events at "+q.events.map(e=>e+" s").join(", ")}</div>
+ <p class="hint" style="margin:8px 0 0">Solid line = a run's p(Yes); dotted line in the same colour = its threshold. Rows below the chart: that run's responses under the chosen rule (filled = catches an event, hollow = false alarm), with events caught out of the total. Pink = event windows (OVO ±2 s around each event; EGO the reply intervals).</p>
+ ${chart(q)}${simchart(q)}${moment(q)}<details><summary>Cues and goals</summary>${cues}${goal}${orc}</details></div>`;
+ for(const id of ["ch","ch2"]){const s=document.getElementById(id);if(s)s.onclick=e=>{const r=s.getBoundingClientRect(),vx=(e.clientX-r.left)/r.width*1000,t0=+s.dataset.t0,t1=+s.dataset.t1;st.t=Math.round((t0+(vx-LM)/(1000-LM-6)*(t1-t0))*2)/2;detail()}}}
+document.onkeydown=e=>{if(st.t==null)return;if(e.key=="ArrowRight"){st.t+=2;detail()}if(e.key=="ArrowLeft"){st.t-=2;detail()}};
+draw();
+</script></body></html>

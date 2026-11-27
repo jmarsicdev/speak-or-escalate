@@ -37,3 +37,4 @@ results/cache/**/*.npy
 
 # viewer frame thumbnails are cut from the benchmark videos; regenerate with viewer/dump_frames.py
 viewer/frames/
+viewer/frames_ego/

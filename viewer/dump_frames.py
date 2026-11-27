@@ -1,6 +1,7 @@
-"""Usage: python viewer/dump_frames.py viewer/frames
+"""Usage: python viewer/dump_frames.py viewer/frames [samples.jsonl] [video_root]
+       python viewer/dump_frames.py viewer/frames_ego data/processed/pvqa_ego_n60.jsonl data/raw/proactivevideoqa/EGO/videos
 
-Save a 0.5 s grid of small JPEG frames per val question (from 10 s before its start to its end) for the explorer page."""
+Defaults: OVO val (data/processed/ovo_far_val.jsonl, data/raw/ovo/src_videos). Save a 0.5 s grid of small JPEG frames per val question (from 10 s before its start to its end) for the explorer page."""
 import sys
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
@@ -46,8 +47,9 @@ def one(args):
 
 if __name__ == "__main__":
     from egogate.eval.datasets import load_jsonl
-    root = Path("data/raw/ovo/src_videos")
-    jobs = [(s.id, str(root / s.video), s.start_s or 0, s.end_s) for s in load_jsonl("data/processed/ovo_far_val.jsonl")]
+    samples = sys.argv[2] if len(sys.argv) > 2 else "data/processed/ovo_far_val.jsonl"
+    root = Path(sys.argv[3] if len(sys.argv) > 3 else "data/raw/ovo/src_videos")
+    jobs = [(s.id, str(root / s.video), s.start_s or 0, s.end_s) for s in load_jsonl(samples)]
     with ProcessPoolExecutor(4) as ex:
         for sid, n in ex.map(one, jobs):
             print(sid, n, flush=True)
