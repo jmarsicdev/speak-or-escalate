@@ -1379,6 +1379,24 @@ ProactiveVideoQA EGO (60; an event is a reply interval, caught by a response ins
 
 **Started 2026-11-26 (settings fixed before results):** the before/after question as the decider, and the graded change gate, on the same 60 ProactiveVideoQA EGO questions (`run_event_signals.py --kind beforeafter` and `run_decider_history.py --variant gate_q`, each with `--set data.video_root=data/raw/proactivevideoqa/EGO/videos`; about 10,800 calls each). Scored exactly as the 8B decider there: `score_intervals.py` (AUC, interval F1 over the per-question timer at 5, 15 and 30%) and recall at <= 1 and <= 2 false alarms per minute.
 
+**Result, graded change gate on EGO** (10,800 calls): AUC **0.752** against 0.743 for the 8B decider; interval F1 52.7 / 59.3 / 57.9 at 5 / 15 / 30%, gap over the per-question timer **+26.2 [+19.3, +33.5] / +23.0 [+16.5, +30.0] / +15.1 [+9.0, +21.3]** against the decider's +17.8 / +19.4 / +12.4 (the paired difference is not yet computed).
+
+**Response rules that speak again during a long confident stretch (EGO, CPU on the stored runs).** Recall of reply intervals at <= 1 / <= 2 / <= 3 false alarms per minute:
+
+| Model | Rule | Recall |
+|---|---|---|
+| Timer | | 49.3 / 71.8 / 80.9% |
+| 8B decider | upward crossing only | 58.1 / 59.7 / 59.7% |
+| 8B decider | re-arm (D24 (v)) | 63.8 / 78.5 / 84.2% |
+| 8B decider | crossing, then every 6 s while above tau | 57.4 / 83.6 / 86.6% |
+| 8B decider | crossing, then every 10 s while above tau | 60.4 / 79.9 / 86.2% |
+| graded change gate | upward crossing only | 63.1 / 63.1 / 63.1% |
+| graded change gate | re-arm | 72.1 / 79.2 / 79.2% |
+| graded change gate | crossing, then every 6 s while above tau | **73.5 / 88.3 / 92.3%** |
+| graded change gate | crossing, then every 10 s while above tau | 74.2 / 85.9 / 88.3% |
+
+**Reading.** On EGO the recall ceiling of about 60% was the response rule, not the model: answering once per stretch above the threshold misses the several reply windows inside a long stretch. Re-arming, or repeating every 6 to 10 s while still confident, raises the 8B's recall at 2 false alarms per minute from 60% to 79 to 84%, above the timer's 72%, and the change gate with a 6 s repeat reaches 88% (92% at 3 per minute). The re-arm rule was fixed in advance (D24 (v)); the "every k s while above" rule and its two values were added after the EGO saturation was seen, so they are exploratory until confirmed on other questions. On OVO's single-moment events re-arming did not help, so the rule should depend on the kind of question (one moment vs an ongoing activity). No intervals on these recall figures yet.
+
 ### Other benchmarks checked (2026-11-26, from the papers; not yet downloaded)
 
 | Benchmark | What is scored | LLM judge | Ground truth | Size, release |
