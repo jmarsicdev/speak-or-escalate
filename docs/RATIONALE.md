@@ -1447,6 +1447,27 @@ ProactiveVideoQA EGO (60; an event is a reply interval, caught by a response ins
 
 **Reading.** The edge decider's advantage over a timer on exact-moment questions holds on unseen questions, and is larger on test than on val. The claim that the before/after question is a better decider overall was a val result that does not hold; what holds is narrower: comparing before and after helps on tutorial steps (state changes). The change gate's tutorial advantage points the same way but is not established. The EGO part of D26 is still running.
 
+### D26 part 2 (PRELIMINARY) and D27 (PRELIMINARY): runs stopped when the OpenRouter account ran out of credits (2026-11-27)
+
+The fresh EGO runs stopped at 29 to 33 of 100 questions and the Gemini run at 21 of 60 (error 402, account credits; everything stored is kept and the runs resume when credits are added). The numbers below use only the questions finished in every run involved; they are preliminary, with wide intervals, and the claims are not decided until the runs finish.
+
+**D26 on the fresh EGO sample, 29 questions finished by all three runs.** AUC: decider 0.709, change gate 0.730, before/after 0.728 (first sample: 0.743 / 0.752 / 0.749). Interval F1 gap over the per-question timer at 5 / 15 / 30%: decider +10.7 [+4.4, +18.0] / **+16.6 [+7.8, +25.8]** / +10.1 [-0.9, +22.4]; change gate +11.9 / **+20.5 [+11.2, +30.0]** / +12.4; before/after +7.0 / +19.8 / +19.4. Recall at <= 2 false alarms per minute: crossing 65.9 / 63.8 / 67.4%, every 6 s while above **85.5 / 87.0 / 87.7%**, timer 78.3%; every 6 s minus crossing **+19.6 [+5.0, +27.4]** (decider), +23.2 (gate), +20.3 (before/after), all intervals above zero; every 6 s minus the timer +7.2 [-5.7, +18.9] (decider), +8.7 [-0.8, +18.1] (gate), +9.4 [+0.0, +19.8] (before/after). Change gate minus decider, F1 gap at 15%: +3.9 [-4.2, +12.5].
+**Preliminary reading of the claims.** E1 (decider beats the timer at 15%): holds so far. E2 (every 6 s beats crossing, and beats the timer, at <= 2 false alarms per minute): the first part holds so far (+19.6, interval above zero); the second does not yet (the timer is stronger on these 29 questions, 78% against 72% on the first sample, and the interval includes zero). E3 (gate not lower than decider): holds so far (+3.9).
+
+**D27, partial: 21 of the first 60 EGO questions with Gemini's verdict at every tick** (3,780 ticks; cost of cloud everywhere on them $1.35; 3 ticks blocked by Gemini's safety filter). Edge: the 8B decider, Platt-calibrated leave-one-video-out, threshold at the 15% share. Gemini says Yes on 46.7% of ticks (the share of ticks inside a reply interval is about 36%).
+
+| System (21 questions) | Rule | Recall | Precision | False alarms / min | F1 gap over timer | Cloud calls | Cost |
+|---|---|---|---|---|---|---|---|
+| Edge only | crossing | 56.9% | 62.2% | 0.65 | +18.7 | 0 | $0 |
+| Cloud everywhere (Gemini) | crossing | 47.1% | 38.6% | 1.21 | +2.7 | 3,780 | $1.35 |
+| Edge only | every 6 s | 64.7% | 66.4% | 0.81 | +19.5 | 0 | $0 |
+| Cloud everywhere (Gemini) | every 6 s | 91.2% | 53.1% | 2.62 | +20.2 | 3,780 | $1.35 |
+| Routed 30% (nearest the edge threshold) | every 6 s | 84.3% | 61.5% | 1.44 | **+24.5** | 1,134 | $0.43 |
+| Routed 50% | every 6 s | 88.2% | 53.7% | 2.28 | +22.9 | 1,890 | $0.70 |
+
+Routed minus random routing (F1 gap): crossing -2.1 to +2.3 (none significant); every 6 s -0.3, +0.7, +4.9 [-0.1, +9.1], **+3.6 [+1.1, +6.3]** at 10 / 20 / 30 / 50%.
+**Preliminary reading.** On timing alone, Gemini 2.5 Flash is not better than the calibrated 8B: it says Yes far more often (47% of ticks), so it catches more intervals with more false alarms, and under the crossing rule its long Yes stretches cost it most of its advantage over the timer. The routed system with the 6 s rule at a 30% budget has the best F1 gap of all (+24.5, above both edge only and cloud everywhere) at a third of the cloud cost, but its advantage over random routing is small and significant only at 50% so far. The cloud model's value here may lie more in answer quality (not measured yet) than in timing.
+
 ### Other benchmarks checked (2026-11-26, from the papers; not yet downloaded)
 
 | Benchmark | What is scored | LLM judge | Ground truth | Size, release |

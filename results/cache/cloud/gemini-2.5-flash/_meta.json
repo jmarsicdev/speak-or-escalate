@@ -1,0 +1,6 @@
+{
+ "model": "google/gemini-2.5-flash",
+ "prompt": "You are an assistant watching a first-person video stream. You are shown the 4 most recent frames (the last 2 seconds).\nThe user asked earlier: \"{query}\"\nIs RIGHT NOW a moment when something that answers the question is happening or has just become visible? Reply on one line: \"Yes: <one-sentence answer>\" or \"No\".",
+ "frames": "last 2 s, 4 frames, 448 px",
+ "reasoning": "disabled"
+}

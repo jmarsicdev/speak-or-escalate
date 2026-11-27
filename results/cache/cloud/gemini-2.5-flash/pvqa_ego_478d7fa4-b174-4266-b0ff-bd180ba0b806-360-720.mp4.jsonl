@@ -1,0 +1,180 @@
+{"t": 2.0, "yes": true, "text": "Yes: The person is currently lighting a fire in the stone stove using a plastic bag and a matchbox.", "in_tokens": 1120, "out_tokens": 22}
+{"t": 4.0, "yes": true, "text": "Yes: The person is lighting a fire in the stone stove, which is the first step in using it to boil water.", "in_tokens": 1120, "out_tokens": 26}
+{"t": 6.0, "yes": true, "text": "Yes: The person is lighting a fire in the stone stove using a matchstick and some kindling.", "in_tokens": 1120, "out_tokens": 21}
+{"t": 8.0, "yes": true, "text": "Yes: The person is currently lighting a fire in the stone stove using a matchstick and a plastic bag as kindling.", "in_tokens": 1120, "out_tokens": 25}
+{"t": 10.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 12.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 14.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 16.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 18.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 20.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 22.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 24.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 26.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 28.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 30.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 32.0, "yes": true, "text": "Yes: The person is currently adding fuel, which appears to be dried cow dung cakes, to the stove.", "in_tokens": 1120, "out_tokens": 22}
+{"t": 34.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 36.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 38.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 40.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 42.0, "yes": true, "text": "Yes: The person is currently adding fuel, which appears to be dried cow dung patties, to the stone stove.", "in_tokens": 1120, "out_tokens": 23}
+{"t": 44.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 46.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 48.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 50.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 52.0, "yes": true, "text": "Yes: The person is placing dried cow dung cakes into the stone stove, which is a common fuel source for boiling water in such stoves.", "in_tokens": 1120, "out_tokens": 29}
+{"t": 54.0, "yes": true, "text": "Yes: The person is currently placing dried cow dung cakes into the stone stove, which is a step in preparing the stove for boiling water.", "in_tokens": 1120, "out_tokens": 28}
+{"t": 56.0, "yes": true, "text": "Yes: The person is placing dried cow dung cakes into the stone stove, which is a common fuel source for boiling water in such stoves.", "in_tokens": 1120, "out_tokens": 28}
+{"t": 58.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 60.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 62.0, "yes": true, "text": "Yes: The person is placing dried cow dung cakes into the stove opening, which is a step in preparing the stove for use.", "in_tokens": 1120, "out_tokens": 26}
+{"t": 64.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 66.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 68.0, "yes": true, "text": "Yes: The person is placing cow dung cakes into the stove, which is a step in preparing the stove for boiling water.", "in_tokens": 1120, "out_tokens": 25}
+{"t": 70.0, "yes": true, "text": "Yes: The person is placing dried cow dung cakes into the stove opening, which is a common fuel source for such stoves.", "in_tokens": 1120, "out_tokens": 25}
+{"t": 72.0, "yes": true, "text": "Yes: The person is placing dried cow dung cakes into the stone stove, which is a common fuel source for such stoves.", "in_tokens": 1120, "out_tokens": 25}
+{"t": 74.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 76.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 78.0, "yes": true, "text": "Yes: The person is adding fuel to the stone stove.", "in_tokens": 1120, "out_tokens": 12}
+{"t": 80.0, "yes": true, "text": "Yes: The person is currently placing dried cow dung cakes into the stove, which is a step in preparing the stove for boiling water.", "in_tokens": 1120, "out_tokens": 27}
+{"t": 82.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 84.0, "yes": true, "text": "Yes: The person is currently placing dried cow dung cakes into the stove opening, which is a step in preparing the stove for use.", "in_tokens": 1120, "out_tokens": 27}
+{"t": 86.0, "yes": true, "text": "Yes: The person is adding cow dung cakes to the stove to fuel the fire.", "in_tokens": 1120, "out_tokens": 17}
+{"t": 88.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 90.0, "yes": true, "text": "Yes: The person is lighting the fuel inside the stove.", "in_tokens": 1120, "out_tokens": 12}
+{"t": 92.0, "yes": true, "text": "Yes: The person is currently lighting the fuel inside the stove.", "in_tokens": 1120, "out_tokens": 13}
+{"t": 94.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 96.0, "yes": true, "text": "Yes: The person is adding dried cow dung cakes to the firebox of the stove to fuel the fire.", "in_tokens": 1120, "out_tokens": 22}
+{"t": 98.0, "yes": true, "text": "Yes: The person is currently placing a piece of dried cow dung into the stove's opening, which is a step in fueling the stove.", "in_tokens": 1120, "out_tokens": 29}
+{"t": 100.0, "yes": true, "text": "Yes: The person is currently placing cow dung cakes into the stove to be used as fuel.", "in_tokens": 1120, "out_tokens": 19}
+{"t": 102.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 104.0, "yes": true, "text": "Yes: The person is placing cow dung cakes around the opening of the stone stove, which is a step in preparing the stove for use.", "in_tokens": 1120, "out_tokens": 28}
+{"t": 106.0, "yes": true, "text": "Yes: The person is placing dried cow dung cakes into the stove's opening, which is a step in fueling the stove.", "in_tokens": 1120, "out_tokens": 26}
+{"t": 108.0, "yes": true, "text": "Yes: The person is adding dried cow dung cakes to the stove's opening, which is a step in fueling the stove to boil water.", "in_tokens": 1120, "out_tokens": 29}
+{"t": 110.0, "yes": true, "text": "Yes: The person is currently placing a cow dung cake into the stove's opening to fuel the fire.", "in_tokens": 1120, "out_tokens": 22}
+{"t": 112.0, "yes": true, "text": "Yes: The person is currently lighting the fuel inside the stove.", "in_tokens": 1120, "out_tokens": 13}
+{"t": 114.0, "yes": true, "text": "Yes: The person is placing dried cow dung cakes into the stove opening, which is a common fuel source for such stoves.", "in_tokens": 1120, "out_tokens": 25}
+{"t": 116.0, "yes": true, "text": "Yes: The person is adding cow dung cakes to the fire in the stove.", "in_tokens": 1120, "out_tokens": 16}
+{"t": 118.0, "yes": true, "text": "Yes: The person is placing cow dung cakes into the stove's opening, which is a step in fueling the stove to boil water.", "in_tokens": 1120, "out_tokens": 28}
+{"t": 120.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 122.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 124.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 126.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 128.0, "yes": true, "text": "Yes: The person is placing dried cow dung cakes into the stove's opening, which is a step in preparing the stove for use.", "in_tokens": 1120, "out_tokens": 28}
+{"t": 130.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 132.0, "yes": true, "text": "Yes: The person is placing dried cow dung cakes into the stove's opening, which is a step in preparing the stove for boiling water.", "in_tokens": 1120, "out_tokens": 29}
+{"t": 134.0, "yes": true, "text": "Yes: The person is breaking up dried cow dung cakes and placing them into the opening of the stone stove, which is a step in preparing the stove for use.", "in_tokens": 1120, "out_tokens": 33}
+{"t": 136.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 138.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 140.0, "yes": true, "text": "Yes: The person is placing cow dung cakes into the stove, which is a step in preparing the stove for use.", "in_tokens": 1120, "out_tokens": 24}
+{"t": 142.0, "yes": true, "text": "Yes: The person is adding cow dung cakes to the stove, which is a step in fueling it to boil water.", "in_tokens": 1120, "out_tokens": 24}
+{"t": 144.0, "yes": true, "text": "Yes: The person is adding fuel (cow dung cakes) to the stove, which is a step in using it to boil water.", "in_tokens": 1120, "out_tokens": 27}
+{"t": 146.0, "yes": true, "text": "Yes: The person is currently adding fuel to the stove, which is a necessary step for boiling water.", "in_tokens": 1120, "out_tokens": 21}
+{"t": 148.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 150.0, "yes": true, "text": "Yes: The person is adding more fuel to the fire in the stone stove.", "in_tokens": 1120, "out_tokens": 16}
+{"t": 152.0, "yes": true, "text": "Yes: The person is currently adding fuel to the stone stove to start a fire.", "in_tokens": 1120, "out_tokens": 17}
+{"t": 154.0, "yes": true, "text": "Yes: The person is adding dried cow dung cakes to the fire in the stove, which is a step in fueling the stove to boil water.", "in_tokens": 1120, "out_tokens": 29}
+{"t": 156.0, "yes": true, "text": "Yes: The person is adding fuel to the stove, which is a step in using it to boil water.", "in_tokens": 1120, "out_tokens": 22}
+{"t": 158.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 160.0, "yes": true, "text": "Yes: The person is adding fuel, which appears to be dried cow dung cakes, to the stove to start or maintain the fire.", "in_tokens": 1120, "out_tokens": 27}
+{"t": 162.0, "yes": true, "text": "Yes: The person is currently adding fuel to the stove, which is a step in using it to boil water.", "in_tokens": 1120, "out_tokens": 23}
+{"t": 164.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 166.0, "yes": true, "text": "Yes: The person is adding fuel to the fire in the stone stove.", "in_tokens": 1120, "out_tokens": 15}
+{"t": 168.0, "yes": true, "text": "Yes: The person is currently adding fuel to the stone stove, which is a step in using it to boil water.", "in_tokens": 1120, "out_tokens": 24}
+{"t": 170.0, "yes": true, "text": "Yes: The person is currently adding a piece of dried cow dung to the fire in the stone stove, which is a step in fueling it to boil water.", "in_tokens": 1120, "out_tokens": 32}
+{"t": 172.0, "yes": true, "text": "Yes: The person is currently adding dried cow dung cakes into the stove's opening to fuel the fire.", "in_tokens": 1120, "out_tokens": 22}
+{"t": 174.0, "yes": true, "text": "Yes: The person is adding fuel to the stove, which is a step in using it to boil water.", "in_tokens": 1120, "out_tokens": 22}
+{"t": 176.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 178.0, "yes": true, "text": "Yes: The person is adding more fuel (cow dung cakes) to the fire in the stone stove.", "in_tokens": 1120, "out_tokens": 21}
+{"t": 180.0, "yes": true, "text": "Yes: The person is adding dried cow dung cakes to the firebox of the stone stove to fuel the fire.", "in_tokens": 1120, "out_tokens": 23}
+{"t": 182.0, "yes": true, "text": "Yes: The person is currently adding cow dung cakes to the firebox of the stone stove to fuel the fire.", "in_tokens": 1120, "out_tokens": 23}
+{"t": 184.0, "yes": true, "text": "Yes: The person is adding fuel to the stove, which is a necessary step for boiling water.", "in_tokens": 1120, "out_tokens": 20}
+{"t": 186.0, "yes": true, "text": "Yes: The person is adding cow dung cakes to the firebox of the stove, which is a step in fueling the stove to boil water.", "in_tokens": 1120, "out_tokens": 29}
+{"t": 188.0, "yes": true, "text": "Yes: The person is adding more cow dung cakes to the fire in the stove.", "in_tokens": 1120, "out_tokens": 17}
+{"t": 190.0, "yes": true, "text": "Yes: The person is placing dried cow dung cakes into the opening of the stove to be used as fuel.", "in_tokens": 1120, "out_tokens": 22}
+{"t": 192.0, "yes": true, "text": "Yes: The person is placing dried cow dung cakes into the opening of the stone stove, which is a step in preparing the stove for use.", "in_tokens": 1120, "out_tokens": 29}
+{"t": 194.0, "yes": true, "text": "Yes: The person is adding fuel to the stove, which is a step in using it to boil water.", "in_tokens": 1120, "out_tokens": 22}
+{"t": 196.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 198.0, "yes": true, "text": "Yes: The person is adding fuel to the stove to heat it up.", "in_tokens": 1120, "out_tokens": 15}
+{"t": 200.0, "yes": true, "text": "Yes: The person is currently stirring a pot on the stone stove, which is being heated by a fire in one of its openings.", "in_tokens": 1120, "out_tokens": 27}
+{"t": 202.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 204.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 206.0, "yes": true, "text": "Yes: The person is currently placing a piece of cow dung into the stove's opening.", "in_tokens": 1120, "out_tokens": 19}
+{"t": 208.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 210.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 212.0, "yes": true, "text": "Yes: The person is adding fuel to the stove, which is a step in using it to boil water.", "in_tokens": 1120, "out_tokens": 22}
+{"t": 214.0, "yes": true, "text": "Yes: The person is currently adding fuel to the stone stove, which is a step in using it to boil water.", "in_tokens": 1120, "out_tokens": 24}
+{"t": 216.0, "yes": true, "text": "Yes: The stone stove is currently being used, with a fire burning in one of its openings, and a pot or vessel placed over another opening.", "in_tokens": 1120, "out_tokens": 30}
+{"t": 218.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 220.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 222.0, "yes": true, "text": "Yes: The stone stove is currently being used, with a fire burning in one of its openings, indicating it's ready for cooking or boiling water.", "in_tokens": 1120, "out_tokens": 31}
+{"t": 224.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 226.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 228.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 230.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 232.0, "yes": true, "text": "Yes: The person is placing a pot on the stone stove, which is a step in using it to boil water.", "in_tokens": 1120, "out_tokens": 24}
+{"t": 234.0, "yes": true, "text": "Yes: The person is placing a pot on the stone stove, which is already lit with fire.", "in_tokens": 1120, "out_tokens": 20}
+{"t": 236.0, "yes": true, "text": "Yes: The person is currently stirring the contents of the pot, which is placed on the stone stove with a fire burning underneath.", "in_tokens": 1120, "out_tokens": 26}
+{"t": 238.0, "yes": true, "text": "Yes: The person is currently adding fuel to the stove, which is a step in using it to boil water.", "in_tokens": 1120, "out_tokens": 23}
+{"t": 240.0, "yes": true, "text": "Yes: The video shows a person adding water to a pot on a stone stove, which is fueled by burning cow dung cakes.", "in_tokens": 1120, "out_tokens": 26}
+{"t": 242.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 244.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 246.0, "yes": true, "text": "Yes: The person is placing a pan on a stone stove, which is likely the first step in boiling water.", "in_tokens": 1120, "out_tokens": 23}
+{"t": 248.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 250.0, "yes": true, "text": "Yes: The person is placing a metal pot on the stone stove, which is likely the first step in using it to boil water.", "in_tokens": 1120, "out_tokens": 27}
+{"t": 252.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 254.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 256.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 258.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 260.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 262.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 264.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 266.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 268.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 270.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 272.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 274.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 276.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 278.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 280.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 282.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 284.0, "yes": true, "text": "Yes: Water is being poured from a metal pot into another metal pot that is on the stone stove.", "in_tokens": 1120, "out_tokens": 21}
+{"t": 286.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 288.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 290.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 292.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 294.0, "yes": true, "text": "Yes: Water is being poured into a pot on the stone stove.", "in_tokens": 1120, "out_tokens": 14}
+{"t": 296.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 298.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 300.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 302.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 304.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 306.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 308.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 310.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 312.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 314.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 316.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 318.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 320.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 322.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 324.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 326.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 328.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 330.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 332.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 334.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 336.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 338.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 340.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 342.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 344.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 346.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 348.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 350.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 352.0, "yes": false, "text": "BLOCKED", "blocked": true, "in_tokens": 0, "out_tokens": 0}
+{"t": 354.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 356.0, "yes": false, "text": "No.", "in_tokens": 1120, "out_tokens": 2}
+{"t": 358.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}
+{"t": 360.0, "yes": false, "text": "No", "in_tokens": 1120, "out_tokens": 1}

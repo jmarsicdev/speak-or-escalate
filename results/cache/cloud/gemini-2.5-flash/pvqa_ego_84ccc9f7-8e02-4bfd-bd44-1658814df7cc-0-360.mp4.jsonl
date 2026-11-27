@@ -1,0 +1,180 @@
+{"t": 2.0, "yes": true, "text": "Yes: The person is currently cutting the leek on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 16}
+{"t": 4.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 6.0, "yes": true, "text": "Yes: The person is currently cutting the leek on a cutting board.", "in_tokens": 1121, "out_tokens": 15}
+{"t": 8.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 10.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces.", "in_tokens": 1121, "out_tokens": 14}
+{"t": 12.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces.", "in_tokens": 1121, "out_tokens": 14}
+{"t": 14.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 16.0, "yes": true, "text": "Yes: The person is currently slicing the leek into rounds on a cutting board.", "in_tokens": 1121, "out_tokens": 17}
+{"t": 18.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 20.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces.", "in_tokens": 1121, "out_tokens": 14}
+{"t": 22.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small, round pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 20}
+{"t": 24.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 26.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small, round pieces.", "in_tokens": 1121, "out_tokens": 16}
+{"t": 28.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small, round pieces.", "in_tokens": 1121, "out_tokens": 16}
+{"t": 30.0, "yes": true, "text": "Yes: The person is peeling off the outer layers of the leek.", "in_tokens": 1121, "out_tokens": 15}
+{"t": 32.0, "yes": true, "text": "Yes: The person is peeling off the outer layers of the leek.", "in_tokens": 1121, "out_tokens": 15}
+{"t": 34.0, "yes": true, "text": "Yes: The person is cleaning the leek by rinsing it under running water.", "in_tokens": 1121, "out_tokens": 16}
+{"t": 36.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 38.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 40.0, "yes": true, "text": "Yes: The person is currently cleaning the leek under running water in the sink.", "in_tokens": 1121, "out_tokens": 17}
+{"t": 42.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 44.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small, round pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 20}
+{"t": 46.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 48.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 50.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 52.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small, round pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 21}
+{"t": 54.0, "yes": true, "text": "Yes: The person is holding a leek and is about to cut it on a cutting board.", "in_tokens": 1121, "out_tokens": 20}
+{"t": 56.0, "yes": true, "text": "Yes: The person is currently rinsing the leek under running water in the sink.", "in_tokens": 1121, "out_tokens": 17}
+{"t": 58.0, "yes": true, "text": "Yes: The person is currently rinsing the leek under running water in the sink.", "in_tokens": 1121, "out_tokens": 17}
+{"t": 60.0, "yes": true, "text": "Yes: The person is currently cleaning the leek under running water in the sink.", "in_tokens": 1121, "out_tokens": 17}
+{"t": 62.0, "yes": true, "text": "Yes: The person is cleaning the leek by rinsing it under running water and removing the outer layers.", "in_tokens": 1121, "out_tokens": 21}
+{"t": 64.0, "yes": true, "text": "Yes: The user is holding a leek and is about to cut it.", "in_tokens": 1121, "out_tokens": 16}
+{"t": 66.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 68.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 70.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 72.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small, round pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 21}
+{"t": 74.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 76.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 78.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 80.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 82.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 84.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 86.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 88.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 90.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 92.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 94.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 96.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 98.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 100.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 102.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 104.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 106.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 108.0, "yes": true, "text": "Yes: The person is holding a leek and appears to be preparing to clean or cut it.", "in_tokens": 1121, "out_tokens": 20}
+{"t": 110.0, "yes": true, "text": "Yes: The person is currently rinsing the leek under running water in the sink.", "in_tokens": 1121, "out_tokens": 17}
+{"t": 112.0, "yes": true, "text": "Yes: The person is currently rinsing the leek under running water in the sink.", "in_tokens": 1121, "out_tokens": 17}
+{"t": 114.0, "yes": true, "text": "Yes: The person is cleaning the leek by rinsing it under running water in the sink.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 116.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 118.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 120.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 122.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 124.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 126.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 128.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 130.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 132.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 134.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 136.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 138.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 140.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 142.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 144.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 146.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces.", "in_tokens": 1121, "out_tokens": 14}
+{"t": 148.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces.", "in_tokens": 1121, "out_tokens": 14}
+{"t": 150.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 152.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 154.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 156.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces.", "in_tokens": 1121, "out_tokens": 14}
+{"t": 158.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 160.0, "yes": true, "text": "Yes: The person is currently cleaning the leek under running water.", "in_tokens": 1121, "out_tokens": 14}
+{"t": 162.0, "yes": true, "text": "Yes: The person is currently cleaning the leek under running water in the sink.", "in_tokens": 1121, "out_tokens": 17}
+{"t": 164.0, "yes": true, "text": "Yes: The person is currently rinsing the leek under running water in the sink.", "in_tokens": 1121, "out_tokens": 17}
+{"t": 166.0, "yes": true, "text": "Yes: The person is cleaning and cutting the leek by holding it over a bowl in the sink and using a knife to cut off the end.", "in_tokens": 1121, "out_tokens": 30}
+{"t": 168.0, "yes": true, "text": "Yes: The person is holding a leek and cutting it into smaller pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 20}
+{"t": 170.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 172.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 174.0, "yes": true, "text": "Yes: The person is currently cutting the leek into smaller pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 176.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a wooden cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 178.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 180.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 182.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 184.0, "yes": false, "text": "No.", "in_tokens": 1121, "out_tokens": 2}
+{"t": 186.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 188.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 190.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 192.0, "yes": false, "text": "No.", "in_tokens": 1121, "out_tokens": 2}
+{"t": 194.0, "yes": false, "text": "No.", "in_tokens": 1121, "out_tokens": 2}
+{"t": 196.0, "yes": true, "text": "Yes: The leek has been cleaned and cut into small pieces, which are now visible on the cutting board.", "in_tokens": 1121, "out_tokens": 23}
+{"t": 198.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 200.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 202.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 204.0, "yes": false, "text": "No.", "in_tokens": 1121, "out_tokens": 2}
+{"t": 206.0, "yes": false, "text": "No.", "in_tokens": 1121, "out_tokens": 2}
+{"t": 208.0, "yes": true, "text": "Yes: The leek has been cleaned and is now being cut into small pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 21}
+{"t": 210.0, "yes": true, "text": "Yes: The leek has been cleaned and cut into small pieces, which are now visible on the cutting board.", "in_tokens": 1121, "out_tokens": 23}
+{"t": 212.0, "yes": true, "text": "Yes: The leek has been cleaned and cut into small pieces, which are now visible on the cutting board.", "in_tokens": 1121, "out_tokens": 23}
+{"t": 214.0, "yes": true, "text": "Yes: The leek has been cleaned and cut into small pieces, which are now visible on the cutting board.", "in_tokens": 1121, "out_tokens": 23}
+{"t": 216.0, "yes": true, "text": "Yes: The leek has been cleaned and cut into small pieces, which are visible on the cutting board.", "in_tokens": 1121, "out_tokens": 22}
+{"t": 218.0, "yes": true, "text": "Yes: The leek has been cut into smaller pieces and is now on a cutting board.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 220.0, "yes": true, "text": "Yes: The person is currently cutting the leek into small pieces on a cutting board.", "in_tokens": 1121, "out_tokens": 18}
+{"t": 222.0, "yes": true, "text": "Yes: The leek has been cleaned and cut into small pieces, which are now visible on the cutting board.", "in_tokens": 1121, "out_tokens": 23}
+{"t": 224.0, "yes": true, "text": "Yes: The leek has been cut into small pieces and is ready for cooking.", "in_tokens": 1121, "out_tokens": 17}
+{"t": 226.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 228.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 230.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 232.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 234.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 236.0, "yes": false, "text": "No.", "in_tokens": 1121, "out_tokens": 2}
+{"t": 238.0, "yes": true, "text": "Yes: The person is currently transferring the cut leeks from the cutting board into the pan.", "in_tokens": 1121, "out_tokens": 19}
+{"t": 240.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 242.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 244.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 246.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 248.0, "yes": false, "text": "No.", "in_tokens": 1121, "out_tokens": 2}
+{"t": 250.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 252.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 254.0, "yes": false, "text": "No.", "in_tokens": 1121, "out_tokens": 2}
+{"t": 256.0, "yes": false, "text": "No.", "in_tokens": 1121, "out_tokens": 2}
+{"t": 258.0, "yes": false, "text": "No.", "in_tokens": 1121, "out_tokens": 2}
+{"t": 260.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 262.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 264.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 266.0, "yes": false, "text": "No.", "in_tokens": 1121, "out_tokens": 2}
+{"t": 268.0, "yes": false, "text": "No.", "in_tokens": 1121, "out_tokens": 2}
+{"t": 270.0, "yes": false, "text": "No.", "in_tokens": 1121, "out_tokens": 2}
+{"t": 272.0, "yes": false, "text": "No.", "in_tokens": 1121, "out_tokens": 2}
+{"t": 274.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 276.0, "yes": false, "text": "No.", "in_tokens": 1121, "out_tokens": 2}
+{"t": 278.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 280.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 282.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 284.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 286.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 288.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 290.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 292.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 294.0, "yes": false, "text": "No.", "in_tokens": 1121, "out_tokens": 2}
+{"t": 296.0, "yes": false, "text": "No.", "in_tokens": 1121, "out_tokens": 2}
+{"t": 298.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 300.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 302.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 304.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 306.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 308.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 310.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 312.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 314.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 316.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 318.0, "yes": false, "text": "No.", "in_tokens": 1121, "out_tokens": 2}
+{"t": 320.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 322.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 324.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 326.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 328.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 330.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 332.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 334.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 336.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 338.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 340.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 342.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 344.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 346.0, "yes": false, "text": "No.", "in_tokens": 1121, "out_tokens": 2}
+{"t": 348.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 350.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 352.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 354.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 356.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 358.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}
+{"t": 360.0, "yes": false, "text": "No", "in_tokens": 1121, "out_tokens": 1}

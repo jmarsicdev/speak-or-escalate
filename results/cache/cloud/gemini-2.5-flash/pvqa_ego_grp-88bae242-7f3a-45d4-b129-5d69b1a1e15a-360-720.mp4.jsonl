@@ -1,0 +1,180 @@
+{"t": 2.0, "yes": true, "text": "Yes: The person is putting a head of cabbage into a plastic bag.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 4.0, "yes": true, "text": "Yes: The person is holding a head of cabbage, indicating that they are preparing vegetables.", "in_tokens": 1117, "out_tokens": 18}
+{"t": 6.0, "yes": false, "text": "No", "in_tokens": 1117, "out_tokens": 1}
+{"t": 8.0, "yes": false, "text": "No", "in_tokens": 1117, "out_tokens": 1}
+{"t": 10.0, "yes": false, "text": "No", "in_tokens": 1117, "out_tokens": 1}
+{"t": 12.0, "yes": false, "text": "No", "in_tokens": 1117, "out_tokens": 1}
+{"t": 14.0, "yes": false, "text": "No", "in_tokens": 1117, "out_tokens": 1}
+{"t": 16.0, "yes": false, "text": "No.", "in_tokens": 1117, "out_tokens": 2}
+{"t": 18.0, "yes": true, "text": "Yes: The person is taking out a long white vegetable (likely a daikon radish) and a round, light-colored vegetable (possibly an onion or turnip) from the refrigerator.", "in_tokens": 1117, "out_tokens": 38}
+{"t": 20.0, "yes": true, "text": "Yes: The person is taking a daikon radish out of the refrigerator.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 22.0, "yes": true, "text": "Yes: The person is taking a vegetable out of the refrigerator.", "in_tokens": 1117, "out_tokens": 13}
+{"t": 24.0, "yes": false, "text": "No", "in_tokens": 1117, "out_tokens": 1}
+{"t": 26.0, "yes": true, "text": "Yes: The person is holding an onion and a daikon radish, indicating they are about to prepare these vegetables.", "in_tokens": 1117, "out_tokens": 23}
+{"t": 28.0, "yes": true, "text": "Yes: The person is holding a vegetable wrapped in plastic and has a bowl of shredded cabbage next to a cutting board, indicating preparation of vegetables.", "in_tokens": 1117, "out_tokens": 29}
+{"t": 30.0, "yes": false, "text": "No.", "in_tokens": 1117, "out_tokens": 2}
+{"t": 32.0, "yes": false, "text": "No.", "in_tokens": 1117, "out_tokens": 2}
+{"t": 34.0, "yes": false, "text": "No.", "in_tokens": 1117, "out_tokens": 2}
+{"t": 36.0, "yes": true, "text": "Yes: The person is preparing to cook by filling a pot with water, and there are already chopped vegetables (cabbage) and whole vegetables (daikon radish, onion) visible on the counter.", "in_tokens": 1117, "out_tokens": 40}
+{"t": 38.0, "yes": true, "text": "Yes: The vegetables, which appear to be shredded cabbage, are already prepared and in a bowl, ready to be cooked.", "in_tokens": 1117, "out_tokens": 25}
+{"t": 40.0, "yes": true, "text": "Yes: The vegetables are being chopped or shredded, as indicated by the presence of a bowl of shredded green vegetables next to the stove.", "in_tokens": 1117, "out_tokens": 27}
+{"t": 42.0, "yes": false, "text": "No", "in_tokens": 1117, "out_tokens": 1}
+{"t": 44.0, "yes": false, "text": "No", "in_tokens": 1117, "out_tokens": 1}
+{"t": 46.0, "yes": true, "text": "Yes: The person is taking a package of vegetables out of a cabinet and opening it.", "in_tokens": 1117, "out_tokens": 18}
+{"t": 48.0, "yes": true, "text": "Yes: The person is opening a bag of vegetables.", "in_tokens": 1117, "out_tokens": 11}
+{"t": 50.0, "yes": true, "text": "Yes: The person is opening a bag of pre-cut vegetables.", "in_tokens": 1117, "out_tokens": 14}
+{"t": 52.0, "yes": true, "text": "Yes: The person is opening a bag of green beans, which are the vegetables to be prepared.", "in_tokens": 1117, "out_tokens": 20}
+{"t": 54.0, "yes": true, "text": "Yes: The person is opening a bag of what appears to be pre-packaged vegetables.", "in_tokens": 1117, "out_tokens": 18}
+{"t": 56.0, "yes": false, "text": "No", "in_tokens": 1117, "out_tokens": 1}
+{"t": 58.0, "yes": true, "text": "Yes: The vegetables are being chopped on a cutting board next to the sink.", "in_tokens": 1117, "out_tokens": 16}
+{"t": 60.0, "yes": true, "text": "Yes: The person is preparing to cut a daikon radish on a cutting board.", "in_tokens": 1117, "out_tokens": 17}
+{"t": 62.0, "yes": true, "text": "Yes: The person is peeling a daikon radish.", "in_tokens": 1117, "out_tokens": 11}
+{"t": 64.0, "yes": true, "text": "Yes: The person is currently slicing a white vegetable, likely a daikon radish, on a cutting board.", "in_tokens": 1117, "out_tokens": 22}
+{"t": 66.0, "yes": true, "text": "Yes: The person is cutting a white vegetable, likely a daikon radish, into smaller pieces on a cutting board.", "in_tokens": 1117, "out_tokens": 24}
+{"t": 68.0, "yes": true, "text": "Yes: The person is unwrapping a daikon radish from plastic packaging.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 70.0, "yes": true, "text": "Yes: The person is unwrapping a vegetable, likely a daikon radish, from plastic wrap.", "in_tokens": 1117, "out_tokens": 20}
+{"t": 72.0, "yes": true, "text": "Yes: The person is preparing to cut a white vegetable, possibly a daikon radish, on a cutting board with a knife.", "in_tokens": 1117, "out_tokens": 26}
+{"t": 74.0, "yes": true, "text": "Yes: The person is peeling an onion with a knife.", "in_tokens": 1117, "out_tokens": 12}
+{"t": 76.0, "yes": true, "text": "Yes: The person is currently peeling an onion with a knife.", "in_tokens": 1117, "out_tokens": 13}
+{"t": 78.0, "yes": true, "text": "Yes: The person is peeling an onion.", "in_tokens": 1117, "out_tokens": 9}
+{"t": 80.0, "yes": true, "text": "Yes: The person is peeling a white vegetable, likely a daikon radish, with a knife.", "in_tokens": 1117, "out_tokens": 20}
+{"t": 82.0, "yes": true, "text": "Yes: The person is peeling a white radish with a knife.", "in_tokens": 1117, "out_tokens": 13}
+{"t": 84.0, "yes": true, "text": "Yes: The person is peeling a white vegetable with a knife.", "in_tokens": 1117, "out_tokens": 13}
+{"t": 86.0, "yes": true, "text": "Yes: The person is peeling a white vegetable, likely a daikon radish, with a knife.", "in_tokens": 1117, "out_tokens": 20}
+{"t": 88.0, "yes": true, "text": "Yes: The person is peeling a white vegetable with a knife.", "in_tokens": 1117, "out_tokens": 13}
+{"t": 90.0, "yes": true, "text": "Yes: The person is peeling a white vegetable with a knife.", "in_tokens": 1117, "out_tokens": 13}
+{"t": 92.0, "yes": true, "text": "Yes: The person is peeling a white vegetable with a peeler.", "in_tokens": 1117, "out_tokens": 14}
+{"t": 94.0, "yes": true, "text": "Yes: The person is peeling a white vegetable, likely a daikon radish, with a knife.", "in_tokens": 1117, "out_tokens": 20}
+{"t": 96.0, "yes": true, "text": "Yes: The person is holding a small white vegetable and a knife, preparing to cut it on a cutting board.", "in_tokens": 1117, "out_tokens": 23}
+{"t": 98.0, "yes": true, "text": "Yes: The person is holding a knife and a piece of vegetable on a cutting board, indicating they are about to cut it.", "in_tokens": 1117, "out_tokens": 26}
+{"t": 100.0, "yes": true, "text": "Yes: The person is holding an onion on a cutting board, preparing to cut it.", "in_tokens": 1117, "out_tokens": 18}
+{"t": 102.0, "yes": true, "text": "Yes: The person is currently peeling a vegetable with a knife.", "in_tokens": 1117, "out_tokens": 13}
+{"t": 104.0, "yes": true, "text": "Yes: The person is currently slicing a white vegetable on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 106.0, "yes": true, "text": "Yes: The person is currently slicing a white vegetable on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 108.0, "yes": true, "text": "Yes: The person is currently slicing a white vegetable on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 110.0, "yes": true, "text": "Yes: The person is currently slicing a white vegetable on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 112.0, "yes": true, "text": "Yes: The person is slicing an onion on a cutting board.", "in_tokens": 1117, "out_tokens": 13}
+{"t": 114.0, "yes": true, "text": "Yes: The person is currently slicing an onion on a cutting board.", "in_tokens": 1117, "out_tokens": 14}
+{"t": 116.0, "yes": true, "text": "Yes: The person is currently slicing an onion on a cutting board.", "in_tokens": 1117, "out_tokens": 14}
+{"t": 118.0, "yes": true, "text": "Yes: The person is currently slicing a vegetable on a cutting board.", "in_tokens": 1117, "out_tokens": 14}
+{"t": 120.0, "yes": true, "text": "Yes: The person is currently slicing a vegetable on a cutting board.", "in_tokens": 1117, "out_tokens": 14}
+{"t": 122.0, "yes": true, "text": "Yes: The person is currently slicing a white vegetable on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 124.0, "yes": true, "text": "Yes: The person is currently slicing a white vegetable on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 126.0, "yes": true, "text": "Yes: The person is slicing a white vegetable on a cutting board.", "in_tokens": 1117, "out_tokens": 14}
+{"t": 128.0, "yes": true, "text": "Yes: The person is slicing an onion on a cutting board.", "in_tokens": 1117, "out_tokens": 13}
+{"t": 130.0, "yes": true, "text": "Yes: The person is slicing a white vegetable on a cutting board.", "in_tokens": 1117, "out_tokens": 14}
+{"t": 132.0, "yes": true, "text": "Yes: The person is slicing a white vegetable, possibly a daikon radish, into thin pieces on a cutting board.", "in_tokens": 1117, "out_tokens": 24}
+{"t": 134.0, "yes": true, "text": "Yes: The person is slicing an onion on a cutting board.", "in_tokens": 1117, "out_tokens": 13}
+{"t": 136.0, "yes": true, "text": "Yes: The person is peeling an onion.", "in_tokens": 1117, "out_tokens": 9}
+{"t": 138.0, "yes": true, "text": "Yes: The person is slicing a white vegetable, likely an onion or daikon radish, on a cutting board.", "in_tokens": 1117, "out_tokens": 23}
+{"t": 140.0, "yes": true, "text": "Yes: The person is slicing a white vegetable, possibly an onion or daikon radish, on a cutting board.", "in_tokens": 1117, "out_tokens": 23}
+{"t": 142.0, "yes": true, "text": "Yes: The person is peeling a white vegetable, likely a daikon radish, and has already shredded cabbage into a bowl.", "in_tokens": 1117, "out_tokens": 25}
+{"t": 144.0, "yes": true, "text": "Yes: The person is peeling a vegetable, likely a daikon radish, and has already shredded cabbage.", "in_tokens": 1117, "out_tokens": 21}
+{"t": 146.0, "yes": true, "text": "Yes: The person is slicing a white vegetable, likely a daikon radish, on a cutting board.", "in_tokens": 1117, "out_tokens": 21}
+{"t": 148.0, "yes": true, "text": "Yes: The person is currently slicing a vegetable on a cutting board.", "in_tokens": 1117, "out_tokens": 14}
+{"t": 150.0, "yes": true, "text": "Yes: The person is currently slicing a white vegetable on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 152.0, "yes": true, "text": "Yes: The person is peeling a vegetable, likely an onion, with their hands.", "in_tokens": 1117, "out_tokens": 17}
+{"t": 154.0, "yes": true, "text": "Yes: The person is peeling an onion.", "in_tokens": 1117, "out_tokens": 9}
+{"t": 156.0, "yes": true, "text": "Yes: The person is currently slicing a vegetable on a cutting board.", "in_tokens": 1117, "out_tokens": 14}
+{"t": 158.0, "yes": true, "text": "Yes: The person is currently slicing a white vegetable on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 160.0, "yes": true, "text": "Yes: The person is slicing a white vegetable, possibly an onion or daikon radish, on a cutting board.", "in_tokens": 1117, "out_tokens": 23}
+{"t": 162.0, "yes": true, "text": "Yes: The person is currently slicing an onion on a cutting board.", "in_tokens": 1117, "out_tokens": 14}
+{"t": 164.0, "yes": true, "text": "Yes: The person is currently slicing a white vegetable on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 166.0, "yes": true, "text": "Yes: The person is currently slicing a white vegetable on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 168.0, "yes": true, "text": "Yes: The person is currently slicing an onion on a cutting board.", "in_tokens": 1117, "out_tokens": 14}
+{"t": 170.0, "yes": true, "text": "Yes: The person is currently slicing an onion on a cutting board.", "in_tokens": 1117, "out_tokens": 14}
+{"t": 172.0, "yes": true, "text": "Yes: The person is currently slicing onions on a cutting board.", "in_tokens": 1117, "out_tokens": 13}
+{"t": 174.0, "yes": true, "text": "Yes: The person is slicing vegetables on a cutting board.", "in_tokens": 1117, "out_tokens": 12}
+{"t": 176.0, "yes": false, "text": "No", "in_tokens": 1117, "out_tokens": 1}
+{"t": 178.0, "yes": true, "text": "Yes: The person is opening the refrigerator to retrieve the vegetables.", "in_tokens": 1117, "out_tokens": 13}
+{"t": 180.0, "yes": true, "text": "Yes: The person is taking a bag of vegetables out of the refrigerator.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 182.0, "yes": true, "text": "Yes: The person is taking vegetables out of a plastic bag, presumably to prepare them for cooking.", "in_tokens": 1117, "out_tokens": 20}
+{"t": 184.0, "yes": true, "text": "Yes: The person is preparing vegetables by holding a plastic bag of greens over the sink, likely to wash them.", "in_tokens": 1117, "out_tokens": 23}
+{"t": 186.0, "yes": true, "text": "Yes: The person is preparing vegetables by washing them in a plastic bag over the sink.", "in_tokens": 1117, "out_tokens": 18}
+{"t": 188.0, "yes": true, "text": "Yes: The person is taking green leafy vegetables out of a plastic bag, presumably to wash or cut them.", "in_tokens": 1117, "out_tokens": 22}
+{"t": 190.0, "yes": true, "text": "Yes: The person is taking vegetables out of a plastic bag and holding a bunch of leafy greens, likely to prepare them for cooking.", "in_tokens": 1117, "out_tokens": 27}
+{"t": 192.0, "yes": true, "text": "Yes: The person is washing a bunch of green leafy vegetables under the faucet in the sink.", "in_tokens": 1117, "out_tokens": 19}
+{"t": 194.0, "yes": true, "text": "Yes: The person is currently washing a bunch of leafy green vegetables under running water in the sink.", "in_tokens": 1117, "out_tokens": 20}
+{"t": 196.0, "yes": true, "text": "Yes: The person is washing and preparing a bunch of leafy green vegetables under running water in the sink.", "in_tokens": 1117, "out_tokens": 21}
+{"t": 198.0, "yes": true, "text": "Yes: The person is washing and cleaning a bunch of leafy green vegetables under running water in the sink.", "in_tokens": 1117, "out_tokens": 21}
+{"t": 200.0, "yes": true, "text": "Yes: The person is washing a bunch of leafy green vegetables under running water in the sink.", "in_tokens": 1117, "out_tokens": 19}
+{"t": 202.0, "yes": true, "text": "Yes: The person is currently washing a bunch of leafy green vegetables under running water in the sink.", "in_tokens": 1117, "out_tokens": 20}
+{"t": 204.0, "yes": true, "text": "Yes: The person is washing the vegetables under running water in the sink.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 206.0, "yes": true, "text": "Yes: The person is washing a bunch of leafy green vegetables under running water in the sink.", "in_tokens": 1117, "out_tokens": 19}
+{"t": 208.0, "yes": true, "text": "Yes: The person is washing the vegetables under running water in the sink.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 210.0, "yes": true, "text": "Yes: The person is washing a bunch of leafy green vegetables under running water in the sink.", "in_tokens": 1117, "out_tokens": 19}
+{"t": 212.0, "yes": true, "text": "Yes: The person is washing a bunch of green leafy vegetables under running water in the sink.", "in_tokens": 1117, "out_tokens": 19}
+{"t": 214.0, "yes": true, "text": "Yes: The person is washing a bunch of leafy green vegetables under running water in the sink.", "in_tokens": 1117, "out_tokens": 19}
+{"t": 216.0, "yes": true, "text": "Yes: The person is washing green leafy vegetables under running water in the sink.", "in_tokens": 1117, "out_tokens": 16}
+{"t": 218.0, "yes": true, "text": "Yes: The person is washing vegetables in the sink.", "in_tokens": 1117, "out_tokens": 11}
+{"t": 220.0, "yes": true, "text": "Yes: The person is currently holding a bunch of green vegetables, possibly preparing to wash or cut them, and there's a cutting board with chopped white vegetables and a knife visible.", "in_tokens": 1117, "out_tokens": 37}
+{"t": 222.0, "yes": true, "text": "Yes: The person is washing and chopping vegetables, including cabbage, onions, and leafy greens.", "in_tokens": 1117, "out_tokens": 19}
+{"t": 224.0, "yes": true, "text": "Yes: The person is chopping vegetables on a cutting board and placing them into a bowl.", "in_tokens": 1117, "out_tokens": 18}
+{"t": 226.0, "yes": true, "text": "Yes: The person is seen chopping vegetables on a cutting board.", "in_tokens": 1117, "out_tokens": 13}
+{"t": 228.0, "yes": true, "text": "Yes: The person is chopping vegetables on a cutting board, specifically what appears to be cabbage and some green leafy vegetables.", "in_tokens": 1117, "out_tokens": 24}
+{"t": 230.0, "yes": true, "text": "Yes: The person is currently chopping vegetables on a cutting board.", "in_tokens": 1117, "out_tokens": 13}
+{"t": 232.0, "yes": true, "text": "Yes: The person is chopping vegetables on a cutting board with a knife.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 234.0, "yes": true, "text": "Yes: The person is chopping vegetables on a cutting board next to the sink.", "in_tokens": 1117, "out_tokens": 16}
+{"t": 236.0, "yes": false, "text": "No", "in_tokens": 1117, "out_tokens": 1}
+{"t": 238.0, "yes": true, "text": "Yes: The person is preparing vegetables by taking them out of a bag and placing them on a cutting board.", "in_tokens": 1117, "out_tokens": 22}
+{"t": 240.0, "yes": true, "text": "Yes: The person is taking bean sprouts out of a bag and putting them into a colander, likely to rinse them.", "in_tokens": 1117, "out_tokens": 25}
+{"t": 242.0, "yes": true, "text": "Yes: The person is rinsing bean sprouts in a colander under running water in the sink.", "in_tokens": 1117, "out_tokens": 19}
+{"t": 244.0, "yes": true, "text": "Yes: The person is washing vegetables in a bowl under running water in the sink.", "in_tokens": 1117, "out_tokens": 17}
+{"t": 246.0, "yes": true, "text": "Yes: The person is rinsing the vegetables under running water in a colander.", "in_tokens": 1117, "out_tokens": 16}
+{"t": 248.0, "yes": true, "text": "Yes: The person is rinsing bean sprouts in a colander under running water.", "in_tokens": 1117, "out_tokens": 16}
+{"t": 250.0, "yes": true, "text": "Yes: The person is rinsing bean sprouts in a colander.", "in_tokens": 1117, "out_tokens": 13}
+{"t": 252.0, "yes": true, "text": "Yes: The person is rinsing bean sprouts in a colander and has a bowl of shredded cabbage and other greens on the counter, indicating the vegetables are being washed and chopped.", "in_tokens": 1117, "out_tokens": 35}
+{"t": 254.0, "yes": true, "text": "Yes: The person is shaking a colander over a pan, likely to drain or rinse vegetables.", "in_tokens": 1117, "out_tokens": 20}
+{"t": 256.0, "yes": true, "text": "Yes: The person is preparing vegetables by chopping them on a cutting board and rinsing them in a colander.", "in_tokens": 1117, "out_tokens": 22}
+{"t": 258.0, "yes": true, "text": "Yes: The person is currently chopping green leafy vegetables on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 260.0, "yes": true, "text": "Yes: The person is cutting the green leafy vegetables on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 262.0, "yes": true, "text": "Yes: The person is currently chopping green leafy vegetables on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 264.0, "yes": true, "text": "Yes: The person is currently chopping green leafy vegetables on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 266.0, "yes": true, "text": "Yes: The person is currently chopping the vegetables on a cutting board.", "in_tokens": 1117, "out_tokens": 14}
+{"t": 268.0, "yes": true, "text": "Yes: The person is currently chopping green leafy vegetables on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 270.0, "yes": true, "text": "Yes: The person is currently chopping green leafy vegetables on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 272.0, "yes": true, "text": "Yes: The person is currently chopping green leafy vegetables on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 274.0, "yes": true, "text": "Yes: The person is currently chopping green leafy vegetables on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 276.0, "yes": true, "text": "Yes: The person is currently chopping green leafy vegetables on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 278.0, "yes": true, "text": "Yes: The person is currently chopping green leafy vegetables on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 280.0, "yes": true, "text": "Yes: The person is currently chopping green leafy vegetables on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 282.0, "yes": true, "text": "Yes: The person is preparing the vegetables by removing the outer leaves and then rinsing them under running water in the sink.", "in_tokens": 1117, "out_tokens": 24}
+{"t": 284.0, "yes": true, "text": "Yes: The person is washing the vegetables under running water in the sink.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 286.0, "yes": true, "text": "Yes: The person is washing the vegetables under running water in the sink.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 288.0, "yes": true, "text": "Yes: The person is washing the vegetables under running water in the sink.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 290.0, "yes": true, "text": "Yes: The person is washing a bunch of green leafy vegetables under running water in the sink.", "in_tokens": 1117, "out_tokens": 19}
+{"t": 292.0, "yes": true, "text": "Yes: The person is holding a bunch of green leafy vegetables and appears to be preparing to cut them on a white cutting board.", "in_tokens": 1117, "out_tokens": 26}
+{"t": 294.0, "yes": true, "text": "Yes: The person is preparing vegetables by chopping them on a cutting board next to the sink.", "in_tokens": 1117, "out_tokens": 19}
+{"t": 296.0, "yes": true, "text": "Yes: The person is holding a bunch of green vegetables in their left hand and using a knife in their right hand to chop them on a white cutting board.", "in_tokens": 1117, "out_tokens": 32}
+{"t": 298.0, "yes": true, "text": "Yes: The person is trimming the ends off of a bunch of green leafy vegetables over the sink.", "in_tokens": 1117, "out_tokens": 20}
+{"t": 300.0, "yes": true, "text": "Yes: The person is washing and trimming green leafy vegetables in a colander over the sink.", "in_tokens": 1117, "out_tokens": 19}
+{"t": 302.0, "yes": true, "text": "Yes: The person is washing a cutting board, which is a step in preparing vegetables.", "in_tokens": 1117, "out_tokens": 18}
+{"t": 304.0, "yes": true, "text": "Yes: The person is washing a cutting board, which is a step in preparing vegetables before cooking.", "in_tokens": 1117, "out_tokens": 20}
+{"t": 306.0, "yes": true, "text": "Yes: The person is rinsing a cutting board under running water in the sink, which is a preparatory step for handling vegetables.", "in_tokens": 1117, "out_tokens": 25}
+{"t": 308.0, "yes": true, "text": "Yes: The person is washing the vegetables in a colander under running water in the sink.", "in_tokens": 1117, "out_tokens": 19}
+{"t": 310.0, "yes": true, "text": "Yes: The person is preparing vegetables by taking them out of a colander and placing them on a cutting board to be chopped.", "in_tokens": 1117, "out_tokens": 26}
+{"t": 312.0, "yes": true, "text": "Yes: The person is currently chopping the green leafy vegetables on a cutting board.", "in_tokens": 1117, "out_tokens": 16}
+{"t": 314.0, "yes": true, "text": "Yes: The person is currently chopping the green leafy vegetables on a cutting board.", "in_tokens": 1117, "out_tokens": 16}
+{"t": 316.0, "yes": true, "text": "Yes: The person is currently chopping green leafy vegetables on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 318.0, "yes": true, "text": "Yes: The person is chopping green leafy vegetables on a cutting board.", "in_tokens": 1117, "out_tokens": 14}
+{"t": 320.0, "yes": true, "text": "Yes: The person is currently chopping leafy green vegetables on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 322.0, "yes": true, "text": "Yes: The person is currently chopping green leafy vegetables on a cutting board.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 324.0, "yes": true, "text": "Yes: The person is chopping spinach on a cutting board.", "in_tokens": 1117, "out_tokens": 12}
+{"t": 326.0, "yes": true, "text": "Yes: The person is cutting green vegetables on a white cutting board.", "in_tokens": 1117, "out_tokens": 14}
+{"t": 328.0, "yes": true, "text": "Yes: The person is currently chopping vegetables on a cutting board.", "in_tokens": 1117, "out_tokens": 13}
+{"t": 330.0, "yes": true, "text": "Yes: The person is cutting green vegetables on a white cutting board and placing them into a metal colander.", "in_tokens": 1117, "out_tokens": 22}
+{"t": 332.0, "yes": true, "text": "Yes: The person is cutting green vegetables on a white cutting board and then transferring them into a metal colander.", "in_tokens": 1117, "out_tokens": 23}
+{"t": 334.0, "yes": true, "text": "Yes: The person is chopping vegetables on a cutting board.", "in_tokens": 1117, "out_tokens": 12}
+{"t": 336.0, "yes": true, "text": "Yes: The person is taking vegetables out of a plastic bag and placing them on a cutting board, indicating they are preparing to cut them.", "in_tokens": 1117, "out_tokens": 28}
+{"t": 338.0, "yes": true, "text": "Yes: The person is peeling a white vegetable, likely a daikon radish, over a cutting board.", "in_tokens": 1117, "out_tokens": 21}
+{"t": 340.0, "yes": true, "text": "Yes: The person is peeling a daikon radish, which is a step in preparing vegetables before cooking.", "in_tokens": 1117, "out_tokens": 21}
+{"t": 342.0, "yes": true, "text": "Yes: The person is peeling a long white vegetable, likely a daikon radish, with a peeler.", "in_tokens": 1117, "out_tokens": 22}
+{"t": 344.0, "yes": true, "text": "Yes: The person is taking out a bag of vegetables from the refrigerator.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 346.0, "yes": true, "text": "Yes: The person is taking vegetables out of the refrigerator.", "in_tokens": 1117, "out_tokens": 12}
+{"t": 348.0, "yes": true, "text": "Yes: The person is taking out a long, light green vegetable from the refrigerator.", "in_tokens": 1117, "out_tokens": 17}
+{"t": 350.0, "yes": true, "text": "Yes: The person is taking out a bag of vegetables from the refrigerator.", "in_tokens": 1117, "out_tokens": 15}
+{"t": 352.0, "yes": false, "text": "No.", "in_tokens": 1117, "out_tokens": 2}
+{"t": 354.0, "yes": true, "text": "Yes: The vegetables are being chopped on a cutting board.", "in_tokens": 1117, "out_tokens": 12}
+{"t": 356.0, "yes": true, "text": "Yes: The person is chopping vegetables on a cutting board next to the sink.", "in_tokens": 1117, "out_tokens": 16}
+{"t": 358.0, "yes": true, "text": "Yes: The person is chopping vegetables on a cutting board next to the sink.", "in_tokens": 1117, "out_tokens": 16}
+{"t": 360.0, "yes": true, "text": "Yes: The person is rinsing a cutting board under running water in the sink, which is a step in preparing vegetables.", "in_tokens": 1117, "out_tokens": 24}
