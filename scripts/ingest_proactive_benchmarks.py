@@ -90,8 +90,11 @@ def ingest_sb():
     return out, vdir
 
 
-def ingest_pvqa(subset: str, n: int | None, seed: int):
+def ingest_pvqa(subset: str, n: int | None, seed: int, exclude: str | None = None):
     anno = json.load(open(RAW / f"proactivevideoqa/{subset}/anno.json", encoding="utf-8"))
+    if exclude:   # questions already used (a fresh sample for confirmation, D26)
+        used = {json.loads(x)["id"] for x in open(exclude, encoding="utf-8")}
+        anno = [a for a in anno if f"pvqa_{subset.lower()}_{a['question_id']}" not in used]
     if n:
         anno = random.Random(seed).sample(anno, min(n, len(anno)))
     vdir = RAW / f"proactivevideoqa/{subset}/videos"
@@ -114,9 +117,10 @@ def main():
     ap.add_argument("--subset", choices=["EGO", "WEB", "VAD"], default="EGO")
     ap.add_argument("--n", type=int, default=None)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--exclude", default=None, help="a samples jsonl whose questions are left out")
     a = ap.parse_args()
-    rows, vdir = ingest_sb() if a.bench == "sb" else ingest_pvqa(a.subset, a.n, a.seed)
-    name = "sb_po" if a.bench == "sb" else f"pvqa_{a.subset.lower()}" + (f"_n{a.n}" if a.n else "")
+    rows, vdir = ingest_sb() if a.bench == "sb" else ingest_pvqa(a.subset, a.n, a.seed, a.exclude)
+    name = "sb_po" if a.bench == "sb" else f"pvqa_{a.subset.lower()}" + (f"_n{a.n}" if a.n else "") + (f"_s{a.seed}" if a.exclude else "")
     out = Path("data/processed") / f"{name}.jsonl"
     with open(out, "w", encoding="utf-8") as f:
         for r in rows:
