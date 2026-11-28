@@ -1475,6 +1475,18 @@ Routed minus random routing (F1 gap): crossing -2.1 to +2.3 (none significant); 
 
 **D27 paused by decision (2026-11-27, user): routing needs iteration, so the full Gemini run is not completed.** Status when paused: 27 of 60 questions (4,860 ticks, $1.72 for cloud everywhere on them; stored in `results/cache/cloud/gemini-2.5-flash/`, resumable). On these 27, with the 6 s rule: edge only F1 gap over the timer +20.0 (recall 66.1%, precision 60.3%); cloud everywhere +17.6 (recall 86.4%, precision 50.8%, Gemini says Yes on 39% of ticks); routed 30% **+22.9**, recall 81.4%, cost $0.54, against random routing +18.2: **+4.7 [+1.9, +7.7]**; routed 50% +18.8 (+1.2 [-1.2, +4.0] over random). With the crossing rule, routing to Gemini lowers recall (routed 50% minus random -18.7 [-29.5, -6.6]): Gemini's long Yes stretches merge responses. Points for the next iteration: Gemini over-says Yes (39 to 47% of ticks against about 36% inside reply intervals), so its verdict needs a stricter prompt or a calibrated score; routing should be paired with the re-firing response rule; answer quality is the cloud's untested contribution.
 
+### Why exact timing is weak: confidence around event starts, and response lag (CPU, 2026-11-27)
+
+The 8B decider's p(Yes), as a within-question percentile (0.5 = an average moment), averaged over events at fixed offsets from each event's start (OVO: the label minus 2 s, since labels are start + 2 s, D3; EGO: each reply interval's start); and the signed lag of the nearest response (15% share, crossing rule) to each start within 20 s.
+
+| | -10 s | -4 s | -2 s | start | +2 s | +4 s | +10 s | +20 s | Lag median, IQR | Within +/- 2 s | Earlier / later than 2 s |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| OVO counting (81 events) | 0.49 | 0.43 | 0.48 | 0.48 | **0.63** | 0.60 | 0.55 | 0.51 | +2.0 s, [-1.0, +5.0] | 42% | 21% / 37% |
+| OVO tutorials (32 steps) | 0.50 | 0.56 | 0.54 | **0.63** | 0.66 | 0.60 | 0.57 | 0.61 | +1.0 s, [-2.2, +2.0] | 53% | 25% / 22% |
+| EGO reply intervals (189) | 0.55 | 0.54 | 0.57 | **0.63** | 0.66 | 0.64 | 0.59 | 0.60 | +1.5 s, [-1.1, +5.0] | 35% | 21% / 44% |
+
+**Reading.** At an event's start the confidence steps up, from about the 0.45 to 0.55 percentile to about 0.63 to 0.66, within 0 to 2 s, and then stays raised for 10 to 20 s: a shallow step into a plateau, not a sharp peak at the onset. Responses come a median 1 to 2 s after the start with an interquartile spread of about 6 s, so only 35 to 53% fall within +/- 2 s, and more come late than early. The model recognises that the relevant activity is under way (it keeps saying Yes while it lasts), rather than detecting the transition into it; the 2 s decision grid adds about 1 s of delay on average. This is why interval targets (EGO) score much higher than point targets (D26 checks) and why re-firing while confident helps recall on ongoing activity.
+
 ### Other benchmarks checked (2026-11-26, from the papers; not yet downloaded)
 
 | Benchmark | What is scored | LLM judge | Ground truth | Size, release |
