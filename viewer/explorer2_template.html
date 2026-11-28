@@ -28,7 +28,7 @@ td.n{text-align:right;font-variant-numeric:tabular-nums} tr.grp td{background:va
 <script>
 const DATA=/*DATA*/;
 const COL=["#2b6cb0","#c05621","#2f855a","#9f7aea","#b7791f","#319795","#b83280","#718096","#e53e3e","#4c51bf","#38a169","#d69e2e","#805ad5","#dd6b20","#3182ce","#00a3c4","#97266d","#2c7a7b"];
-const GROUPS={decider:"Deciders, question only",prompt:"Decider with evidence in its prompt",change:"Change questions (asked instead of 'is now the moment?')",signal:"Separate signals",combo:"Combinations"};
+const GROUPS={decider:"Deciders, question only",prompt:"Decider with evidence in its prompt",change:"Change questions (asked instead of 'is now the moment?')",signal:"Separate signals",combo:"Combinations",cloud:"Cloud model (verdict only: Yes = 0.9, No = 0.1)"};
 const SHARES=[0.05,0.10,0.15,0.20,0.30],RULES=[["edge","Crossing"],["rearm","Re-arm"],["every6","Every 6 s while above"],["every10","Every 10 s while above"]];
 let st={ds:0,share:0.15,rule:"edge",qset:"ct",on:new Set(["8B decider","Before/after","Change gate (graded)"]),q:null,t:null};
 const D=()=>DATA[st.ds], Q=()=>D().questions, M=()=>D().models.map(m=>m.label);

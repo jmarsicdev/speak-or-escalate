@@ -43,7 +43,11 @@ OVO_MODELS = [
 ]
 EGO_MODELS = [("8B decider", "qwen3-vl-8b-instruct__query_only__d0bdbc25", "decider"),
               ("Change gate (graded)", "qwen3-vl-8b-instruct__history_gate_q__*", "change"),
-              ("Before/after", "qwen3-vl-8b-instruct__signal_beforeafter", "change")]
+              ("Before/after", "qwen3-vl-8b-instruct__signal_beforeafter", "change"),
+              ("Gemini 2.5 Flash (cloud verdict)", "CLOUD:gemini-2.5-flash", "cloud")]
+TEST_MODELS = [("8B decider", "qwen3-vl-8b-instruct__query_only__d0bdbc25", "decider"),
+               ("Change gate (graded)", "qwen3-vl-8b-instruct__history_gate_q__*", "change"),
+               ("Before/after", "qwen3-vl-8b-instruct__signal_beforeafter", "change")]
 
 
 def p_of(r):
@@ -51,6 +55,16 @@ def p_of(r):
 
 
 def rows(pat, sid):
+    if pat.startswith("CLOUD:"):   # the cloud model gives a verdict, not a probability: Yes -> 0.9, No -> 0.1 (blocked counts as No)
+        f = Path("results/cache/cloud") / pat.split(":", 1)[1] / f"{sid}.jsonl"
+        if not f.exists():
+            return None
+        out = []
+        for x in open(f, encoding="utf-8"):
+            if x.strip():
+                r = json.loads(x)
+                out.append({"t": r["t"], "lp_yes": math.log(0.9 if r["yes"] else 0.1), "lp_no": math.log(0.1 if r["yes"] else 0.9), "change": r["text"]})
+        return sorted(out, key=lambda r: r["t"])
     hits = sorted(D.glob(pat))
     f = hits[-1] / f"{sid}.jsonl" if hits else None
     if not f or not f.exists():
@@ -88,7 +102,11 @@ def dataset(name, samples_path, models, frames_dir, goals=None):
 def main():
     goals = {json.loads(x)["id"]: json.loads(x)["cues"][0] for x in open("results/cache/cues/qwen3-vl-8b-instruct__goal/cues.jsonl", encoding="utf-8")}
     data = [dataset("OVO-Bench val", "data/processed/ovo_far_val.jsonl", OVO_MODELS, "frames", goals),
-            dataset("ProactiveVideoQA EGO (60)", "data/processed/pvqa_ego_n60.jsonl", EGO_MODELS, "frames_ego")]
+            dataset("OVO-Bench test (used once, D26)", "data/processed/ovo_far_test.jsonl", TEST_MODELS, "frames"),
+            dataset("ProactiveVideoQA EGO (first 60)", "data/processed/pvqa_ego_n60.jsonl", EGO_MODELS, "frames_ego"),
+            dataset("ProactiveVideoQA EGO (fresh 100, D26; partial while running)", "data/processed/pvqa_ego_n100_s1.jsonl", TEST_MODELS, "frames_ego")]
+    for d in data:   # keep only questions that have at least one run (the fresh sample is still running)
+        d["questions"] = [q for q in d["questions"] if q["p"]]
     html = open("viewer/explorer2_template.html", encoding="utf-8").read().replace("/*DATA*/", json.dumps(data, separators=(",", ":")))
     open("viewer/explorer2.html", "w", encoding="utf-8").write(html)
     print("viewer/explorer2.html", round(len(html) / 1e6, 1), "MB")
